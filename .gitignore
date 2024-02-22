@@ -1,6 +1,9 @@
 # PHPStorm
 /.idea/
 
+# VSCodeish
+*.code-workspace
+
 # Composer
 /vendor/
 /composer.phar
