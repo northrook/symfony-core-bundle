@@ -15,12 +15,15 @@ use Twig\Environment;
 abstract class AbstractCoreController extends AbstractController
 {
 	protected ContainerInterface $container;
+	protected ?EnvironmentService $env;
 
 
 	#[Required]
 	public function setContainer( ContainerInterface $container ) : ?ContainerInterface {
 		$previous = $this->container ?? null;
 		$this->container = $container;
+
+		$this->env = $container->get( 'core.environment_service');
 
 		return $previous;
 	}
