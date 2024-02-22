@@ -12,8 +12,6 @@ return static function (ContainerConfigurator $container): void {
 
 	$root = mb_strtolower(dirname( __DIR__ ));
 
-	dd( __DIR__);
-
 	$container->parameters()
 			  ->set( 'env', '%kernel.environment%' )
 			  ->set( 'dir.root', dir( $root ) )
