@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
+use Northrook\Symfony\Core\Services\EnvironmentService;
 use Psr\Container\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
@@ -38,6 +39,7 @@ abstract class AbstractCoreController extends AbstractController
 			'security.csrf.token_manager' => '?'.CsrfTokenManagerInterface::class,
 			'parameter_bag' => '?'.ContainerBagInterface::class,
 			'web_link.http_header_serializer' => '?'.HttpHeaderSerializer::class,
+			'core.environment_service' => '?'.EnvironmentService::class,
 		];
 	}
 
