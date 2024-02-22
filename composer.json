@@ -23,11 +23,13 @@
         "symfony/http-kernel": "^7.0"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-latest",
         "doctrine/orm": "^2.13",
         "symfony/framework-bundle": "^7.0",
         "symfony/phpunit-bridge": "^7.0",
         "doctrine/doctrine-bundle": "^2.8",
         "doctrine/annotations": "^1.0",
-        "symfony/web-profiler-bundle": "^7.0"
+        "symfony/web-profiler-bundle": "^7",
+        "symfony/stopwatch": "7"
     }
 }
