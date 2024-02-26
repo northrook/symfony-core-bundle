@@ -34,16 +34,5 @@ return static function ( ContainerConfigurator $container ) : void {
 	          ->alias( EnvironmentService::class, 'core.environment_service' )
 	;
 
-	$container->services()
-	          ->set( 'core.latte', Environment::class )
-	          ->args( [
-		                  param( 'dir.templates' ),
-		                  param( 'dir.cache.latte' ),
-		                  service( 'logger' )->nullOnInvalid(),
-		                  service( 'debug.stopwatch' )->nullOnInvalid(),
-	                  ] )
-	          ->public()
-	          ->alias( Environment::class, 'core.latte' )
-	;
 
 };
