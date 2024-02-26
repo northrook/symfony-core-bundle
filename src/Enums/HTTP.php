@@ -2,7 +2,7 @@
 
 namespace Northrook\Symfony\Core\Enums;
 
-enum Status : int
+enum HTTP : int
 {
 	case CONTINUE = 100;
 	case SWITCHING_PROTOCOLS = 101;

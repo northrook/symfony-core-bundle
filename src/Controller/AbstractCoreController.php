@@ -2,7 +2,7 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
-use Northrook\Symfony\Core\Enums\Status;
+use Northrook\Symfony\Core\Enums\HTTP;
 use Northrook\Symfony\Core\Services\EnvironmentService;
 use Psr\Container\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
