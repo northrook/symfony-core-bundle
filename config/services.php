@@ -3,6 +3,7 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Symfony\Core\Services\EnvironmentService;
+use Northrook\Symfony\Latte\Environment;
 
 function fromRoot( string $set = '' ) : string {
 	return '%kernel.project_dir%' . DIRECTORY_SEPARATOR . trim(
@@ -30,6 +31,18 @@ return static function ( ContainerConfigurator $container ) : void {
 	                  ] )
 	          ->public()
 	          ->alias( EnvironmentService::class, 'core.environment_service' )
+	;
+
+	$container->services()
+	          ->set( 'core.latte', Environment::class )
+	          ->args( [
+		                  param( 'dir.templates' ),
+		                  param( 'dir.cache.latte' ),
+		                  service( 'logger' )->nullOnInvalid(),
+		                  service( 'stopwatch' )->nullOnInvalid(),
+	                  ] )
+	          ->public()
+	          ->alias( Environment::class, 'core.latte' )
 	;
 
 };

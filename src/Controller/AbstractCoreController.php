@@ -2,8 +2,10 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
+use LogicException;
 use Northrook\Symfony\Core\Enums\HTTP;
 use Northrook\Symfony\Core\Services\EnvironmentService;
+use Northrook\Symfony\Latte\Environment;
 use Psr\Container\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +16,7 @@ abstract class AbstractCoreController extends AbstractController
 {
 	protected ContainerInterface  $container;
 	protected ?EnvironmentService $env;
+
 
 	/** Runs on container initialization.
 	 *
@@ -42,7 +45,10 @@ abstract class AbstractCoreController extends AbstractController
 	public static function getSubscribedServices() : array {
 		return array_merge(
 			parent::getSubscribedServices(),
-			[ 'core.environment_service' => '?' . EnvironmentService::class, ],
+			[
+				'core.environment_service' => '?' . EnvironmentService::class,
+				'core.latte'    => '?' . Environment::class,
+				],
 		);
 	}
 
@@ -55,7 +61,17 @@ abstract class AbstractCoreController extends AbstractController
 		string         $view,
 		object | array $parameters = [],
 	) : string {
-		return 'This is a dummy template render';
+
+		if (!$this->container->has('core.latte')) {
+			throw new LogicException(
+				'You cannot use the "latte" or "latteResponse"  method if the Latte Bundle is not available.\nTry running "composer require northrook/symfony-latte-bundle".');
+		}
+
+		$latte = $this->container->get('core.latte');
+
+		$render = $latte->render( $view, $parameters );
+
+		return $render;
 	}
 
 	protected function latteResponse(
