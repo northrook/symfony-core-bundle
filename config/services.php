@@ -8,19 +8,19 @@ use Northrook\Symfony\Latte\Environment;
 
 return static function ( ContainerConfigurator $container ) : void {
 
-	function fromRoot( string $set = '' ) : string {
+	$fromRoot = function( string $set = '' ) : string {
 		return '%kernel.project_dir%' . DIRECTORY_SEPARATOR . trim(
 				str_replace( [ '\\', '/' ], DIRECTORY_SEPARATOR, $set ), DIRECTORY_SEPARATOR,
 			) . DIRECTORY_SEPARATOR;
-	}
+	};
 
 	$container->parameters()
 	          ->set( 'env', '%kernel.environment%' )
-	          ->set( 'dir.root', fromRoot() )
-	          ->set( 'dir.public', fromRoot( "/public" ) )
-	          ->set( 'dir.templates', fromRoot( "/templates" ) )
-	          ->set( 'dir.cache', fromRoot( "/var/cache" ) )
-	          ->set( 'dir.cache.latte', fromRoot( "/var/cache/latte" ) )
+	          ->set( 'dir.root', $fromRoot() )
+	          ->set( 'dir.public', $fromRoot( "/public" ) )
+	          ->set( 'dir.templates', $fromRoot( "/templates" ) )
+	          ->set( 'dir.cache', $fromRoot( "/var/cache" ) )
+	          ->set( 'dir.cache.latte', $fromRoot( "/var/cache/latte" ) )
 	          ->set( 'ttl.cache', 86400 )
 	;
 
@@ -40,7 +40,7 @@ return static function ( ContainerConfigurator $container ) : void {
 		                  param( 'dir.templates' ),
 		                  param( 'dir.cache.latte' ),
 		                  service( 'logger' )->nullOnInvalid(),
-		                  service( 'stopwatch' )->nullOnInvalid(),
+		                  service( 'debug.stopwatch' )->nullOnInvalid(),
 	                  ] )
 	          ->public()
 	          ->alias( Environment::class, 'core.latte' )
