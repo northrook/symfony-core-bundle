@@ -6,6 +6,7 @@ use LogicException;
 use Northrook\Symfony\Core\Enums\HTTP;
 use Northrook\Symfony\Core\Services\EnvironmentService;
 use Northrook\Symfony\Latte\Environment;
+use Northrook\Symfony\Latte\Template;
 use Psr\Container\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,6 +50,7 @@ abstract class AbstractCoreController extends AbstractController
 			[
 				'core.environment_service' => '?' . EnvironmentService::class,
 				'core.latte'               => '?' . Environment::class,
+				'core.template_parameters' => '?' . Template::class,
 			],
 		);
 	}
@@ -60,7 +62,7 @@ abstract class AbstractCoreController extends AbstractController
 	 */
 	protected function latte(
 		string         $view,
-		object | array $parameters = [],
+		object | array | null $parameters = null,
 	) : string {
 
 		if ( !$this->container->has( 'core.latte' ) ) {
@@ -71,10 +73,11 @@ abstract class AbstractCoreController extends AbstractController
 
 		$this->latte = $this->container->get( 'core.latte' );
 
+
 		$this->latte->addExtension();
 		$this->latte->addPrecompiler();
 
-		$render = $this->latte->render( $view, $parameters );
+		$render = $this->latte->render( $view, $parameters ?? $this->container->get( 'core.template_parameters' ) );
 
 		return $render;
 	}
