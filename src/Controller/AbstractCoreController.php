@@ -16,6 +16,7 @@ abstract class AbstractCoreController extends AbstractController
 {
 	protected ContainerInterface  $container;
 	protected ?EnvironmentService $env;
+	protected ?Environment        $latte;
 
 
 	/** Runs on container initialization.
@@ -47,8 +48,8 @@ abstract class AbstractCoreController extends AbstractController
 			parent::getSubscribedServices(),
 			[
 				'core.environment_service' => '?' . EnvironmentService::class,
-				'core.latte'    => '?' . Environment::class,
-				],
+				'core.latte'               => '?' . Environment::class,
+			],
 		);
 	}
 
@@ -62,14 +63,18 @@ abstract class AbstractCoreController extends AbstractController
 		object | array $parameters = [],
 	) : string {
 
-		if (!$this->container->has('core.latte')) {
+		if ( !$this->container->has( 'core.latte' ) ) {
 			throw new LogicException(
-				'You cannot use the "latte" or "latteResponse"  method if the Latte Bundle is not available.\nTry running "composer require northrook/symfony-latte-bundle".');
+				'You cannot use the "latte" or "latteResponse"  method if the Latte Bundle is not available.\nTry running "composer require northrook/symfony-latte-bundle".'
+			);
 		}
 
-		$latte = $this->container->get('core.latte');
+		$this->latte = $this->container->get( 'core.latte' );
 
-		$render = $latte->render( $view, $parameters );
+		$this->latte->addExtension();
+		$this->latte->addPrecompiler();
+
+		$render = $this->latte->render( $view, $parameters );
 
 		return $render;
 	}
