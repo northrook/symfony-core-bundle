@@ -8,12 +8,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 final class LogAggregationOnTerminateSubscriber implements EventSubscriberInterface
 {
 
-	public function logAggregation( LoggerInterface $logger ) : void {
-		$logger->info( '{Terminated}', [ 'Terminated' => 'Terminated' ] );
-		dd(
-			$this,
-			$logger,
-		);
+	public function __construct(
+		private ?LoggerInterface $logger = null,
+	) {}
+
+	public function logAggregation() : void {
+
+		dd( $this, );
 	}
 
 	public static function getSubscribedEvents() : array {

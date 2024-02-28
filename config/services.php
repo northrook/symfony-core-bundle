@@ -26,7 +26,8 @@ return static function ( ContainerConfigurator $container ) : void {
 	;
 
 	$container->services()
-	          ->set( 'core.environment_service', EnvironmentService::class )
+		// Environment Service
+		      ->set( 'core.environment_service', EnvironmentService::class )
 	          ->args( [
 		                  service( 'parameter_bag' ),
 		                  service( 'logger' )->nullOnInvalid(),
@@ -35,6 +36,9 @@ return static function ( ContainerConfigurator $container ) : void {
 	          ->alias( EnvironmentService::class, 'core.environment_service' )
 		// Event Subscriber
 		      ->set( LogAggregationOnTerminateSubscriber::class )
+	          ->args( [
+		                  service( 'logger' )->nullOnInvalid(),
+	                  ] )
 	          ->tag( 'kernel.event_subscriber' )
 	;
 
