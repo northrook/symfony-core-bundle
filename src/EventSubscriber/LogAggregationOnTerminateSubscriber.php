@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\EventSubscriber;
 
+use Northrook\Support\Debug;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -9,12 +10,27 @@ final class LogAggregationOnTerminateSubscriber implements EventSubscriberInterf
 {
 
 	public function __construct(
-		private ?LoggerInterface $logger = null,
+		private readonly ?LoggerInterface $logger = null,
 	) {}
 
 	public function logAggregation() : void {
 
-		dd( $this, );
+
+		foreach ( Debug::getLogs() as $log ) {
+
+			$level = strtolower( $log->level->name() );
+
+			$this->logger->$level(
+				$log->message,
+				[
+					'timestamp' => $log->timestamp,
+					'dump'      => $log->dump,
+				],
+			);
+		}
+
+
+//		dd( $this );
 	}
 
 	public static function getSubscribedEvents() : array {
