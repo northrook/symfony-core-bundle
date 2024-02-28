@@ -73,7 +73,6 @@ abstract class AbstractCoreController extends AbstractController
 
 		$this->latte = $this->container->get( 'core.latte' );
 
-
 		$this->latte->addExtension();
 		$this->latte->addPrecompiler();
 
