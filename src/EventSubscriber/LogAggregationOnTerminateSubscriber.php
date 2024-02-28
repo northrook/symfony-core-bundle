@@ -5,11 +5,15 @@ namespace Northrook\Symfony\Core\EventSubscriber;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class LogAggregationOnTerminateSubscriber implements EventSubscriberInterface
+final class LogAggregationOnTerminateSubscriber implements EventSubscriberInterface
 {
 
 	public function logAggregation( LoggerInterface $logger ) : void {
 		$logger->info( '{Terminated}', [ 'Terminated' => 'Terminated' ] );
+		dd(
+			$this,
+			$logger,
+		);
 	}
 
 	public static function getSubscribedEvents() : array {

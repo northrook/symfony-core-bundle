@@ -2,13 +2,14 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Northrook\Symfony\Core\EventSubscriber\LogAggregationOnTerminateSubscriber;
 use Northrook\Symfony\Core\Services\EnvironmentService;
 use Northrook\Symfony\Latte\Environment;
 
 
 return static function ( ContainerConfigurator $container ) : void {
 
-	$fromRoot = function( string $set = '' ) : string {
+	$fromRoot = function ( string $set = '' ) : string {
 		return '%kernel.project_dir%' . DIRECTORY_SEPARATOR . trim(
 				str_replace( [ '\\', '/' ], DIRECTORY_SEPARATOR, $set ), DIRECTORY_SEPARATOR,
 			) . DIRECTORY_SEPARATOR;
@@ -32,6 +33,9 @@ return static function ( ContainerConfigurator $container ) : void {
 	                  ] )
 	          ->public()
 	          ->alias( EnvironmentService::class, 'core.environment_service' )
+		// Event Subscriber
+		      ->set( LogAggregationOnTerminateSubscriber::class )
+	          ->tag( 'kernel.event_subscriber' )
 	;
 
 
