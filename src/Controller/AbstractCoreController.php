@@ -94,7 +94,6 @@ abstract class AbstractCoreController extends AbstractController
 		$render = $this->latte->render(
 			template   : $view,
 			parameters : $parameters
-			             ?? $this->container->get( 'core.template_parameters' ),
 		);
 
 		return $render;
