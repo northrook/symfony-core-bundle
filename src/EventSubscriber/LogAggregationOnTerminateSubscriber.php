@@ -40,7 +40,7 @@ final class LogAggregationOnTerminateSubscriber implements EventSubscriberInterf
 		foreach ( Log::inventory() as $log ) {
 			$this->log[] = [
 				'channel'           => null,
-				'context'           => $log->dump,
+				'context'           => $log->context ?? [],
 				'message'           => $log->message,
 				'priority'          => (int) $log->Level->value ?? 100,
 				'priorityName'      => strtolower( $log->Level->name() ),
