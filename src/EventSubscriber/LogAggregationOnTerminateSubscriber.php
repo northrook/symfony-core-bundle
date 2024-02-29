@@ -10,6 +10,12 @@ use ReflectionException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Log\Logger;
 
+/**
+ * Collects and aggregates logs on application termination.
+ *
+ * @version 1.0.0 ✅
+ * @author Martin Nielsen <mn@northrook.com>
+ */
 final class LogAggregationOnTerminateSubscriber implements EventSubscriberInterface
 {
 
@@ -24,8 +30,7 @@ final class LogAggregationOnTerminateSubscriber implements EventSubscriberInterf
 	}
 
 	public function logAggregation() : void {
-
-
+		
 		foreach ( Debug::getLogs() as $log ) {
 			$this->log[] = [
 				'channel'           => null,
