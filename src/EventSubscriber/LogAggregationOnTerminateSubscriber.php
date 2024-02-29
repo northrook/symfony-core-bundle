@@ -3,15 +3,21 @@
 namespace Northrook\Symfony\Core\EventSubscriber;
 
 use DateTimeInterface;
-use Northrook\Support\Debug;
-use Northrook\Support\Timer;
+use Northrook\Logger\Log;
+use Northrook\Logger\Timer;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Log\Logger;
 
 /**
- * Collects and aggregates logs on application termination.
+ * Collects and aggregates and logs on application termination.
+ *
+ * * {@see Logger} - Symfony's internal logger
+ * > Part of the $container.
+ *
+ * * {@see Log} - Logger service by Northrook
+ * > Static session logs.
  *
  * @version 1.0.0 ✅
  * @author Martin Nielsen <mn@northrook.com>
@@ -30,8 +36,8 @@ final class LogAggregationOnTerminateSubscriber implements EventSubscriberInterf
 	}
 
 	public function logAggregation() : void {
-		
-		foreach ( Debug::getLogs() as $log ) {
+
+		foreach ( Log::inventory() as $log ) {
 			$this->log[] = [
 				'channel'           => null,
 				'context'           => $log->dump,
@@ -55,10 +61,10 @@ final class LogAggregationOnTerminateSubscriber implements EventSubscriberInterf
 			$this->logger->info(
 				"Log aggregation completed in {time}.",
 				[
-					'time'                 => Timer::get( 'log_aggregation' ) . 'ms',
-					Debug\Log\Entry::class => count( $this->log ),
-					$this->logger::class   => count( $this->loggerLogs ),
-					'total'                => count( $this->logger->getLogs() ),
+					'time'               => Timer::get( 'log_aggregation' ) . 'ms',
+					Log\Entry::class     => count( $this->log ),
+					$this->logger::class => count( $this->loggerLogs ),
+					'total'              => count( $this->logger->getLogs() ),
 				],
 			);
 		}
@@ -66,10 +72,10 @@ final class LogAggregationOnTerminateSubscriber implements EventSubscriberInterf
 			$this->logger->error(
 				"Unable to merge logs: {message}",
 				[
-					'message'              => $e->getMessage(),
-					'time'                 => Timer::get( 'log_aggregation' ) . 'ms',
-					Debug\Log\Entry::class => count( $this->log ),
-					$this->logger::class   => count( $this->loggerLogs ),
+					'message'            => $e->getMessage(),
+					'time'               => Timer::get( 'log_aggregation' ) . 'ms',
+					Log\Entry::class     => count( $this->log ),
+					$this->logger::class => count( $this->loggerLogs ),
 				],
 			);
 

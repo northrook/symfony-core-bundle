@@ -4,7 +4,6 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationOnTerminateSubscriber;
 use Northrook\Symfony\Core\Services\EnvironmentService;
-use Northrook\Symfony\Latte\Environment;
 
 
 return static function ( ContainerConfigurator $container ) : void {
@@ -19,13 +18,12 @@ return static function ( ContainerConfigurator $container ) : void {
 	          ->set( 'env', '%kernel.environment%' )
 	          ->set( 'dir.root', $fromRoot() )
 	          ->set( 'dir.public', $fromRoot( "/public" ) )
-	          ->set( 'dir.templates', $fromRoot( "/templates" ) )
 	          ->set( 'dir.cache', $fromRoot( "/var/cache" ) )
-	          ->set( 'dir.cache.latte', $fromRoot( "/var/cache/latte" ) )
 	          ->set( 'ttl.cache', 86400 )
 	;
 
 	$container->services()
+		//
 		// Environment Service
 		      ->set( 'core.environment_service', EnvironmentService::class )
 	          ->args( [
@@ -34,12 +32,13 @@ return static function ( ContainerConfigurator $container ) : void {
 	                  ] )
 	          ->public()
 	          ->alias( EnvironmentService::class, 'core.environment_service' )
-		// Event Subscriber
+		//
+		// Log Aggregating Event Subscriber
 		      ->set( LogAggregationOnTerminateSubscriber::class )
 	          ->args( [
 		                  service( 'logger' )->nullOnInvalid(),
 	                  ] )
-	          ->tag( 'kernel.event_subscriber' )
+	          ->tag( 'kernel.event_subscriber' )//
 	;
 
 
