@@ -17,23 +17,24 @@ class PathfinderService
 
 	/**
 	 * @param  string  $key  {@see ParameterBagInterface::get}
-	 * @param  bool  $strict
 	 * @return string
 	 *
-	 * @throws Exception
 	 */
 	public function get(
 		string $key,
-		bool   $strict = false,
 	) : string {
 
 		$path = Str::normalizePath( $this->parameter->get( $key ) );
 
 		if ( !file_exists( $path ) ) {
-			$this->logger?->error( "File does not exist: $path" );
-			if ( $strict ) {
-				throw new Exception( "File does not exist: $path" );
-			}
+			$this->logger?->error(
+				"File requested with parameter {key} does not exist: {path}",
+				[
+					'key'  => $key,
+					'path' => $path,
+				],
+			);
+			return $key;
 		}
 
 		return $path;
