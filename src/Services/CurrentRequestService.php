@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class CurrentRequestService
 {
@@ -33,6 +34,18 @@ class CurrentRequestService
 	}
 
 	/**
+	 * @param  string|null  $get  {@see  SessionInterface::get}
+	 * @return SessionInterface|mixed
+	 */
+	public function session( ?string $get = null ) : mixed {
+		if ( false === $this->getRequest()->hasSession() ) {
+			return null;
+		}
+		return $get ? $this->getRequest()->getSession()->get( $get ) : $this->getRequest()->getSession();
+	}
+
+
+	/**
 	 * @param  string|null  $get  {@see HeaderBag::get}
 	 * @return HeaderBag|string|null
 	 */
@@ -46,6 +59,27 @@ class CurrentRequestService
 	 */
 	public function cookies( ?string $get = null ) : InputBag | string | null {
 		return $get ? $this->getRequest()->cookies->get( $get ) : $this->getRequest()->cookies;
+	}
+
+	/** Get the current route from the container request stack.
+	 *
+	 * @param  bool  $root  Return just the root route
+	 * @return ?string The current route
+	 */
+	public function currentRoute( bool $root = false ) : ?string {
+		$route = $this->getRequest()->get( '_route' );
+
+		return $root ? strstr( $route, ':', true ) : $route;
+	}
+
+	/** Returns the path being requested relative to the executed script.
+	 *
+	 * * The path info always starts with a /.
+	 *
+	 * @return string The raw path (i.e. not urlecoded)
+	 */
+	public function currentPathInfo() : string {
+		return $this->getRequest()->getPathInfo();
 	}
 
 	public function getRequest() : Request {
