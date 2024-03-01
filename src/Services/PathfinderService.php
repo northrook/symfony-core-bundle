@@ -10,7 +10,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class PathfinderService
 {
 
-	// Has been passed from config/services.php
 	public function __construct(
 		private readonly ParameterBagInterface $parameter,
 		private readonly ?LoggerInterface      $logger = null,
