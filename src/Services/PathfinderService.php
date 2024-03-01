@@ -2,7 +2,6 @@
 
 namespace Northrook\Symfony\Core\Services;
 
-use Exception;
 use Northrook\Support\Str;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -16,27 +15,32 @@ class PathfinderService
 	) {}
 
 	/**
-	 * @param  string  $key  {@see ParameterBagInterface::get}
+	 * @param  string  $root  {@see ParameterBagInterface::get}
+	 * @param  string|null  $path
 	 * @return string
 	 *
 	 */
 	public function get(
-		string $key,
+		string  $root,
+		?string $path = null,
 	) : string {
 
-		$path = Str::normalizePath( $this->parameter->get( $key ) );
+		$string = Str::normalizePath( $this->parameter->get( $root ) . "/$path" );
 
-		if ( !file_exists( $path ) ) {
+		if ( false === file_exists( $path ) ) {
 			$this->logger?->error(
-				"File requested with parameter {key} does not exist: {path}",
+				'File requested with parameter {root}' . ( $path ? ' and path {path}'
+					: '' ) . ' does not exist: {string}',
 				[
-					'key'  => $key,
-					'path' => $path,
+					'root'   => $root,
+					'path'   => $path,
+					'string' => $string,
+					'caller' => debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS )[ 0 ],
 				],
 			);
-			return $key;
+			return $string;
 		}
 
-		return $path;
+		return $string;
 	}
 }
