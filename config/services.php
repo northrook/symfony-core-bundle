@@ -39,6 +39,8 @@ return static function ( ContainerConfigurator $container ) : void {
 		                  service( 'parameter_bag' ),
 		                  service( 'logger' )->nullOnInvalid(),
 	                  ] )
+	          ->public()
+	          ->autowire()
 	          ->alias( PathfinderService::class, 'core.service.pathfinder' )
 		//
 		// Log Aggregating Event Subscriber
