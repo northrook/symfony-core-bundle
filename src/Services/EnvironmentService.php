@@ -24,7 +24,7 @@ final class EnvironmentService
 //	public static array $pathCache = [];
 
 	public function __construct(
-		public ParameterBagInterface $parameter,
+		private readonly ParameterBagInterface $parameter,
 	) {
 
 		$this->dev = $this->parameter->get( 'kernel.environment' ) == 'dev';

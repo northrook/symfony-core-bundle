@@ -4,6 +4,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationOnTerminateSubscriber;
 use Northrook\Symfony\Core\Services\EnvironmentService;
+use Northrook\Symfony\Core\Services\PathfinderService;
 
 
 return static function ( ContainerConfigurator $container ) : void {
@@ -25,13 +26,20 @@ return static function ( ContainerConfigurator $container ) : void {
 	$container->services()
 		//
 		// Environment Service
-		      ->set( 'core.environment_service', EnvironmentService::class )
+		      ->set( 'core.service.environment', EnvironmentService::class )
 	          ->args( [
 		                  service( 'parameter_bag' ),
 		                  service( 'logger' )->nullOnInvalid(),
 	                  ] )
-	          ->public()
-	          ->alias( EnvironmentService::class, 'core.environment_service' )
+	          ->alias( EnvironmentService::class, 'core.service.environment' )
+		//
+		// Pathfinder Service
+		      ->set( 'core.service.pathfinder', PathfinderService::class )
+	          ->args( [
+		                  service( 'parameter_bag' ),
+		                  service( 'logger' )->nullOnInvalid(),
+	                  ] )
+	          ->alias( PathfinderService::class, 'core.service.pathfinder' )
 		//
 		// Log Aggregating Event Subscriber
 		      ->set( LogAggregationOnTerminateSubscriber::class )

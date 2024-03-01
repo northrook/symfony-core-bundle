@@ -49,7 +49,7 @@ abstract class AbstractCoreController extends AbstractController
 		$this->container = $container;
 
 		if ( $container->has( 'core.environment_service' ) ) {
-			$this->env = $container->get( 'core.environment_service' );
+			$this->env = $container->get( 'core.service.environment' );
 		}
 
 		return $previous;
@@ -66,7 +66,7 @@ abstract class AbstractCoreController extends AbstractController
 		return array_merge(
 			parent::getSubscribedServices(),
 			[
-				'core.environment_service' => '?' . EnvironmentService::class,
+				'core.service.environment' => '?' . EnvironmentService::class,
 				'core.latte'               => '?' . Latte\Environment::class,
 				'core.template_parameters' => '?' . Template::class,
 			],
