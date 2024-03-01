@@ -4,6 +4,7 @@ namespace Northrook\Symfony\Core\Controller;
 
 use LogicException;
 use Northrook\Logger\Log;
+use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\EnvironmentService;
 use Northrook\Symfony\Latte;
 use Northrook\Symfony\Latte\Template;
@@ -30,9 +31,10 @@ use Symfony\Contracts\Service\Attribute\SubscribedService;
  */
 abstract class AbstractCoreController extends AbstractController
 {
-	protected ContainerInterface  $container;
-	protected ?EnvironmentService $env;
-	protected ?Latte\Environment  $latte;
+	protected ContainerInterface    $container;
+	protected CurrentRequestService $request;
+	protected ?EnvironmentService   $env;
+	protected ?Latte\Environment    $latte;
 
 
 	/** Runs on container initialization.
@@ -48,8 +50,11 @@ abstract class AbstractCoreController extends AbstractController
 		$previous = $this->container ?? null;
 		$this->container = $container;
 
-		if ( $container->has( 'core.environment_service' ) ) {
+		if ( $container->has( 'core.service.environment' ) ) {
 			$this->env = $container->get( 'core.service.environment' );
+		}
+		if ( $container->has( 'core.service.request' ) ) {
+			$this->request = $container->get( 'core.service.request' );
 		}
 
 		return $previous;
@@ -66,6 +71,7 @@ abstract class AbstractCoreController extends AbstractController
 		return array_merge(
 			parent::getSubscribedServices(),
 			[
+				'core.service.request'     => '?' . CurrentRequestService::class,
 				'core.service.environment' => '?' . EnvironmentService::class,
 				'core.latte'               => '?' . Latte\Environment::class,
 				'core.template_parameters' => '?' . Template::class,

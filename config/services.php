@@ -3,6 +3,7 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationOnTerminateSubscriber;
+use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\EnvironmentService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 
@@ -25,15 +26,24 @@ return static function ( ContainerConfigurator $container ) : void {
 
 	$container->services()
 		//
-		// Environment Service
+		// CRS - Current Request Service
+		      ->set( 'core.service.request', CurrentRequestService::class )
+	          ->args( [
+		                  service( 'request_stack' ),
+	                  ] )
+	          ->autowire()
+	          ->alias( CurrentRequestService::class, 'core.service.request' )
+		//
+		// ES - Environment Service
 		      ->set( 'core.service.environment', EnvironmentService::class )
 	          ->args( [
 		                  service( 'parameter_bag' ),
 		                  service( 'logger' )->nullOnInvalid(),
 	                  ] )
+	          ->autowire()
 	          ->alias( EnvironmentService::class, 'core.service.environment' )
 		//
-		// Pathfinder Service
+		// PS - Pathfinder Service
 		      ->set( 'core.service.pathfinder', PathfinderService::class )
 	          ->args( [
 		                  service( 'parameter_bag' ),
