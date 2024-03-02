@@ -3,6 +3,7 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use LogicException;
+use Northrook\Latte\ComponentExtension;
 use Northrook\Support\HTML\Element;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\EnvironmentService;
@@ -84,6 +85,27 @@ abstract class AbstractCoreController extends AbstractController
 	protected function __onLatteRender() : void {}
 
 	/**
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
+	 */
+	protected function getLatte() : Latte\Environment {
+
+		if ( !$this->container->has( 'core.latte' ) ) {
+			throw new LogicException(
+				'You cannot use the "latte" or "latteResponse" method if the Latte Bundle is not available.\nTry running "composer require northrook/symfony-latte-bundle".'
+			);
+		}
+
+		$this->latte->addExtension(
+			new ComponentExtension(),
+		);
+		$this->latte->addPrecompiler();
+
+
+		return $this->latte ??= $this->container->get( 'core.latte' );
+	}
+
+	/**
 	 * @param  string  $view  Template file or template string
 	 * @param  object|array|null  $parameters
 	 * @return string
@@ -95,18 +117,9 @@ abstract class AbstractCoreController extends AbstractController
 		object | array | null $parameters = null,
 	) : string {
 
-		if ( !$this->container->has( 'core.latte' ) ) {
-			throw new LogicException(
-				'You cannot use the "latte" or "latteResponse" method if the Latte Bundle is not available.\nTry running "composer require northrook/symfony-latte-bundle".'
-			);
-		}
+		$this->latte ??= $this->getLatte();
 
 		$this->__onLatteRender();
-
-		$this->latte = $this->container->get( 'core.latte' );
-
-		$this->latte->addExtension();
-		$this->latte->addPrecompiler();
 
 		return $this->latte->render(
 			template   : $view,
@@ -118,38 +131,31 @@ abstract class AbstractCoreController extends AbstractController
 	 * @throws ContainerExceptionInterface
 	 * @throws NotFoundExceptionInterface
 	 */
-	protected function modal(
-		string $content,
-		array  $parameters = [],
-		array  $attributes = [],
-	) : string {
+	protected function modalResponse(
+		string         $view,
+		object | array $parameters = [],
+		int            $status = Response::HTTP_OK,
+		array          $headers = [],
+		array          $attributes = [],
+		// UI\Button $button -  from Latte Components
+	) : Response {
 
-		$content = $this->latte( $content, [ 'asModal' => true ] + $parameters );
-//		$button = UI::button( 'close' );
-		$button = 'btn';
+		$options = [
+			'Template-Type' => 'modal', // TODO: [?] as Enum from Latte Components
+		];
 
-		return ( string ) new Element(
+		$content = $this->latte( $view, $parameters );
+
+		$modal = ( string) new Element(
 			tag        : 'modal',
 			attributes : $attributes,
-			content    : "<section class='modal-content'>$button$content</section>",
+			content    : "<section class='modal-content'>$content</section>", // if array is passed, simple implode
 		);
-	}
 
-	/**
-	 * @throws ContainerExceptionInterface
-	 * @throws NotFoundExceptionInterface
-	 */
-	protected function modalResponse(
-		string $content,
-		array  $parameters = [],
-		array  $attributes = [],
-		int    $status = Response::HTTP_OK,
-		array  $headers = [],
-	) : Response {
 		return new Response(
-			content : $this->modal( $content, $parameters, $attributes ),
+			content : $modal,
 			status  : $status,
-			headers : $headers,
+			headers : $options + $headers,
 		);
 	}
 
