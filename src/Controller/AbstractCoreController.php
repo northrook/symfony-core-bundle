@@ -47,6 +47,7 @@ abstract class AbstractCoreController extends AbstractController
 	 */
 	#[Required]
 	public function setContainer( ContainerInterface $container ) : ?ContainerInterface {
+
 		$previous = $this->container ?? null;
 		$this->container = $container;
 
@@ -129,33 +130,4 @@ abstract class AbstractCoreController extends AbstractController
 			headers : $headers,
 		);
 	}
-
-
-	/** Get the current request from the container request stack.
-	 *
-	 * * Will return the current request if it exists, otherwise it will return a new request.
-	 *
-	 * @return Request The current request
-	 * @version 1.0 ✅
-	 * @uses    \Symfony\Component\HttpFoundation\RequestStack
-	 */
-	public function currentRequest() : Request {
-		try {
-			return $this->container->get( 'request_stack' )->getCurrentRequest();
-		}
-		catch ( NotFoundExceptionInterface | ContainerExceptionInterface ) {
-			if ( $this->env->dev ) {
-				Log::Warning(
-					'Could not find the current request. Returned new {return}.',
-					[
-						'return' => 'Request()',
-						'class'  => Request::class,
-					],
-				);
-			}
-			return new Request();
-		}
-
-	}
-
 }
