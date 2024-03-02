@@ -14,7 +14,10 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 /**
  * Current Request Service
  *
- * @property Request $request
+ * @property Request $current         Get the current request from the container request stack.
+ * @property string $currentRouteName Get the current `root:route` name.
+ * @property string $currentRouteRoot Get the current `root` name.
+ * @property string $currentPathInfo  Get the current path info. Always starts with a /. Not urlecoded.
  *
  * @author Martin Nielsen <mn@northrook.com>
  * @version ✅ Beta
@@ -22,12 +25,34 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class CurrentRequestService
 {
 
-	public function __get( string $name ) {
-		if ( 'request' === $name ) {
-			return $this->currentRequest();
+	/**
+	 * @param  string  $name
+	 * @return Request|string|null
+	 */
+	public function __get( string $name ) : Request | string | null {
+
+		$get = match ( $name ) {
+			'current'          => $this->currentRequest(),
+			'currentRouteName' => $this->currentRoute(),
+			'currentRouteRoot' => $this->currentRoute( true ),
+			'currentPathInfo'  => $this->currentPathInfo(),
+			default            => null,
+		};
+
+		if ( null !== $get ) {
+			return $get;
 		}
 
-		throw new LogicException( 'Property ' . $name . ' does not exist.' );
+		return Log::Error(
+			"Property {property} does not exist in {CurrentRequestService}",
+			[
+				'property'              => $name,
+				'service'               => 'CurrentRequestService',
+				'CurrentRequestService' => $this,
+				'caller'                => [ 'file' => __FILE__, 'line' => __LINE__ ],
+				'backtrace'             => debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 ),
+			],
+		);
 	}
 
 	public function __construct(
@@ -82,7 +107,7 @@ class CurrentRequestService
 	 * @param  bool  $root  Return just the root route
 	 * @return ?string The current route
 	 */
-	public function currentRoute( bool $root = false ) : ?string {
+	private function currentRoute( bool $root = false ) : ?string {
 		$route = $this->currentRequest()->get( '_route' );
 
 		return $root ? strstr( $route, ':', true ) : $route;
@@ -94,7 +119,7 @@ class CurrentRequestService
 	 *
 	 * @return string The raw path (i.e. not urlecoded)
 	 */
-	public function currentPathInfo() : string {
+	private function currentPathInfo() : string {
 		return $this->currentRequest()->getPathInfo();
 	}
 
