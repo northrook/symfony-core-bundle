@@ -3,7 +3,7 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use LogicException;
-use Northrook\Logger\Log;
+use Northrook\Support\HTML\Element;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\EnvironmentService;
 use Northrook\Symfony\Latte;
@@ -12,11 +12,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\HeaderBag;
-use Symfony\Component\HttpFoundation\InputBag;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Service\Attribute\SubscribedService;
 
@@ -81,6 +77,13 @@ abstract class AbstractCoreController extends AbstractController
 	}
 
 	/**
+	 * Run at the very start of the {@see Latte\Environment} render chain.
+	 *
+	 * @return void
+	 */
+	protected function __onLatteRender() : void {}
+
+	/**
 	 * @param  string  $view  Template file or template string
 	 * @param  object|array|null  $parameters
 	 * @return string
@@ -98,6 +101,8 @@ abstract class AbstractCoreController extends AbstractController
 			);
 		}
 
+		$this->__onLatteRender();
+
 		$this->latte = $this->container->get( 'core.latte' );
 
 		$this->latte->addExtension();
@@ -108,6 +113,46 @@ abstract class AbstractCoreController extends AbstractController
 			parameters : $parameters,
 		);
 	}
+
+	/**
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
+	 */
+	protected function modal(
+		string $content,
+		array  $parameters = [],
+		array  $attributes = [],
+	) : string {
+
+		$content = $this->latte( $content, [ 'asModal' => true ] + $parameters );
+//		$button = UI::button( 'close' );
+		$button = 'btn';
+
+		return ( string ) new Element(
+			tag        : 'modal',
+			attributes : $attributes,
+			content    : "<section class='modal-content'>$button$content</section>",
+		);
+	}
+
+	/**
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
+	 */
+	protected function modalResponse(
+		string $content,
+		array  $parameters = [],
+		array  $attributes = [],
+		int    $status = Response::HTTP_OK,
+		array  $headers = [],
+	) : Response {
+		return new Response(
+			content : $this->modal( $content, $parameters, $attributes ),
+			status  : $status,
+			headers : $headers,
+		);
+	}
+
 
 	/**
 	 * @param  string  $view
