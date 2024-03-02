@@ -43,7 +43,7 @@ class CurrentRequestService
 		if ( null !== $get ) {
 			return $get;
 		}
-		
+
 		$backtrace = Debug::backtrace( 1 );
 
 		return Log::Error(
