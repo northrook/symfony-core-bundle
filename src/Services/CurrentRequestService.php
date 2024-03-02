@@ -3,6 +3,7 @@
 namespace Northrook\Symfony\Core\Services;
 
 use LogicException;
+use Northrook\Logger\Debug;
 use Northrook\Logger\Log;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -42,15 +43,16 @@ class CurrentRequestService
 		if ( null !== $get ) {
 			return $get;
 		}
+		
+		$backtrace = Debug::backtrace( 1 );
 
 		return Log::Error(
-			"Property {property} does not exist in {CurrentRequestService}",
+			"Property {property} does not exist in {service}",
 			[
-				'property'              => $name,
-				'service'               => 'CurrentRequestService',
-				'CurrentRequestService' => $this,
-				'caller'                => [ 'file' => __FILE__, 'line' => __LINE__ ],
-				'backtrace'             => debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 ),
+				'property' => $name,
+				'service'  => 'CurrentRequestService',
+				'caller'   => $backtrace->getCaller(),
+				'line'     => $backtrace->getLine(),
 			],
 		);
 	}
