@@ -22,8 +22,7 @@
     "symfony/deprecation-contracts": "^3.0",
     "symfony/http-kernel": "^7.0",
     "northrook/symfony-latte-bundle": "dev-main",
-    "northrook/logger": "dev-main",
-    "northrook/latte-components": "dev-main"
+    "northrook/logger": "dev-main"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
