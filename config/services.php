@@ -7,6 +7,7 @@ use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\EnvironmentService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 
+//♦️🪧🗃️🚩🪠🪣❄️
 
 return static function ( ContainerConfigurator $container ) : void {
 
@@ -26,15 +27,16 @@ return static function ( ContainerConfigurator $container ) : void {
 
 	$container->services()
 		//
-		// CRS - Current Request Service
+		// 📥 - Current Request Service
 		      ->set( 'core.service.request', CurrentRequestService::class )
 	          ->args( [
 		                  service( 'request_stack' ),
+		                  service( 'logger' )->nullOnInvalid(),
 	                  ] )
 	          ->autowire()
 	          ->alias( CurrentRequestService::class, 'core.service.request' )
 		//
-		// ES - Environment Service
+		// 🗃️️ - Environment Service
 		      ->set( 'core.service.environment', EnvironmentService::class )
 	          ->args( [
 		                  service( 'parameter_bag' ),
@@ -43,7 +45,7 @@ return static function ( ContainerConfigurator $container ) : void {
 	          ->autowire()
 	          ->alias( EnvironmentService::class, 'core.service.environment' )
 		//
-		// PS - Pathfinder Service
+		// 🧭 - Pathfinder Service
 		      ->set( 'core.service.pathfinder', PathfinderService::class )
 	          ->args( [
 		                  service( 'parameter_bag' ),
@@ -53,7 +55,7 @@ return static function ( ContainerConfigurator $container ) : void {
 	          ->autowire()
 	          ->alias( PathfinderService::class, 'core.service.pathfinder' )
 		//
-		// Log Aggregating Event Subscriber
+		// 🗂 - Log Aggregating Event Subscriber
 		      ->set( LogAggregationOnTerminateSubscriber::class )
 	          ->args( [
 		                  service( 'logger' )->nullOnInvalid(),

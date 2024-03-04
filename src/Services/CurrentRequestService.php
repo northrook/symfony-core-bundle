@@ -2,9 +2,9 @@
 
 namespace Northrook\Symfony\Core\Services;
 
-use LogicException;
 use Northrook\Logger\Debug;
-use Northrook\Logger\Log;
+use Northrook\Support\Attribute\Development;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -21,8 +21,8 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  * @property string $currentPathInfo  Get the current path info. Always starts with a /. Not urlecoded.
  *
  * @author Martin Nielsen <mn@northrook.com>
- * @version ✅ Beta
  */
+#[Development( 'beta')]
 class CurrentRequestService
 {
 
@@ -46,8 +46,8 @@ class CurrentRequestService
 
 		$backtrace = Debug::backtrace( 1 );
 
-		return Log::Error(
-			"Property {property} does not exist in {service}",
+		$this->logger?->warning(
+			'Could not find the current request. Returned new {return}.',
 			[
 				'property' => $name,
 				'service'  => 'CurrentRequestService',
@@ -55,10 +55,13 @@ class CurrentRequestService
 				'line'     => $backtrace->getLine(),
 			],
 		);
+
+		return null;
 	}
 
 	public function __construct(
-		private readonly RequestStack $requestStack,
+		private readonly RequestStack     $requestStack,
+		private readonly ?LoggerInterface $logger = null,
 	) {}
 
 	/**
@@ -137,8 +140,8 @@ class CurrentRequestService
 	private function currentRequest() : Request {
 		$request = $this->requestStack->getCurrentRequest();
 
-		if ( null !== $request ) {
-			Log::Warning(
+		if ( null !== $request && $this->logger ) {
+			$this->logger->warning(
 				'Could not find the current request. Returned new {return}.',
 				[
 					'return' => 'Request()',
