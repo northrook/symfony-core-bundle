@@ -2,12 +2,20 @@
 
 namespace Northrook\Symfony\Core\Services;
 
+use Northrook\Logger\Debug;
 use Northrook\Support\Str;
+use Northrook\Types\Path;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class PathfinderService
 {
+
+	/**
+	 * @var Path[]
+	 */
+	private array $parameterCache = [];
 
 	public function __construct(
 		private readonly ParameterBagInterface $parameter,
@@ -16,31 +24,58 @@ class PathfinderService
 
 	/**
 	 * @param  string  $root  {@see ParameterBagInterface::get}
-	 * @param  string|null  $path
+	 * @param  string|null  $add
 	 * @return string
 	 *
 	 */
 	public function get(
 		string  $root,
-		?string $path = null,
+		?string $add = null,
 	) : string {
 
-		$string = Str::normalizePath( $this->parameter->get( $root ) . "/$path" );
+		$path = $this->parameter( $root );
 
-		if ( false === file_exists( $path ) ) {
+		if ( $add ) {
+			$path->add( $add );
+		}
+
+		if ( !$path->isValid ) {
 			$this->logger?->error(
-				'File requested with parameter {root}' . ( $path ? ' and path {path}'
-					: '' ) . ' does not exist: {string}',
+				'File requested with parameter {root}' . ( $add ? ' and path {path}'
+					: '' ) . ' does not exist.',
 				[
 					'root'   => $root,
 					'path'   => $path,
-					'string' => $string,
-					'caller' => debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS )[ 0 ],
+					'caller' => Debug::backtrace( 2 ),
 				],
 			);
-			return $string;
+			return '';
 		}
 
-		return $string;
+		return $path;
+	}
+
+	/**
+	 * @param  string  $get  {@see ParameterBagInterface::get}
+	 * @return ?Path
+	 */
+	private function parameter( string $get ) : ?Path {
+		if ( !isset( $this->parameterCache[ $get ] ) ) {
+			try {
+				$this->parameterCache[ $get ] = Path::type( $this->parameter->get( $get ) );
+			}
+			catch ( ParameterNotFoundException $exception ) {
+				$this->logger?->error(
+					'Requested parameter {get} does not exist.',
+					[
+						'get'          => $get,
+						'parameterBag' => $this->parameter,
+						'exception'    => $exception,
+					],
+				);
+			}
+		}
+
+		return $this->parameterCache[ $get ] ?? null;
 	}
 }

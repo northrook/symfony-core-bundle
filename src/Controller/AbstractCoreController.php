@@ -3,8 +3,8 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use LogicException;
-use Northrook\Latte\ComponentExtension;
 use Northrook\Support\HTML\Element;
+use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\EnvironmentService;
 use Northrook\Symfony\Latte;
@@ -72,6 +72,7 @@ abstract class AbstractCoreController extends AbstractController
 				'core.service.request'     => '?' . CurrentRequestService::class,
 				'core.service.environment' => '?' . EnvironmentService::class,
 				'core.latte'               => '?' . Latte\Environment::class,
+				'core.latte.preprocessor'  => '?' . LatteComponentPreprocessor::class,
 				'core.template_parameters' => '?' . Template::class,
 			],
 		);
@@ -98,10 +99,10 @@ abstract class AbstractCoreController extends AbstractController
 
 		$this->latte ??= $this->container->get( 'core.latte' );
 
-		$this->latte->addExtension(
-//			new ComponentExtension(),
+		$this->latte->addExtension();
+		$this->latte->addPrecompiler(
+			LatteComponentPreprocessor
 		);
-		$this->latte->addPrecompiler();
 
 
 		return $this->latte;

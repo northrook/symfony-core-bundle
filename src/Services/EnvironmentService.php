@@ -3,6 +3,8 @@
 namespace Northrook\Symfony\Core\Services;
 
 use Northrook\Logger\Log;
+use Northrook\Support\Attributes\Development;
+use Northrook\Support\Attributes\EntryPoint;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use UnitEnum;
@@ -17,6 +19,7 @@ use UnitEnum;
  * @property bool $debug
  *
  */
+#[Development( 'beta' )]
 final class EnvironmentService
 {
 
@@ -29,6 +32,7 @@ final class EnvironmentService
 		};
 	}
 
+	#[EntryPoint( 'autowire' )]
 	public function __construct( private readonly ParameterBagInterface $parameter ) {}
 
 	/** Get environment variable

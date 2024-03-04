@@ -3,7 +3,9 @@
 namespace Northrook\Symfony\Core\Services;
 
 use Northrook\Logger\Debug;
-use Northrook\Support\Attribute\Development;
+use Northrook\Support\Attributes\Development;
+use Northrook\Support\Attributes\EntryPoint;
+use Northrook\Symfony\Core\Controller\AbstractCoreController;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -22,7 +24,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  *
  * @author Martin Nielsen <mn@northrook.com>
  */
-#[Development( 'beta')]
+#[Development( 'beta' )]
 class CurrentRequestService
 {
 
@@ -59,6 +61,7 @@ class CurrentRequestService
 		return null;
 	}
 
+	#[EntryPoint( 'autowire', AbstractCoreController::class )]
 	public function __construct(
 		private readonly RequestStack     $requestStack,
 		private readonly ?LoggerInterface $logger = null,
