@@ -2,6 +2,7 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationOnTerminateSubscriber;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\EnvironmentService;
@@ -17,6 +18,7 @@ return static function ( ContainerConfigurator $container ) : void {
 			) . DIRECTORY_SEPARATOR;
 	};
 
+	// Parameters
 	$container->parameters()
 	          ->set( 'env', '%kernel.environment%' )
 	          ->set( 'dir.root', $fromRoot() )
@@ -25,7 +27,18 @@ return static function ( ContainerConfigurator $container ) : void {
 	          ->set( 'ttl.cache', 86400 )
 	;
 
+	// Services
 	$container->services()
+		//
+		//
+		// ☕ - Core Latte Preprocessor
+		      ->set( 'core.latte.preprocessor', LatteComponentPreprocessor::class )
+	          ->args( [
+		                  service( 'logger' )->nullOnInvalid(),
+		                  service( 'twig.extension.debug.stopwatch' )->nullOnInvalid(),
+	                  ] )
+	          ->alias( LatteComponentPreprocessor::class, 'core.latte.preprocessor' )
+		//
 		//
 		// 📥 - Current Request Service
 		      ->set( 'core.service.request', CurrentRequestService::class )
@@ -36,6 +49,7 @@ return static function ( ContainerConfigurator $container ) : void {
 	          ->autowire()
 	          ->alias( CurrentRequestService::class, 'core.service.request' )
 		//
+		//
 		// 🗃️️ - Environment Service
 		      ->set( 'core.service.environment', EnvironmentService::class )
 	          ->args( [
@@ -44,6 +58,7 @@ return static function ( ContainerConfigurator $container ) : void {
 	                  ] )
 	          ->autowire()
 	          ->alias( EnvironmentService::class, 'core.service.environment' )
+		//
 		//
 		// 🧭 - Pathfinder Service
 		      ->set( 'core.service.pathfinder', PathfinderService::class )
@@ -54,6 +69,7 @@ return static function ( ContainerConfigurator $container ) : void {
 	          ->public()
 	          ->autowire()
 	          ->alias( PathfinderService::class, 'core.service.pathfinder' )
+		//
 		//
 		// 🗂 - Log Aggregating Event Subscriber
 		      ->set( LogAggregationOnTerminateSubscriber::class )

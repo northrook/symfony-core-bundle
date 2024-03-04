@@ -71,9 +71,8 @@ abstract class AbstractCoreController extends AbstractController
 			[
 				'core.service.request'     => '?' . CurrentRequestService::class,
 				'core.service.environment' => '?' . EnvironmentService::class,
-				'core.latte'               => '?' . Latte\Environment::class,
 				'core.latte.preprocessor'  => '?' . LatteComponentPreprocessor::class,
-				'core.template_parameters' => '?' . Template::class,
+				'latte.environment'        => '?' . Latte\Environment::class,
 			],
 		);
 	}
@@ -91,18 +90,16 @@ abstract class AbstractCoreController extends AbstractController
 	 */
 	protected function getLatte() : Latte\Environment {
 
-		if ( !$this->container->has( 'core.latte' ) ) {
+		if ( !$this->container->has( 'latte.environment' )|| !$this->container->has( 'core.latte.preprocessor' ) ) {
 			throw new LogicException(
 				'You cannot use the "latte" or "latteResponse" method if the Latte Bundle is not available.\nTry running "composer require northrook/symfony-latte-bundle".'
 			);
 		}
 
-		$this->latte ??= $this->container->get( 'core.latte' );
+		$this->latte ??= $this->container->get( 'latte.environment' );
 
 		$this->latte->addExtension();
-		$this->latte->addPrecompiler(
-			LatteComponentPreprocessor
-		);
+		$this->latte->addPreprocessor( $this->container->get( 'core.latte.preprocessor' ) );
 
 
 		return $this->latte;
