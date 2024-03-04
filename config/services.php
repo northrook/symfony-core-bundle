@@ -35,7 +35,7 @@ return static function ( ContainerConfigurator $container ) : void {
 		      ->set( 'core.latte.preprocessor', LatteComponentPreprocessor::class )
 	          ->args( [
 		                  service( 'logger' )->nullOnInvalid(),
-		                  service( 'twig.extension.debug.stopwatch' )->nullOnInvalid(),
+		                  service( 'debug.stopwatch' )->nullOnInvalid(),
 	                  ] )
 	          ->alias( LatteComponentPreprocessor::class, 'core.latte.preprocessor' )
 		//
