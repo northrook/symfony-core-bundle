@@ -7,15 +7,11 @@ use Northrook\Support\Attributes\EntryPoint;
 use Psr\Log\LoggerInterface;
 use Stringable;
 
-/** Interact with environment variables
+/**
  *
- * * Run checks against environment status
- * * Get environment variables
- *
- * @property bool $dev
- * @property bool $prod
- * @property bool $debug
- *
+ * @property array meta // [ 'name' => 'content' ]
+ * @property array scripts // [ 'path' => 'path' ]
+ * @property array stylesheets // [ 'path' => 'path' ]
  */
 #[Development( 'beta' )]
 final class ContentManagementService implements Stringable

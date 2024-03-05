@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\Latte;
 
+use Northrook\Support\Str;
 use Northrook\Symfony\Core\Services\ContentManagementService;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\PathfinderService;
@@ -22,9 +23,9 @@ use Psr\Log\LoggerInterface;
 final class DocumentParameters
 {
 
-	private array $scripts     = [];
-	private array $stylesheets = [];
-	private array $meta        = [];
+	public array $scripts     = [];
+	public array $stylesheets = [];
+	public array $meta        = [];
 
 	public function __get( string $name ) {
 		$name = "get" . ucfirst( $name );
@@ -42,18 +43,33 @@ final class DocumentParameters
 		private readonly ?LoggerInterface         $logger = null,
 	) {}
 
-	public function addStylesheet( string ...$public ) : self {
-		foreach ( $public as $path ) {
-			$this->stylesheets[] = Path::type( $this->path->get( 'dir.public' ) . $path );
+	public function setContent( string $content ) : self {
+		$this->content->set( $content );
+		return $this;
+	}
+
+
+	public function addStylesheet( string ...$styles ) : self {
+		foreach ( $styles as $path ) {
+			$this->stylesheets[] = Path::type( $this->path->get( 'dir.public' ) . "assets/styles/$path" );
 		}
 		return $this;
 	}
 
-	public function addScript( string ...$public ) : self {
-		foreach ( $public as $path ) {
+	public function addScript( string ...$scripts ) : self {
+		foreach ( $scripts as $path ) {
+			$path = Str::end( "assets/scripts/$path", '.js' );
 			$this->scripts[] = Path::type( $this->path->get( 'dir.public' ) . $path );
 		}
 		return $this;
+	}
+
+	private function getScripts() : array {
+//		$scripts = new st
+//		foreach ( $this->scripts as $key => $script ) {
+//			$this->scripts[ $key ] = $script;
+//		}
+		return $this->scripts;
 	}
 
 	private function getTitle() {}
@@ -61,4 +77,6 @@ final class DocumentParameters
 	private function getDescription() {}
 
 	private function getKeywords() {}
+
+	private function getRobots() {}
 }
