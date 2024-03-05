@@ -2,11 +2,8 @@
 
 namespace Northrook\Symfony\Core\EventSubscriber;
 
-use DateTimeInterface;
 use Northrook\Logger\Log;
 use Northrook\Logger\Timer;
-use ReflectionClass;
-use ReflectionException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Log\Logger;
 
