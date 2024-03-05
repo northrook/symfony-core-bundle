@@ -85,7 +85,7 @@ final class LogAggregationOnTerminateSubscriber implements EventSubscriberInterf
 
 	public static function getSubscribedEvents() : array {
 		return [
-			'kernel.terminate' => 'logAggregation',
+			'kernel.finish_request' => 'logAggregation',
 		];
 	}
 }
