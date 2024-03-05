@@ -47,6 +47,7 @@ return static function ( ContainerConfigurator $container ) : void {
 	          ->args( [
 		                  service( 'core.service.request' ),
 		                  service( 'core.service.content' ),
+		                  service( 'core.service.pathfinder' ),
 		                  service( 'logger' )->nullOnInvalid(),
 	                  ] )
 	          ->autowire()

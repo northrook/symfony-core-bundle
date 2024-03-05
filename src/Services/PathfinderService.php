@@ -23,7 +23,7 @@ class PathfinderService
 	) {}
 
 	/**
-	 * @param  string  $root  {@see ParameterBagInterface::get}
+	 * @param  string  $root  {@see ParameterBagInterface::get()}
 	 * @param  string|null  $add
 	 * @return string
 	 *
