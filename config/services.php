@@ -2,8 +2,10 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use App\Latte\Parameters\DocumentParameters;
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
+use Northrook\Symfony\Core\Services\ContentManagementService;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\EnvironmentService;
 use Northrook\Symfony\Core\Services\PathfinderService;
@@ -38,6 +40,25 @@ return static function ( ContainerConfigurator $container ) : void {
 		                  service( 'debug.stopwatch' )->nullOnInvalid(),
 	                  ] )
 	          ->alias( LatteComponentPreprocessor::class, 'core.latte.preprocessor' )
+		//
+		//
+		// ☕ - Document Parameters
+		      ->set( 'core.latte.document.parameters', DocumentParameters::class )
+	          ->args( [
+		                  service( 'core.service.request' ),
+		                  service( 'core.service.content' ),
+		                  service( 'logger' )->nullOnInvalid(),
+	                  ] )
+	          ->alias( DocumentParameters::class, 'core.latte.document.parameters' )
+		//
+		//
+		// 🗃️️ - Content Management Service
+		      ->set( 'core.service.content', ContentManagementService::class )
+	          ->args( [
+		                  service( 'logger' )->nullOnInvalid(),
+	                  ] )
+	          ->autowire()
+	          ->alias( ContentManagementService::class, 'core.service.content' )
 		//
 		//
 		// 📥 - Current Request Service

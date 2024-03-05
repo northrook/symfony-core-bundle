@@ -211,30 +211,10 @@ final class LatteComponentPreprocessor extends Preprocessor
 		);
 	}
 
-	private static function extractAttributes( string $html, ?string $tag = null ) : array {
-
-		if ( !$html ) {
-			return [];
-		}
-
-		if ( false === str_starts_with( $html, '<' ) && false === str_starts_with( $html, '>' ) ) {
-			$tag ??= 'div';
-			$html = "<$tag $html > ";
-		}
-
-		$tag ??= substr( $html, 1, strpos( $html, ' ' ) - 1 );
-		$dom = new \DOMDocument();
-		$dom->loadHTML( $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOERROR );
-
-		$attributes = [];
-
-		$node = $dom->getElementsByTagName( $tag )->item( 0 );
-
-		foreach ( $node->attributes as $attribute ) {
-			$attributes[ $attribute->nodeName ] = $attribute->nodeValue;
-		}
-
-		return $attributes;
-	}
+	/**
+	 * @todo Avatar Component
+	 * Has to grab the avatar user entity
+	 *
+	 */
 
 }
