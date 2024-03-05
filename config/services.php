@@ -3,7 +3,7 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
-use Northrook\Symfony\Core\EventSubscriber\LogAggregationOnTerminateSubscriber;
+use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\EnvironmentService;
 use Northrook\Symfony\Core\Services\PathfinderService;
@@ -72,7 +72,7 @@ return static function ( ContainerConfigurator $container ) : void {
 		//
 		//
 		// 🗂 - Log Aggregating Event Subscriber
-		      ->set( LogAggregationOnTerminateSubscriber::class )
+		      ->set( LogAggregationSubscriber::class )
 	          ->args( [
 		                  service( 'logger' )->nullOnInvalid(),
 	                  ] )
