@@ -8,13 +8,12 @@ use Northrook\Components\Icon;
 use Northrook\Components\Image;
 use Northrook\Symfony\Latte\Preprocessor;
 use Northrook\Support\Regex;
-use Northrook\Support\Str;
-use Northrook\Symfony\Latte\Services\CompileException;
-
-//use Northrook\Components\Element;
 
 final class LatteComponentPreprocessor extends Preprocessor
 {
+	/**
+	 * @var Component[]
+	 */
 	private mixed $components = [];
 
 	public function construct() : void {
@@ -22,11 +21,14 @@ final class LatteComponentPreprocessor extends Preprocessor
 		$this->matchComponents();
 		$this->processButtons();
 		$this->processIcons();
-//		dd( $this );
+
+		foreach ( $this->components as $component ) {
+			$this->updateContent( $component->templateString, $component );
+		}
 	}
 
 	/**
-	 * @throws CompileException
+	 * Match components
 	 */
 	private function matchComponents() : void {
 
@@ -42,7 +44,7 @@ final class LatteComponentPreprocessor extends Preprocessor
 
 		foreach ( $components as $match ) {
 
-			$component = Component::element( $match, $this->logger, $this->stopwatch );
+			$element = Component::element( $match, $this->logger, $this->stopwatch );
 
 			// Looks forwards to find innerHTML
 			if (
@@ -54,9 +56,9 @@ final class LatteComponentPreprocessor extends Preprocessor
 				$closingTag = $closingTag[ 0 ] ?? false;
 
 				if ( $closingTag === false ) {
-					throw new CompileException(
-						"Closing tag expected, but not found for $match->component.\n\nPlease check your template, and either self-close the component, or add a closing tag.",
-						$match->string
+					$this->logger->error(
+						'Closing tag expected, but not found for {match}',
+						[ 'match' => $match->component ],
 					);
 				}
 
@@ -82,9 +84,10 @@ final class LatteComponentPreprocessor extends Preprocessor
 				$innerHTML = trim( $innerHTML );
 				$this->content = str_ireplace( $outerHTML, $match->string, $this->content );
 
+				$element->innerHTML = $innerHTML;
 //				$node[ 'innerHTML' ] = $innerHTML;
 			}
-				$this->components[] = $component;
+			$this->components[] = $element;
 
 //			$this->components[] = $node;
 		}
