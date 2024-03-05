@@ -22,9 +22,12 @@ final class LatteComponentPreprocessor extends Preprocessor
 		$this->matchComponents();
 		$this->processButtons();
 		$this->processIcons();
-		dd( $this );
+//		dd( $this );
 	}
 
+	/**
+	 * @throws CompileException
+	 */
 	private function matchComponents() : void {
 
 		$components = Regex::matchNamedGroups(
@@ -115,6 +118,7 @@ final class LatteComponentPreprocessor extends Preprocessor
 				if ( $button->has( 'icon' ) ) {
 					$button->class->add( 'icon' );
 					$button->content[] = Asset::svg( $button->get( 'icon' ) );
+//					dd( $button);
 					$button->remove( 'icon' );
 				}
 
