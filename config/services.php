@@ -76,7 +76,7 @@ return static function ( ContainerConfigurator $container ) : void {
 	          ->args( [
 		                  service( 'logger' )->nullOnInvalid(),
 	                  ] )
-	          ->tag( 'kernel.event_subscriber' )//
+	          ->tag( 'kernel.event_subscriber', [ 'priority' => 100 ] )
 	;
 
 
