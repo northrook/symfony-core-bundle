@@ -2,9 +2,9 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use App\Latte\Parameters\DocumentParameters;
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
+use Northrook\Symfony\Core\Latte\DocumentParameters;
 use Northrook\Symfony\Core\Services\ContentManagementService;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\EnvironmentService;
