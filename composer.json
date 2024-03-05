@@ -25,7 +25,7 @@
     "northrook/logger": "dev-main",
     "northrook/types": "dev-main",
     "northrook/components": "dev-main",
-    "symfony/event-dispatcher": "7.1.x-dev"
+    "symfony/event-dispatcher": "^7.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
