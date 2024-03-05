@@ -42,9 +42,7 @@ final class LatteComponentPreprocessor extends Preprocessor
 
 		foreach ( $components as $match ) {
 
-			$this->components = new Component(
-				tag : 'field'
-			);
+			$this->components[] = Component::element( $match, $this->logger, $this->stopwatch );
 
 			$tag = str_replace( ':', '-', $match->component );
 

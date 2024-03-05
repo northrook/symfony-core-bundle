@@ -3,7 +3,6 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use LogicException;
-use Northrook\Support\HTML\Element;
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\EnvironmentService;
