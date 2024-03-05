@@ -42,21 +42,9 @@ final class LatteComponentPreprocessor extends Preprocessor
 
 		foreach ( $components as $match ) {
 
-			$this->components[] = Component::element( $match, $this->logger, $this->stopwatch );
+			$component = Component::element( $match, $this->logger, $this->stopwatch );
 
-			$tag = str_replace( ':', '-', $match->component );
-
-			$test = str_replace( $match->component, $tag, $match->string );
-
-			$node = [
-				'component'  => $match->component,                      // ✅
-				'tag'        => $match->tag,                            // ✅
-				'type'       => $match->type,                           // ✅
-				'attributes' => self::extractAttributes( $test, $tag ), // ✅
-				'innerHTML'  => null,
-				'match'      => $match->string, // ✅
-			];
-
+			// Looks forwards to find innerHTML
 			if (
 				false === str_ends_with( $match->string, '/>' )
 				&&
@@ -80,6 +68,7 @@ final class LatteComponentPreprocessor extends Preprocessor
 					offset : $component,
 					length : $closing - $component + strlen( $closingTag ),
 				);
+
 				$innerHTML = substr(
 					$outerHTML,
 					strlen( $match->string ),
@@ -93,12 +82,13 @@ final class LatteComponentPreprocessor extends Preprocessor
 				$innerHTML = trim( $innerHTML );
 				$this->content = str_ireplace( $outerHTML, $match->string, $this->content );
 
-				$node[ 'innerHTML' ] = $innerHTML;
+//				$node[ 'innerHTML' ] = $innerHTML;
 			}
+				$this->components[] = $component;
 
-			$this->components[] = $node;
+//			$this->components[] = $node;
 		}
-		dd( $this->components );
+//		dd( $this->components );
 	}
 
 	private function processButtons() : void {
