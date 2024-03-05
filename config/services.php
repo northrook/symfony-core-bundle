@@ -49,6 +49,8 @@ return static function ( ContainerConfigurator $container ) : void {
 		                  service( 'core.service.content' ),
 		                  service( 'logger' )->nullOnInvalid(),
 	                  ] )
+	          ->autowire()
+	          ->public()
 	          ->alias( DocumentParameters::class, 'core.latte.document.parameters' )
 		//
 		//
