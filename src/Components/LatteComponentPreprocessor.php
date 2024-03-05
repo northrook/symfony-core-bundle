@@ -43,7 +43,7 @@ final class LatteComponentPreprocessor extends Preprocessor
 		foreach ( $components as $match ) {
 
 			$this->components = new Component(
-				tag: 'field'
+				tag : 'field'
 			);
 
 			$tag = str_replace( ':', '-', $match->component );
@@ -51,12 +51,12 @@ final class LatteComponentPreprocessor extends Preprocessor
 			$test = str_replace( $match->component, $tag, $match->string );
 
 			$node = [
-				'component'  => $match->component,
-				'tag'        => $match->tag,
-				'type'       => $match->type,
-				'attributes' => self::extractAttributes( $test, $tag ),
+				'component'  => $match->component,                      // ✅
+				'tag'        => $match->tag,                            // ✅
+				'type'       => $match->type,                           // ✅
+				'attributes' => self::extractAttributes( $test, $tag ), // ✅
 				'innerHTML'  => null,
-				'match'      => $match->string,
+				'match'      => $match->string, // ✅
 			];
 
 			if (
@@ -100,6 +100,7 @@ final class LatteComponentPreprocessor extends Preprocessor
 
 			$this->components[] = $node;
 		}
+		dd( $this->components );
 	}
 
 	private function processButtons() : void {
