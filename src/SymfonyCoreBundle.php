@@ -14,6 +14,12 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 final class SymfonyCoreBundle extends Bundle
 {
+	public function boot() {
+		parent::boot();
+
+		FacadesContainerInstance::setContainer( $this->container );
+	}
+
 	public function getPath() : string {
 		FacadesContainerInstance::setContainer( $this->container );
 		return dirname( __DIR__ );
