@@ -5,8 +5,6 @@ namespace Northrook\Symfony\Core;
 use JetBrains\PhpStorm\ExpectedValues;
 use Northrook\Logger\Log;
 use Northrook\Types\Path;
-use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 final class App extends Facades\AbstractFacade
 {
@@ -52,31 +50,10 @@ final class App extends Facades\AbstractFacade
 		?string $path = null,
 	) : string {
 
-		$dir = App::getParameter( "dir.$dir" );
-		$path = self::staticPathfinderResolver( $dir, $path );
+		$dir = App::parameterBag( "dir.$dir" );
+		$path = App::pathfinderResolver( $dir, $path );
 
 		return $path->value;
-	}
-
-	/**
-	 * @param  string  $get  {@see ParameterBagInterface::get}
-	 * @return string
-	 */
-	public static function getParameter( string $get ) : string {
-
-		try {
-			return App::kernel()->getContainer()->getParameter( $get );
-		}
-		catch ( ParameterNotFoundException $exception ) {
-			Log::Alert(
-				'Failed getting parameter {get}, the parameter does not exist. Returned raw string:{get} instead.',
-				[
-					'get'       => $get,
-					'exception' => $exception,
-				],
-			);
-			return $get;
-		}
 	}
 
 	/**
@@ -84,7 +61,7 @@ final class App extends Facades\AbstractFacade
 	 * @param  string|null  $path
 	 * @return Path
 	 */
-	private static function staticPathfinderResolver( string $root, ?string $path ) : Path {
+	private static function pathfinderResolver( string $root, ?string $path ) : Path {
 
 		$key = $root . ( $path ? '/' . $path : '' );
 

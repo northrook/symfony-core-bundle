@@ -3,13 +3,16 @@
 namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Northrook\Logger\Log;
-use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-final class FacadesContainerInstance
+/**
+ * @internal
+ * @author Martin Nielsen <mn@northrook.com>
+ *
+ */
+final class ContainerInstance
 {
 	private static ContainerInterface $container;
-	private static ?ServiceLocator    $locator;
 
 	/**
 	 * Assign the container instance and service locator.
@@ -17,7 +20,7 @@ final class FacadesContainerInstance
 	 * @param  ContainerInterface  $container
 	 * @return void
 	 */
-	public static function setContainer( ContainerInterface $container ) : void {
+	public static function set( ContainerInterface $container ) : void {
 
 		if ( isset( self::$container ) ) {
 			Log::Alert(
@@ -31,29 +34,18 @@ final class FacadesContainerInstance
 			return;
 		}
 
-
 		self::$container = $container;
-		self::$locator = $container->get(
-			id              : 'core.facades.locator',
-			invalidBehavior : ContainerInterface::NULL_ON_INVALID_REFERENCE,
-		);
+
 	}
 
 	/**
 	 * @return ContainerInterface
 	 */
-	public static function getContainer() : ContainerInterface {
+	public static function get() : ContainerInterface {
 		if ( !isset( self::$container ) ) {
 			trigger_error( 'Container not set.', E_USER_ERROR );
 		}
 		return self::$container;
-	}
-
-	public static function getLocator() : ServiceLocator {
-		if ( self::$locator === null ) {
-			trigger_error( 'Locator not set.', E_USER_ERROR );
-		}
-		return self::$locator;
 	}
 
 

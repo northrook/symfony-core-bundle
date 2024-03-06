@@ -3,11 +3,11 @@
 namespace Northrook\Symfony\Core\Facades;
 
 use Northrook\Logger\Log;
-use Northrook\Symfony\Core\DependencyInjection\FacadesContainerInstance;
-use Northrook\Symfony\Core\Services\CurrentRequestService;
+use Northrook\Symfony\Core\DependencyInjection\ContainerInstance;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -30,31 +30,43 @@ abstract class AbstractFacade
 		'logs',          // ~symfony/logs/
 	];
 
-	protected static function currentRequest() : CurrentRequestService {
-		return self::getContainerService( 'core.service.request' );
+	/**
+	 * @param  ?string  $get  {@see ParameterBagInterface::get}
+	 * @return ParameterBagInterface | string | null
+	 */
+	protected static function parameterBag( ?string $get = null ) : ParameterBagInterface | string | null {
+
+		if ( null === $get ) {
+			return static::getContainerService( 'parameter_bag' )->getParameterBag();
+		}
+
+		try {
+			return static::getContainerService( 'parameter_bag' )->getParameterBag()->get( $get );
+		}
+		catch ( ParameterNotFoundException $exception ) {
+			Log::Alert(
+				'Failed getting parameter {get}, the parameter does not exist. Returned raw string:{get} instead.',
+				[
+					'get'       => $get,
+					'exception' => $exception,
+				],
+			);
+			return $get;
+		}
 	}
 
-//	protected static function pathfinder() : PathfinderService {
-//		return self::getContainerService( 'core.service.pathfinder' );
-//	}
-
-	protected static function parameterBag() : ParameterBagInterface {
-		return self::getContainerService( 'parameter_bag' );
-	}
-
-	protected static function kernel() : ?KernelInterface {
+	protected static function kernel() : KernelInterface {
 		return self::getContainerService( 'kernel' );
 	}
-
 
 	/**
 	 * @param  string  $get  {@see ParameterBagInterface::get}
 	 * @return mixed
 	 */
-	protected static function getContainerService( string $get ) : mixed {
+	private static function getContainerService( string $get ) : mixed {
 
 		try {
-			$service = self::getContainer()->get( $get );
+			$service = self::ContainerInstance()->get( $get );
 		}
 		catch ( NotFoundExceptionInterface | ContainerExceptionInterface $e ) {
 			Log::Alert(
@@ -71,7 +83,7 @@ abstract class AbstractFacade
 		return $service;
 	}
 
-	private static function getContainer() : ContainerInterface {
-		return FacadesContainerInstance::getContainer();
+	private static function ContainerInstance() : ContainerInterface {
+		return ContainerInstance::get();
 	}
 }

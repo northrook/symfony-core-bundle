@@ -36,14 +36,6 @@ return static function ( ContainerConfigurator $container ) : void {
 
 	// Services
 	$container->services()
-	          ->set( 'core.facades.locator', ServiceLocator::class )
-	          ->args( [
-		                  service_locator( [
-			                                   service( 'logger' )->nullOnInvalid(),
-			                                   service( 'debug.stopwatch' )->nullOnInvalid(),
-		                                   ] ),
-	                  ] )
-
 		//
 		//
 		// ☕ - Core Latte Preprocessor
