@@ -5,13 +5,24 @@ namespace Northrook\Symfony\Core\Facades;
 use Exception;
 use Northrook\Symfony\Core\DependencyInjection\FacadesContainerInstance;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
+use Northrook\Symfony\Core\Services\EnvironmentService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
+/**
+ * @internal
+ *
+ * @author Martin Nielsen <mn@northrook.com>
+ *
+ */
 abstract class AbstractFacade
 {
+
+	protected static function environment() : EnvironmentService {
+		return self::getContainerService( 'core.service.environment' );
+	}
 
 	protected static function currentRequest() : CurrentRequestService {
 		return self::getContainerService( 'core.service.request' );
