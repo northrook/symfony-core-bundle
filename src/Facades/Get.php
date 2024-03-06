@@ -8,14 +8,13 @@ use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 
 final class Get extends AbstractFacade
 {
-
 	/**
 	 * @var array<string, string> // [name => kernel.parameter]
 	 */
 	private static array $parameterCache = [];
 
 	/**
-	 * @var Path[]
+	 * @var Path[] // Only valid Paths will be cached
 	 */
 	private static array $pathfinderCache = [];
 
@@ -37,7 +36,7 @@ final class Get extends AbstractFacade
 
 		if ( !isset( self::$parameterCache[ $get ] ) ) {
 			try {
-				return self::$parameterCache[ $get ] = Get::kernel()->getContainer()->getParameter( $get );
+				return self::$parameterCache[ $get ] = static::kernel()->getContainer()->getParameter( $get );
 			}
 			catch ( ParameterNotFoundException $e ) {
 				Log::Alert(
@@ -73,10 +72,13 @@ final class Get extends AbstractFacade
 			}
 
 			Log::Error(
-				'Unable to resolve path {path}, the file or directory does not exist. The returned {path} is invalid.',
+				'Unable to resolve path {path}, the file or directory does not exist. The returned {type::class} is invalid.',
 				[
-					'key'  => $key,
-					'path' => $pathfinder,
+					'cacheKey'    => $key,
+					'path'        => $pathfinder->value,
+					'type'        => $pathfinder,
+					'type::class' => $pathfinder::class,
+					'cache'       => self::$pathfinderCache,
 				],
 			);
 
