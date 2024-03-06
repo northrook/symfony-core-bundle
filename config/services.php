@@ -26,8 +26,11 @@ return static function ( ContainerConfigurator $container ) : void {
 	$container->parameters()
 	          ->set( 'env', '%kernel.environment%' )
 	          ->set( 'dir.root', $fromRoot() )
+	          ->set( 'dir.assets', $fromRoot( '/assets' ) )
 	          ->set( 'dir.public', $fromRoot( "/public" ) )
+	          ->set( 'dir.public.assets', $fromRoot( "/public/assets" ) )
 	          ->set( 'dir.cache', $fromRoot( "/var/cache" ) )
+	          ->set( 'dir.templates', $fromRoot( "/templates" ) )
 	          ->set( 'ttl.cache', 86400 )
 	;
 

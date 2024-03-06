@@ -4,13 +4,17 @@ namespace Northrook\Symfony\Core;
 
 use JetBrains\PhpStorm\ExpectedValues;
 use Northrook\Logger\Log;
-use Northrook\Symfony\Core\Traits\StaticPathfinderTrait;
+use Northrook\Types\Path;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 final class App extends Facades\AbstractFacade
 {
 
-	use StaticPathfinderTrait;
+	/**
+	 * @var Path[] // Only valid Paths will be cached
+	 */
+	private static array $pathfinderCache = [];
 
 	public static function env(
 		#[ExpectedValues( [ 'dev', 'prod', 'debug' ] )]
@@ -39,6 +43,22 @@ final class App extends Facades\AbstractFacade
 
 
 	/**
+	 * @param  string  $dir  = App::KERNEL_DIR[]
+	 * @param  string|null  $path
+	 * @return string
+	 */
+	public static function pathfinder(
+		string  $dir,
+		?string $path = null,
+	) : string {
+
+		$dir = App::getParameter( "dir.$dir" );
+		$path = self::staticPathfinderResolver( $dir, $path );
+
+		return $path->value;
+	}
+
+	/**
 	 * @param  string  $get  {@see ParameterBagInterface::get}
 	 * @return string
 	 */
@@ -57,6 +77,42 @@ final class App extends Facades\AbstractFacade
 			);
 			return $get;
 		}
+	}
+
+	/**
+	 * @param  string  $root
+	 * @param  string|null  $path
+	 * @return Path
+	 */
+	private static function staticPathfinderResolver( string $root, ?string $path ) : Path {
+
+		$key = $root . ( $path ? '/' . $path : '' );
+
+		if ( !isset( App::$pathfinderCache[ $key ] ) ) {
+
+			$pathfinder = Path::type( $root );
+			$pathfinder->add( $path );
+
+			if ( $pathfinder->isValid ) {
+				return App::$pathfinderCache[ $key ] = $pathfinder;
+			}
+
+			Log::Error(
+				'Unable to resolve path {path}, the file or directory does not exist. The returned {type::class} is invalid.',
+				[
+					'cacheKey'    => $key,
+					'path'        => $pathfinder->value,
+					'type'        => $pathfinder,
+					'type::class' => $pathfinder::class,
+					'cache'       => App::$pathfinderCache,
+				],
+			);
+
+			return $pathfinder;
+
+		}
+
+		return App::$pathfinderCache[ $key ];
 	}
 
 

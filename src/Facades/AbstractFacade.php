@@ -22,6 +22,16 @@ use Symfony\Component\HttpKernel\KernelInterface;
 abstract class AbstractFacade
 {
 
+	protected const KERNEL_DIR = [
+		'root',          // ~symfony/
+		'assets',        // ~symfony/assets/
+		'public',        // ~symfony/public/
+		'public.assets', // ~symfony/public/assets/
+		'templates',     // ~symfony/templates/
+		'cache',         // ~symfony/cache/
+		'logs',          // ~symfony/logs/
+	];
+
 	protected static function environment() : EnvironmentService {
 		return self::getContainerService( 'core.service.environment' );
 	}
