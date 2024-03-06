@@ -3,10 +3,9 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use LogicException;
-use Northrook\Symfony\Core\App;
+use Northrook\Components\Element;
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
-use Northrook\Symfony\Core\Services\EnvironmentService;
 use Northrook\Symfony\Latte;
 use Northrook\Symfony\Latte\Template;
 use Psr\Container\ContainerExceptionInterface;
@@ -30,7 +29,6 @@ abstract class AbstractCoreController extends AbstractController
 {
 	protected ContainerInterface    $container;
 	protected CurrentRequestService $request;
-	protected ?EnvironmentService   $env;
 	protected ?Latte\Environment    $latte;
 
 
@@ -48,9 +46,6 @@ abstract class AbstractCoreController extends AbstractController
 		$previous = $this->container ?? null;
 		$this->container = $container;
 
-		if ( $container->has( 'core.service.environment' ) ) {
-			$this->env = $container->get( 'core.service.environment' );
-		}
 		if ( $container->has( 'core.service.request' ) ) {
 			$this->request = $container->get( 'core.service.request' );
 		}
@@ -69,11 +64,10 @@ abstract class AbstractCoreController extends AbstractController
 		return array_merge(
 			parent::getSubscribedServices(),
 			[
-				'core.service.request'     => '?' . CurrentRequestService::class,
-				'core.service.environment' => '?' . EnvironmentService::class,
-				'core.latte.preprocessor'  => '?' . LatteComponentPreprocessor::class,
-				'latte.environment'        => '?' . Latte\Environment::class,
-				'latte.core.extension'     => '?' . Template::class,
+				'core.service.request'    => '?' . CurrentRequestService::class,
+				'core.latte.preprocessor' => '?' . LatteComponentPreprocessor::class,
+				'latte.environment'       => '?' . Latte\Environment::class,
+				'latte.core.extension'    => '?' . Template::class,
 			],
 		);
 	}

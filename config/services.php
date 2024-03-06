@@ -7,7 +7,6 @@ use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
 use Northrook\Symfony\Core\Latte\DocumentParameters;
 use Northrook\Symfony\Core\Services\ContentManagementService;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
-use Northrook\Symfony\Core\Services\EnvironmentService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 
 //♦️🪧🗃️🚩🪠🪣❄️
@@ -77,16 +76,6 @@ return static function ( ContainerConfigurator $container ) : void {
 	                  ] )
 	          ->autowire()
 	          ->alias( CurrentRequestService::class, 'core.service.request' )
-		//
-		//
-		// 🗃️️ - Environment Service
-		      ->set( 'core.service.environment', EnvironmentService::class )
-	          ->args( [
-		                  service( 'parameter_bag' ),
-		                  service( 'logger' )->nullOnInvalid(),
-	                  ] )
-	          ->autowire()
-	          ->alias( EnvironmentService::class, 'core.service.environment' )
 		//
 		//
 		// 🧭 - Pathfinder Service
