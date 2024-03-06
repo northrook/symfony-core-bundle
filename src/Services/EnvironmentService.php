@@ -35,13 +35,20 @@ final class EnvironmentService
 	}
 
 	#[EntryPoint( 'autowire' )]
-	public function __construct( private readonly ParameterBagInterface $parameter ) {}
+	public function __construct( private readonly ParameterBagInterface $parameter ) {
+		trigger_deprecation(
+			'Northrook\\Symfony\\Core',
+			'beta',
+			'EnvironmentService is deprecated. Use App::env() instead.',
+		);
+	}
 
 	/** Get environment variable
 	 *
-	 * @param  null|string  $key
-	 * @param  null|string  $default
-	 * @param  bool  $logOnFail
+	 * @param null|string  $key
+	 * @param null|string  $default
+	 * @param bool         $logOnFail
+	 *
 	 * @return string|int|bool|array|float|UnitEnum|null
 	 */
 	public function get(

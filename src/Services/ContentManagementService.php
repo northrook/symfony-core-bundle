@@ -9,8 +9,8 @@ use Stringable;
 
 /**
  *
- * @property array meta // [ 'name' => 'content' ]
- * @property array scripts // [ 'path' => 'path' ]
+ * @property array meta        // [ 'name' => 'content' ]
+ * @property array scripts     // [ 'path' => 'path' ]
  * @property array stylesheets // [ 'path' => 'path' ]
  */
 #[Development( 'beta' )]

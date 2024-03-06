@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\Log\Logger;
  * > Static session logs.
  *
  * @version 1.0.0 ✅
- * @author Martin Nielsen <mn@northrook.com>
+ * @author  Martin Nielsen <mn@northrook.com>
  */
 final class LogAggregationSubscriber implements EventSubscriberInterface
 {

@@ -23,7 +23,7 @@ use Symfony\Contracts\Service\Attribute\SubscribedService;
  * * Integrates {@see Latte\Environment} from `northrook/symfony-latte-bundle`
  *
  * @version 0.1.0 ☑️
- * @author Martin Nielsen <mn@northrook.com>
+ * @author  Martin Nielsen <mn@northrook.com>
  */
 abstract class AbstractCoreController extends AbstractController
 {
@@ -61,6 +61,7 @@ abstract class AbstractCoreController extends AbstractController
 	 * @return string[]|SubscribedService[]
 	 *  */
 	public static function getSubscribedServices() : array {
+
 		return array_merge(
 			parent::getSubscribedServices(),
 			[
@@ -101,8 +102,9 @@ abstract class AbstractCoreController extends AbstractController
 	}
 
 	/**
-	 * @param  string  $view  Template file or template string
-	 * @param  object|array|null  $parameters
+	 * @param string             $view  Template file or template string
+	 * @param object|array|null  $parameters
+	 *
 	 * @return string
 	 * @throws ContainerExceptionInterface
 	 * @throws NotFoundExceptionInterface
@@ -156,10 +158,11 @@ abstract class AbstractCoreController extends AbstractController
 
 
 	/**
-	 * @param  string  $view
-	 * @param  object|array  $parameters
-	 * @param  int  $status
-	 * @param  array  $headers
+	 * @param string        $view
+	 * @param object|array  $parameters
+	 * @param int           $status
+	 * @param array         $headers
+	 *
 	 * @return Response
 	 * @throws ContainerExceptionInterface
 	 * @throws NotFoundExceptionInterface

@@ -22,8 +22,9 @@ class PathfinderService
 	) {}
 
 	/**
-	 * @param  string  $root  {@see ParameterBagInterface::get}
-	 * @param  string|null  $add
+	 * @param string       $root  {@see ParameterBagInterface::get}
+	 * @param string|null  $add
+	 *
 	 * @return string
 	 *
 	 */
@@ -55,7 +56,8 @@ class PathfinderService
 	}
 
 	/**
-	 * @param  string  $get  {@see ParameterBagInterface::get}
+	 * @param string  $get  {@see ParameterBagInterface::get}
+	 *
 	 * @return ?Path
 	 */
 	private function parameter( string $get ) : ?Path {

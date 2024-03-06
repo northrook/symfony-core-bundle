@@ -9,7 +9,9 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpKernel as App;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
  * @internal
@@ -19,7 +21,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 abstract class AbstractFacade
 {
-
 	protected const KERNEL_DIR = [
 		'root',          // ~symfony/
 		'assets',        // ~symfony/assets/
@@ -32,16 +33,19 @@ abstract class AbstractFacade
 
 	/**
 	 * @param  ?string  $get  {@see ParameterBagInterface::get}
+	 *
 	 * @return ParameterBagInterface | string | null
 	 */
 	protected static function parameterBag( ?string $get = null ) : ParameterBagInterface | string | null {
 
+		$parameterBag = static::getContainerService( 'kernel' )->getContainer()->getParameterBag();
+
 		if ( null === $get ) {
-			return static::getContainerService( 'parameter_bag' )->getParameterBag();
+			return $parameterBag;
 		}
 
 		try {
-			return static::getContainerService( 'parameter_bag' )->getParameterBag()->get( $get );
+			return $parameterBag->get( $get );
 		}
 		catch ( ParameterNotFoundException $exception ) {
 			Log::Alert(
@@ -55,12 +59,27 @@ abstract class AbstractFacade
 		}
 	}
 
+	/**
+	 * Returns the {@see Stopwatch} instance from the {@see ContainerInstance}.
+	 *
+	 * @return ?Stopwatch {@see Stopwatch}, or null if the service is not available.
+	 */
+	protected static function stopwatch() : ?Stopwatch {
+		return self::getContainerService( 'debug.stopwatch' );
+	}
+
+	/**
+	 * Returns the {@see App\Kernel} instance from the {@see ContainerInstance}.
+	 *
+	 * @return KernelInterface {@see App\Kernel}
+	 */
 	protected static function kernel() : KernelInterface {
 		return self::getContainerService( 'kernel' );
 	}
 
 	/**
-	 * @param  string  $get  {@see ParameterBagInterface::get}
+	 * @param string  $get  {@see ParameterBagInterface::get}
+	 *
 	 * @return mixed
 	 */
 	private static function getContainerService( string $get ) : mixed {

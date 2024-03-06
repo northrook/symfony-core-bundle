@@ -15,9 +15,10 @@ final class ContainerInstance
 	private static ContainerInterface $container;
 
 	/**
-	 * Assign the container instance and service locator.
+	 * Assign the container instance.
 	 *
-	 * @param  ContainerInterface  $container
+	 * @param ContainerInterface  $container
+	 *
 	 * @return void
 	 */
 	public static function set( ContainerInterface $container ) : void {
@@ -35,7 +36,6 @@ final class ContainerInstance
 		}
 
 		self::$container = $container;
-
 	}
 
 	/**

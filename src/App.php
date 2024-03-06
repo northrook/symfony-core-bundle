@@ -41,11 +41,13 @@ final class App extends Facades\AbstractFacade
 
 
 	/**
-	 * @param  string  $dir  = App::KERNEL_DIR[]
-	 * @param  string|null  $path
+	 * @param string       $dir  = App::KERNEL_DIR[]
+	 * @param string|null  $path
+	 *
 	 * @return string
 	 */
 	public static function pathfinder(
+		#[ExpectedValues( self::KERNEL_DIR )]
 		string  $dir,
 		?string $path = null,
 	) : string {
@@ -57,8 +59,9 @@ final class App extends Facades\AbstractFacade
 	}
 
 	/**
-	 * @param  string  $root
-	 * @param  string|null  $path
+	 * @param string       $root
+	 * @param string|null  $path
+	 *
 	 * @return Path
 	 */
 	private static function pathfinderResolver( string $root, ?string $path ) : Path {

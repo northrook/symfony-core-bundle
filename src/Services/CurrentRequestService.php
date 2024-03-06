@@ -17,10 +17,10 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 /**
  * Current Request Service
  *
- * @property Request $current         Get the current request from the container request stack.
- * @property string $currentRouteName Get the current `root:route` name.
- * @property string $currentRouteRoot Get the current `root` name.
- * @property string $currentPathInfo  Get the current path info. Always starts with a /. Not urlecoded.
+ * @property Request $current          Get the current request from the container request stack.
+ * @property string  $currentRouteName Get the current `root:route` name.
+ * @property string  $currentRouteRoot Get the current `root` name.
+ * @property string  $currentPathInfo  Get the current path info. Always starts with a /. Not urlecoded.
  *
  * @author Martin Nielsen <mn@northrook.com>
  */
@@ -29,7 +29,8 @@ class CurrentRequestService
 {
 
 	/**
-	 * @param  string  $name
+	 * @param string  $name
+	 *
 	 * @return Request|string|null
 	 */
 	public function __get( string $name ) : Request | string | null {
@@ -57,7 +58,7 @@ class CurrentRequestService
 				'line'     => $backtrace->getLine(),
 			],
 		);
-
+		
 		return null;
 	}
 
@@ -69,6 +70,7 @@ class CurrentRequestService
 
 	/**
 	 * @param  ?string  $get  {@see Request::get}
+	 *
 	 * @return ParameterBag|array|string|int|bool|float|null
 	 */
 	public function parameter( ?string $get = null ) : ParameterBag | array | string | int | bool | float | null {
@@ -76,7 +78,8 @@ class CurrentRequestService
 	}
 
 	/**
-	 * @param  string|null  $get  {@see  InputBag::get}
+	 * @param string|null  $get  {@see  InputBag::get}
+	 *
 	 * @return InputBag|string|int|float|bool|null
 	 */
 	public function query( ?string $get = null ) : InputBag | string | int | float | bool | null {
@@ -84,7 +87,8 @@ class CurrentRequestService
 	}
 
 	/**
-	 * @param  string|null  $get  {@see  SessionInterface::get}
+	 * @param string|null  $get  {@see  SessionInterface::get}
+	 *
 	 * @return SessionInterface|mixed
 	 */
 	public function session( ?string $get = null ) : mixed {
@@ -95,7 +99,8 @@ class CurrentRequestService
 	}
 
 	/**
-	 * @param  string|null  $get  {@see HeaderBag::get}
+	 * @param string|null  $get  {@see HeaderBag::get}
+	 *
 	 * @return HeaderBag|string|null
 	 */
 	public function headers( ?string $get = null ) : HeaderBag | string | null {
@@ -103,7 +108,8 @@ class CurrentRequestService
 	}
 
 	/**
-	 * @param  string|null  $get  {@see InputBag::get}
+	 * @param string|null  $get  {@see InputBag::get}
+	 *
 	 * @return InputBag|string|int|float|bool|null
 	 */
 	public function cookies( ?string $get = null ) : InputBag | string | int | float | bool | null {
@@ -112,7 +118,8 @@ class CurrentRequestService
 
 	/** Get the current route from the container request stack.
 	 *
-	 * @param  bool  $root  Return just the root route
+	 * @param bool  $root  Return just the root route
+	 *
 	 * @return ?string The current route
 	 */
 	private function currentRoute( bool $root = false ) : ?string {
