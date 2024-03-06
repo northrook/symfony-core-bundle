@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core;
 
+use Northrook\Symfony\Core\DependencyInjection\FacadesContainerInstance;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -14,7 +15,8 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 final class SymfonyCoreBundle extends Bundle
 {
 	public function getPath() : string {
-		dump( $this );
+		FacadesContainerInstance::setContainer( $this->container );
 		return dirname( __DIR__ );
 	}
+
 }
