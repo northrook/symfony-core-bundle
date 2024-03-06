@@ -30,14 +30,14 @@ abstract class AbstractFacade
 		return self::getContainerService( 'core.service.request' );
 	}
 
-	protected static function pathfinder() : PathfinderService {
-		return self::getContainerService( 'core.service.pathfinder' );
-	}
+//	protected static function pathfinder() : PathfinderService {
+//		return self::getContainerService( 'core.service.pathfinder' );
+//	}
 
 	protected static function parameterBag() : ParameterBagInterface {
 		return self::getContainerService( 'parameter_bag' );
 	}
-	
+
 	protected static function kernel() : ?KernelInterface {
 		return self::getContainerService( 'kernel' );
 	}

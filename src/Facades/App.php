@@ -14,10 +14,11 @@ final class App extends AbstractFacade
 	) : bool {
 		if ( self::kernel() === null ) {
 			Log::Alert(
-				'Failed checking if Kernel is {is}, as {call} returned {status}. Returned {return} instead.',
+				'Failed checking if {call} is {is}, as {kernel} is {status}. Returned {return} instead.',
 				[
 					'is'     => $is,
-					'call'   => 'App::kernel',
+					'call'   => 'App::env',
+					'kernel' => 'App::kernel',
 					'status' => 'null',
 					'return' => 'false',
 				],
