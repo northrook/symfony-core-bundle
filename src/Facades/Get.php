@@ -19,14 +19,16 @@ final class Get extends AbstractFacade
 	 */
 	private static array $pathfinderCache = [];
 
+
 	/**
-	 * @param  string  ...$root  [0]  {@see ParameterBagInterface::get}
+	 * @param  string  $root  {@see ParameterBagInterface::get}
+	 * @param  string|null  $path
+	 * @return string
 	 */
-	public static function path( string ...$root ) : string {
+	public static function path( string $root, ?string $path = null ) : string {
 
-		$path = Get::kernelParameter( array_shift( $root ) );
-
-		$path = Get::pathfinder( $path, $root );
+		$root = Get::kernelParameter( $root );
+		$path = Get::pathfinder( $root, $path );
 
 		return $path->value;
 	}
@@ -50,40 +52,39 @@ final class Get extends AbstractFacade
 		}
 
 		return self::$parameterCache[ $get ];
-
 	}
 
 	/**
-	 * @param  string  $get
-	 * @param  string[]|null  ...$root
+	 * @param  string  $root
+	 * @param  string|null  $path
 	 * @return Path
 	 */
-	protected static function pathfinder( string $get, ?array ...$root ) : Path {
+	protected static function pathfinder( string $root, ?string $path ) : Path {
 
-		if ( $root ) {
-			$get .= implode( '/', $root );
-		}
+		$key = $root . ( $path ? '/' . $path : '' );
 
-		if ( !isset( self::$pathfinderCache[ $get ] ) ) {
-			$path = Path::type( $get );
+		if ( !isset( self::$pathfinderCache[ $key ] ) ) {
 
-			if ( $path->isValid ) {
-				return self::$pathfinderCache[ $get ] = $path;
+			$pathfinder = Path::type( $root );
+			$pathfinder->add( $path );
+
+			if ( $pathfinder->isValid ) {
+				return self::$pathfinderCache[ $key ] = $pathfinder;
 			}
 
 			Log::Error(
-				'Unable to resolve path {path}, the file or directory does not exist.',
+				'Unable to resolve path {path}, the file or directory does not exist. The returned {path} is invalid.',
 				[
-					'get'  => $get,
-					'path' => $path,
+					'key'  => $key,
+					'path' => $pathfinder,
 				],
 			);
 
-			return $path;
+			return $pathfinder;
 
 		}
 
-		return self::$pathfinderCache[ $get ];
+		return self::$pathfinderCache[ $key ];
 	}
 
 }
