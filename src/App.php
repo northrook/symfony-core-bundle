@@ -1,13 +1,13 @@
 <?php
 
-namespace Northrook\Symfony\Core\Facades;
+namespace Northrook\Symfony\Core;
 
 use JetBrains\PhpStorm\ExpectedValues;
 use Northrook\Logger\Log;
+use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 
-final class App extends AbstractFacade
+final class App extends Facades\AbstractFacade
 {
-
 	public static function env(
 		#[ExpectedValues( [ 'dev', 'prod', 'debug' ] )]
 		string $is,
@@ -32,5 +32,29 @@ final class App extends AbstractFacade
 			default => false,
 		};
 	}
+
+
+	/**
+	 * @param  string  $get  {@see ParameterBagInterface::get}
+	 * @return string
+	 */
+	public static function getParameter( string $get ) : string {
+
+		try {
+			return App::kernel()->getContainer()->getParameter( $get );
+		}
+		catch ( ParameterNotFoundException $exception ) {
+			Log::Alert(
+				'Failed getting parameter {get}, the parameter does not exist. Returned raw string:{get} instead.',
+				[
+					'get'       => $get,
+					'exception' => $exception,
+				],
+			);
+			return $get;
+		}
+	}
+
+
 
 }

@@ -1,12 +1,12 @@
 <?php declare( strict_types = 1 );
 
-namespace Northrook\Symfony\Core\Facades;
+namespace Northrook\Symfony\Core;
 
 use Northrook\Logger\Log;
 use Northrook\Types\Path;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 
-final class Get extends AbstractFacade
+final class Get extends Facades\AbstractFacade
 {
 	/**
 	 * @var array<string, string> // [name => kernel.parameter]
