@@ -45,7 +45,7 @@ final class ContentManagementService implements Stringable
 		return $this->history[ $key ];
 	}
 
-	public function __toString() {
-		// TODO: Implement __toString() method.
+	public function __toString() : string {
+		return $this->content;
 	}
 }

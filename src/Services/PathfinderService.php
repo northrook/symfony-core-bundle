@@ -3,7 +3,6 @@
 namespace Northrook\Symfony\Core\Services;
 
 use Northrook\Logger\Debug;
-use Northrook\Support\Str;
 use Northrook\Types\Path;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
@@ -23,7 +22,7 @@ class PathfinderService
 	) {}
 
 	/**
-	 * @param  string  $root  {@see ParameterBagInterface::get()}
+	 * @param  string  $root  {@see ParameterBagInterface::get}
 	 * @param  string|null  $add
 	 * @return string
 	 *

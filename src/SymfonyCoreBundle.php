@@ -14,6 +14,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 final class SymfonyCoreBundle extends Bundle
 {
 	public function getPath() : string {
+		dump( $this );
 		return dirname( __DIR__ );
 	}
 }
