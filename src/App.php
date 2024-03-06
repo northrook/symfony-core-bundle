@@ -4,10 +4,14 @@ namespace Northrook\Symfony\Core;
 
 use JetBrains\PhpStorm\ExpectedValues;
 use Northrook\Logger\Log;
+use Northrook\Symfony\Core\Traits\StaticPathfinderTrait;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 
 final class App extends Facades\AbstractFacade
 {
+
+	use StaticPathfinderTrait;
+
 	public static function env(
 		#[ExpectedValues( [ 'dev', 'prod', 'debug' ] )]
 		string $is,
@@ -54,7 +58,6 @@ final class App extends Facades\AbstractFacade
 			return $get;
 		}
 	}
-
 
 
 }

@@ -4,7 +4,6 @@ namespace Northrook\Symfony\Core\Traits;
 
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\App;
-use Northrook\Symfony\Core\Get;
 use Northrook\Types\Path;
 
 trait StaticPathfinderTrait
@@ -27,7 +26,6 @@ trait StaticPathfinderTrait
 
 		return $path->value;
 	}
-
 
 	/**
 	 * @param  string  $root
