@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\Services;
 
+use JetBrains\PhpStorm\Deprecated;
 use Northrook\Logger\Log;
 use Northrook\Support\Attributes\Development;
 use Northrook\Support\Attributes\EntryPoint;
@@ -20,6 +21,7 @@ use UnitEnum;
  *
  */
 #[Development( 'beta' )]
+#[Deprecated]
 final class EnvironmentService
 {
 

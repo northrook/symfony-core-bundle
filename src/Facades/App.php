@@ -3,23 +3,27 @@
 namespace Northrook\Symfony\Core\Facades;
 
 use JetBrains\PhpStorm\ExpectedValues;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\HttpKernel\KernelInterface;
-use UnitEnum;
+use Northrook\Logger\Log;
 
 final class App extends AbstractFacade
 {
-
-	private static function kernel() : KernelInterface {
-		return self::getContainerService( 'kernel' );
-	}
 
 	public static function env(
 		#[ExpectedValues( [ 'dev', 'prod', 'debug' ] )]
 		string $is,
 	) : bool {
+		if ( self::kernel() === null ) {
+			Log::Alert(
+				'Failed checking if Kernel is {is}, as {call} returned {status}. Returned {return} instead.',
+				[
+					'is'     => $is,
+					'call'   => 'App::kernel',
+					'status' => 'null',
+					'return' => 'false',
+				],
+			);
+			return false;
+		}
 		return match ( $is ) {
 			'dev'   => App::kernel()->getEnvironment() == 'dev',
 			'prod'  => App::kernel()->getEnvironment() == 'prod',

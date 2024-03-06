@@ -11,6 +11,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * @internal
@@ -36,6 +37,11 @@ abstract class AbstractFacade
 	protected static function parameterBag() : ParameterBagInterface {
 		return self::getContainerService( 'parameter_bag' );
 	}
+	
+	protected static function kernel() : ?KernelInterface {
+		return self::getContainerService( 'kernel' );
+	}
+
 
 	/**
 	 * @param  string  $get  {@see ParameterBagInterface::get}
