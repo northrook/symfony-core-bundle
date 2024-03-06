@@ -9,18 +9,26 @@ use UnitEnum;
 final class App extends AbstractFacade
 {
 
+	/**
+	 * @param  string  $get  {@see ParameterBagInterface::get}
+	 * @return string|int|bool|array|float|UnitEnum|null
+	 */
 	public static function getParameter(
-		#[ExpectedValues( valuesFromClass : ParameterBagInterface::class )]
-		?string $name = null,
+		string $get,
 	) : string | int | bool | array | null | float | UnitEnum {
-		return self::environment()->get( $name );
+		return self::parameterBag()->get( $get );
 	}
 
 	public static function env(
 		#[ExpectedValues( [ 'dev', 'prod', 'debug' ] )]
 		string $is,
 	) : bool {
-		return self::environment()->$is;
+		return match ( $is ) {
+			'dev'   => self::getParameter( 'kernel.environment' ) == 'dev',
+			'prod'  => self::getParameter( 'kernel.environment' ) == 'prod',
+			'debug' => self::getParameter( 'kernel.debug' ) === true,
+			default => false,
+		};
 	}
 
 }

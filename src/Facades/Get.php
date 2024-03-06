@@ -11,7 +11,7 @@ final class Get extends AbstractFacade
 
 		$pathfinder = self::pathfinder()->get( 'dir.public' ) . $path;
 
-		return $path;
+		return $pathfinder;
 	}
 
 }

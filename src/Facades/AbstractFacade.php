@@ -10,6 +10,7 @@ use Northrook\Symfony\Core\Services\PathfinderService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 /**
  * @internal
@@ -32,11 +33,15 @@ abstract class AbstractFacade
 		return self::getContainerService( 'core.service.pathfinder' );
 	}
 
+	protected static function parameterBag() : ParameterBagInterface {
+		return self::getContainerService( 'parameter_bag' );
+	}
+
 	/**
 	 * @param  string  $get  {@see ParameterBagInterface::get}
 	 * @return mixed
 	 */
-	private static function getContainerService( string $get ) : mixed {
+	protected static function getContainerService( string $get ) : mixed {
 
 		try {
 			$service = self::getContainer()->get( $get );
