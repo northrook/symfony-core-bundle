@@ -11,13 +11,11 @@ use Northrook\Symfony\Core\Services\PathfinderService;
 
 return static function ( ContainerConfigurator $container ) : void {
 
-	$fromRoot = function ( string $set = '' ) : string {
-		return trim(
-			'%kernel.project_dir%' . DIRECTORY_SEPARATOR . trim(
-				str_replace( [ '\\', '/' ], DIRECTORY_SEPARATOR, $set ), DIRECTORY_SEPARATOR,
-			) . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR,
-		);
-	};
+	$fromRoot = static fn ( string $set = '' ) => $set ? trim(
+		'%kernel.project_dir%' . DIRECTORY_SEPARATOR . trim(
+			str_replace( [ '\\', '/' ], DIRECTORY_SEPARATOR, $set ), DIRECTORY_SEPARATOR,
+		) . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR,
+	) : $set;
 
 	// Parameters
 	$container->parameters()

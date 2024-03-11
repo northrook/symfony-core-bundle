@@ -7,20 +7,20 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * @version 1.0 ☑️
- * @author Martin Nielsen <mn@northrook.com>
+ * @author  Martin Nielsen <mn@northrook.com>
  *
- * @link https://github.com/northrook Documentation
- * @todo Update URL to documentation : root of symfony-core-bundle
+ * @link    https://github.com/northrook Documentation
+ * @todo    Update URL to documentation : root of symfony-core-bundle
  */
 final class SymfonyCoreBundle extends Bundle
 {
-	public function boot() {
-		parent::boot();
-		ContainerInstance::set( $this->container );
-	}
+    public function boot() {
+        parent::boot();
+        ContainerInstance::set( $this->container );
+    }
 
-	public function getPath() : string {
-		return dirname( __DIR__ );
-	}
+    public function getPath() : string {
+        return dirname( __DIR__ );
+    }
 
 }

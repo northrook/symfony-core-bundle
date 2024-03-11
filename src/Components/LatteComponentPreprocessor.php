@@ -6,143 +6,143 @@ use Northrook\Components\Asset;
 use Northrook\Components\Element;
 use Northrook\Components\Icon;
 use Northrook\Components\Image;
-use Northrook\Symfony\Latte\Preprocessor;
 use Northrook\Support\Regex;
+use Northrook\Symfony\Latte\Preprocessor;
 
 final class LatteComponentPreprocessor extends Preprocessor
 {
-	/**
-	 * @var Component[]
-	 */
-	private mixed $components = [];
+    /**
+     * @var Component[]
+     */
+    private mixed $components = [];
 
-	public function construct() : void {
-		$this->prepareContent();
-		$this->matchComponents();
-		$this->processButtons();
-		$this->processIcons();
+    public function construct() : void {
+        $this->prepareContent();
+        $this->matchComponents();
+        $this->processButtons();
+        $this->processIcons();
 
-		foreach ( $this->components as $component ) {
-			$this->updateContent( $component->templateString, $component );
-		}
-	}
+        foreach ( $this->components as $component ) {
+            $this->updateContent( $component->templateString, $component );
+        }
+    }
 
-	/**
-	 * Match components
-	 */
-	private function matchComponents() : void {
+    /**
+     * Match components
+     */
+    private function matchComponents() : void {
 
-		$components = Regex::matchNamedGroups(
-			pattern         : "/<(?<component>(?<tag>\w*?):(?<type>\w.*?)) .*?>/ms",
-			subject         : $this->content,
-			matchedProperty : 'string',
-		);
+        $components = Regex::matchNamedGroups(
+            pattern         : "/<(?<component>(?<tag>\w*?):(?<type>\w.*?)) .*?>/ms",
+            subject         : $this->content,
+            matchedProperty : 'string',
+        );
 
-		if ( !$components ) {
-			return;
-		}
+        if ( !$components ) {
+            return;
+        }
 
-		foreach ( $components as $match ) {
+        foreach ( $components as $match ) {
 
-			$element = Component::element( $match, $this->logger, $this->stopwatch );
+            $element = Component::element( $match, $this->logger, $this->stopwatch );
 
-			// Looks forwards to find innerHTML
-			if (
-				false === str_ends_with( $match->string, '/>' )
-				&&
-				false !== preg_match( "/<\s*?\/\s*?$match->component\s*?>/ms", $this->content, $closingTag )
-			) {
+            // Looks forwards to find innerHTML
+            if (
+                false === str_ends_with( $match->string, '/>' )
+                &&
+                false !== preg_match( "/<\s*?\/\s*?$match->component\s*?>/ms", $this->content, $closingTag )
+            ) {
 
-				$closingTag = $closingTag[ 0 ] ?? false;
+                $closingTag = $closingTag[ 0 ] ?? false;
 
-				if ( $closingTag === false ) {
-					$this->logger->error(
-						'Closing tag expected, but not found for {match}',
-						[ 'match' => $match->component ],
-					);
-				}
+                if ( $closingTag === false ) {
+                    $this->logger->error(
+                        'Closing tag expected, but not found for {match}',
+                        [ 'match' => $match->component ],
+                    );
+                }
 
-				$component = strpos( $this->content, $match->string );
-				$closing = strpos( $this->content, $closingTag );
+                $component = strpos( $this->content, $match->string );
+                $closing   = strpos( $this->content, $closingTag );
 
-				$outerHTML = substr(
-					string : $this->content,
-					offset : $component,
-					length : $closing - $component + strlen( $closingTag ),
-				);
+                $outerHTML = substr(
+                    string : $this->content,
+                    offset : $component,
+                    length : $closing - $component + strlen( $closingTag ),
+                );
 
-				$innerHTML = substr(
-					$outerHTML,
-					strlen( $match->string ),
-					(
-						strlen( $outerHTML )
-						- strlen( $match->string )
-						- strlen( $closingTag )
-					),
-				);
+                $innerHTML = substr(
+                    $outerHTML,
+                    strlen( $match->string ),
+                    (
+                        strlen( $outerHTML )
+                        - strlen( $match->string )
+                        - strlen( $closingTag )
+                    ),
+                );
 
-				$innerHTML = trim( $innerHTML );
-				$this->content = str_ireplace( $outerHTML, $match->string, $this->content );
+                $innerHTML     = trim( $innerHTML );
+                $this->content = str_ireplace( $outerHTML, $match->string, $this->content );
 
-				$element->innerHTML = $innerHTML;
+                $element->innerHTML = $innerHTML;
 //				$node[ 'innerHTML' ] = $innerHTML;
-			}
-			$this->components[] = $element;
+            }
+            $this->components[] = $element;
 
 //			$this->components[] = $node;
-		}
+        }
 //		dd( $this->components );
-	}
+    }
 
-	private function processButtons() : void {
+    private function processButtons() : void {
 
-		if ( !str_contains( $this->content, '<button ' ) ) {
-			return;
-		}
+        if ( !str_contains( $this->content, '<button ' ) ) {
+            return;
+        }
 
-		$this->content = preg_replace_callback(
-			pattern  : "/<button(.*?)>/ms",
-			callback : static function ( $element ) : string {
+        $this->content = preg_replace_callback(
+            pattern  : "/<button(.*?)>/ms",
+            callback : static function ( $element ) : string {
 
-				$button = new Element(
-					tag   : 'button',
-					close : str_ends_with( $element[ 0 ], '/>' ),
-				);
+                $button = new Element(
+                    tag   : 'button',
+                    close : str_ends_with( $element[ 0 ], '/>' ),
+                );
 
-				$button->extractAttributes( trim( $element[ 1 ], ' /' ) );
+                $button->extractAttributes( trim( $element[ 1 ], ' /' ) );
 
-				if ( $button->has( 'icon' ) ) {
-					$button->class->add( 'icon' );
-					$button->content[] = Asset::svg( $button->get( 'icon' ) );
+                if ( $button->has( 'icon' ) ) {
+                    $button->class->add( 'icon' );
+                    $button->content[] = Asset::svg( $button->get( 'icon' ) );
 //					dd( $button);
-					$button->remove( 'icon' );
-				}
+                    $button->remove( 'icon' );
+                }
 
-				if ( $button->has( 'text' ) ) {
-					$button->content[] = $button->get( 'text' );
-					$button->remove( 'text' );
-				}
+                if ( $button->has( 'text' ) ) {
+                    $button->content[] = $button->get( 'text' );
+                    $button->remove( 'text' );
+                }
 
-				return $button->print();
-			},
-			subject  : $this->content,
-		);
-	}
+                return $button->print();
+            },
+            subject  : $this->content,
+        );
+    }
 
-	private function processIcons() : void {
+    private function processIcons() : void {
 
-		if ( !str_contains( $this->content, '<icon ' ) ) {
-			return;
-		}
+        if ( !str_contains( $this->content, '<icon ' ) ) {
+            return;
+        }
 
-		$this->content = preg_replace_callback(
-			pattern  : " /<icon(.*?)>/ms",
-			callback : static function ( $element ) : string {
+        $this->content = preg_replace_callback(
+            pattern  : " /<icon(.*?)>/ms",
+            callback : static function ( $element ) : string {
 
-				$icon = Icon::asset(
-					$attributes[ 'get' ] ?? null,
-					$attributes[ 'stroke' ] ?? null,
-				)->extractAttributes( trim( $element[ 1 ], ' /' ) );
+                $icon = Icon::asset(
+                    $attributes[ 'get' ] ?? null,
+                    $attributes[ 'stroke' ] ?? null,
+                )->extractAttributes( trim( $element[ 1 ], ' /' ) );
 
 
 //				$attributes = trim( $element[ 1 ], ' /' );
@@ -166,55 +166,55 @@ final class LatteComponentPreprocessor extends Preprocessor
 //				);
 
 //				dd( $icon );
-				return $icon->print();
-			},
-			subject  : $this->content,
-		);
-	}
+                return $icon->print();
+            },
+            subject  : $this->content,
+        );
+    }
 
-	private function images() : void {
+    private function images() : void {
 
-		if ( !str_contains( $this->content, '<image ' ) ) {
-			return;
-		}
+        if ( !str_contains( $this->content, '<image ' ) ) {
+            return;
+        }
 
-		$this->content = preg_replace_callback(
-			pattern  : "/<image(.*?)>/ms",
-			callback : static function ( $element ) : string {
+        $this->content = preg_replace_callback(
+            pattern  : "/<image(.*?)>/ms",
+            callback : static function ( $element ) : string {
 
 //				$attributes = trim( $element[ 1 ], ' /' );
 //				$attributes = static::extractAttributes( $attributes );
 
 //				$isExternal = Str::isUrl( $attributes[ 'src' ] ?? '' );
 
-				$image = new Image();
-				$image->extractAttributes( trim( $element[ 1 ], ' /' ) );
+                $image = new Image();
+                $image->extractAttributes( trim( $element[ 1 ], ' /' ) );
 
-				// dd( $image, $image->figure() );
+                // dd( $image, $image->figure() );
 
-				return $image->print();
+                return $image->print();
 
-				// $get = $attributes['get'] ?? 'angry';
-				// unset( $attributes['get'] );
+                // $get = $attributes['get'] ?? 'angry';
+                // unset( $attributes['get'] );
 
-				// if ( isset( $attributes['class'] ) ) {
-				// 	$attributes['class'] = 'icon ' . implode( ' ', (array) $attributes['class'] );
-				// } else {
-				// 	$attributes['class'] = 'icon';
-				// }
+                // if ( isset( $attributes['class'] ) ) {
+                // 	$attributes['class'] = 'icon ' . implode( ' ', (array) $attributes['class'] );
+                // } else {
+                // 	$attributes['class'] = 'icon';
+                // }
 
-				// $icon = new Element( 'i', $attributes, Get::icon( $get, raw: true ) );
+                // $icon = new Element( 'i', $attributes, Get::icon( $get, raw: true ) );
 
-				// return Str::squish( $icon );
-			},
-			subject  : $this->content,
-		);
-	}
+                // return Str::squish( $icon );
+            },
+            subject  : $this->content,
+        );
+    }
 
-	/**
-	 * @todo Avatar Component
-	 * Has to grab the avatar user entity
-	 *
-	 */
+    /**
+     * @todo Avatar Component
+     * Has to grab the avatar user entity
+     *
+     */
 
 }

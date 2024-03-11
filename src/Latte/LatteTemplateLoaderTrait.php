@@ -2,9 +2,6 @@
 
 namespace Northrook\Symfony\Core\Latte;
 
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
-
 use Latte;
 
 trait LatteTemplateLoaderTrait
@@ -14,6 +11,5 @@ trait LatteTemplateLoaderTrait
 		$engine = new Latte\Engine();
 
 		return $engine::class;
-
 	}
 }

@@ -9,91 +9,94 @@ use Northrook\Types\Path;
 final class App extends Facades\AbstractFacade
 {
 
-	/**
-	 * @var Path[] // Only valid Paths will be cached
-	 */
-	private static array $pathfinderCache = [];
+    /**
+     * @var Path[] // Only valid Paths will be cached
+     */
+    private static array $pathfinderCache = [];
 
-	public static function env(
-		#[ExpectedValues( [ 'dev', 'prod', 'debug' ] )]
-		string $is,
-	) : bool {
-		if ( self::kernel() === null ) {
-			Log::Alert(
-				'Failed checking if {call} is {is}, as {kernel} is {status}. Returned {return} instead.',
-				[
-					'is'     => $is,
-					'call'   => 'App::env',
-					'kernel' => 'App::kernel',
-					'status' => 'null',
-					'return' => 'false',
-				],
-			);
-			return false;
-		}
-		return match ( $is ) {
-			'dev'   => App::kernel()->getEnvironment() == 'dev',
-			'prod'  => App::kernel()->getEnvironment() == 'prod',
-			'debug' => App::kernel()->isDebug(),
-			default => false,
-		};
-	}
+    public static function env(
+        #[ExpectedValues( [ 'dev', 'prod', 'debug' ] )]
+        string $is,
+    ) : bool {
+        if ( self::kernel() === null ) {
+            Log::Alert(
+                'Failed checking if {call} is {is}, as {kernel} is {status}. Returned {return} instead.',
+                [
+                    'is'     => $is,
+                    'call'   => 'App::env',
+                    'kernel' => 'App::kernel',
+                    'status' => 'null',
+                    'return' => 'false',
+                ],
+            );
+            return false;
+        }
+        return match ( $is ) {
+            'dev'   => App::kernel()->getEnvironment() == 'dev',
+            'prod'  => App::kernel()->getEnvironment() == 'prod',
+            'debug' => App::kernel()->isDebug(),
+            default => false,
+        };
+    }
 
 
-	/**
-	 * @param string       $dir  = App::KERNEL_DIR[]
-	 * @param string|null  $path
-	 *
-	 * @return string
-	 */
-	public static function pathfinder(
-		#[ExpectedValues( self::KERNEL_DIR )]
-		string  $dir,
-		?string $path = null,
-	) : string {
+    /**
+     * @param string       $dir  = App::KERNEL_DIR[]
+     * @param string|null  $path
+     *
+     * @return string
+     */
+    public static function pathfinder(
+        #[ExpectedValues( self::KERNEL_DIR )]
+        string  $dir,
+        ?string $path = null,
+    ) : string {
 
-		$dir = App::parameterBag( "dir.$dir" );
-		$path = App::pathfinderResolver( $dir, $path );
+        $dir  = App::parameterBag( "dir.$dir" );
+        $path = App::pathfinderResolver( $dir, $path );
 
-		return $path->value;
-	}
+        return $path->value;
+    }
 
-	/**
-	 * @param string       $root
-	 * @param string|null  $path
-	 *
-	 * @return Path
-	 */
-	private static function pathfinderResolver( string $root, ?string $path ) : Path {
+    /**
+     * @param string       $root
+     * @param string|null  $path
+     *
+     * @return Path
+     */
+    private static function pathfinderResolver( string $root, ?string $path ) : Path {
 
-		$key = $root . ( $path ? '/' . $path : '' );
+        $key = $root . ( $path ? '/' . $path : '' );
 
-		if ( !isset( App::$pathfinderCache[ $key ] ) ) {
+        if ( !isset( App::$pathfinderCache[ $key ] ) ) {
 
-			$pathfinder = Path::type( $root );
-			$pathfinder->add( $path );
+            $pathfinder = new Path( $root );
 
-			if ( $pathfinder->isValid ) {
-				return App::$pathfinderCache[ $key ] = $pathfinder;
-			}
+            if ( $path ) {
+                $pathfinder->add( $path );
+            }
 
-			Log::Error(
-				'Unable to resolve path {path}, the file or directory does not exist. The returned {type::class} is invalid.',
-				[
-					'cacheKey'    => $key,
-					'path'        => $pathfinder->value,
-					'type'        => $pathfinder,
-					'type::class' => $pathfinder::class,
-					'cache'       => App::$pathfinderCache,
-				],
-			);
+            if ( $pathfinder->isValid ) {
+                return App::$pathfinderCache[ $key ] = $pathfinder;
+            }
 
-			return $pathfinder;
+            Log::Error(
+                'Unable to resolve path {path}, the file or directory does not exist. The returned {type::class} is invalid.',
+                [
+                    'cacheKey'    => $key,
+                    'path'        => $pathfinder->value,
+                    'type'        => $pathfinder,
+                    'type::class' => $pathfinder::class,
+                    'cache'       => App::$pathfinderCache,
+                ],
+            );
 
-		}
+            return $pathfinder;
 
-		return App::$pathfinderCache[ $key ];
-	}
+        }
+
+        return App::$pathfinderCache[ $key ];
+    }
 
 
 }
