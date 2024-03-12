@@ -4,9 +4,10 @@ namespace Northrook\Symfony\Core;
 
 use JetBrains\PhpStorm\ExpectedValues;
 use Northrook\Logger\Log;
+use Northrook\Symfony\Core\DependencyInjection\ContainerFacade;
 use Northrook\Types\Path;
 
-final class App extends Facades\AbstractFacade
+final class App extends ContainerFacade
 {
 
     /**

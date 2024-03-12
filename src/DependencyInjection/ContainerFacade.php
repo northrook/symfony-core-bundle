@@ -1,9 +1,8 @@
 <?php
 
-namespace Northrook\Symfony\Core\Facades;
+namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Northrook\Logger\Log;
-use Northrook\Symfony\Core\DependencyInjection\ContainerInstance;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel as App;
@@ -16,7 +15,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
  * @author Martin Nielsen <mn@northrook.com>
  *
  */
-abstract class AbstractFacade
+abstract class ContainerFacade
 {
 //	protected const KERNEL_DIR = [
 //		'root',          // ~symfony/
@@ -27,6 +26,15 @@ abstract class AbstractFacade
 //		'cache',         // ~symfony/cache/
 //		'logs',          // ~symfony/logs/
 //	];
+
+    /**
+     * Returns the {@see App\Kernel} instance from the {@see ContainerInstance}.
+     *
+     * @return KernelInterface {@see App\Kernel}
+     */
+    protected static function kernel() : KernelInterface {
+        return ContainerInstance::getService( 'kernel' );
+    }
 
     /**
      * @param  ?string  $get  {@see ParameterBagInterface::get}
@@ -64,42 +72,4 @@ abstract class AbstractFacade
     protected static function stopwatch() : ?Stopwatch {
         return ContainerInstance::getService( 'debug.stopwatch' );
     }
-
-    /**
-     * Returns the {@see App\Kernel} instance from the {@see ContainerInstance}.
-     *
-     * @return KernelInterface {@see App\Kernel}
-     */
-    protected static function kernel() : KernelInterface {
-        return ContainerInstance::getService( 'kernel' );
-    }
-
-    /**
-     * @param string  $get  {@see ParameterBagInterface::get}
-     *
-     * @return mixed
-     */
-//    private static function getContainerService( string $get ) : mixed {
-//
-//        try {
-//            $service = self::ContainerInstance()->get( $get );
-//        }
-//        catch ( NotFoundExceptionInterface | ContainerExceptionInterface $e ) {
-//            Log::Alert(
-//                'Failed getting container parameter {get}, the parameter does not exist. Returned {return} instead.',
-//                [
-//                    'get'       => $get,
-//                    'return'    => 'null',
-//                    'exception' => $e,
-//                ],
-//            );
-//            return null;
-//        }
-//
-//        return $service;
-//    }
-
-//    private static function ContainerInstance() : ContainerInterface {
-//        return ContainerInstance::get();
-//    }
 }

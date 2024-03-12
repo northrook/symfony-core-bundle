@@ -28,7 +28,8 @@
     "northrook/components": "dev-main",
     "symfony/event-dispatcher": "^7.0",
     "ext-dom": "*",
-    "ext-libxml": "*"
+    "ext-libxml": "*",
+    "northrook/symfony-core-support": "dev-main"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
