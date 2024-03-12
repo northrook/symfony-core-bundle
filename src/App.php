@@ -41,18 +41,18 @@ final class App extends Facades\AbstractFacade
 
 
     /**
-     * @param string       $dir  = App::KERNEL_DIR[]
+     * @param string       $root  {@see ParameterBagInterface::get}
      * @param string|null  $path
      *
      * @return string
      */
     public static function pathfinder(
-        #[ExpectedValues( self::KERNEL_DIR )]
-        string  $dir,
+//        #[ExpectedValues( self::KERNEL_DIR )]
+        string  $root,
         ?string $path = null,
     ) : string {
 
-        $dir  = App::parameterBag( "dir.$dir" );
+        $dir  = App::parameterBag( $root );
         $path = App::pathfinderResolver( $dir, $path );
 
         return $path->value;
