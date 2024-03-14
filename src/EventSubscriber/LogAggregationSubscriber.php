@@ -4,6 +4,7 @@ namespace Northrook\Symfony\Core\EventSubscriber;
 
 use Northrook\Logger\Log;
 use Northrook\Logger\Timer;
+use Northrook\Symfony\Core\Services\PathfinderService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Log\Logger;
 
@@ -24,41 +25,47 @@ use Symfony\Component\HttpKernel\Log\Logger;
 final class LogAggregationSubscriber implements EventSubscriberInterface
 {
 
+    public function __construct(
+        private readonly ?Logger $logger = null,
+    ) {
+        Timer::start( 'log_aggregation' );
+    }
 
-	public function __construct(
-		private readonly ?Logger $logger = null,
-	) {
-		Timer::start( 'log_aggregation' );
-	}
+    public function logAggregation() : void {
 
-	public function logAggregation() : void {
+        $loggerStartCount = count( $this->logger->getLogs() );
+        $log              = Log::inventory();
 
-		$loggerStartCount = count( $this->logger->getLogs() );
-		$log = Log::inventory();
+        foreach ( $log as $entry ) {
+            $this->logger->log(
+                strtolower( $entry->Level->name() ),
+                $entry->message,
+                $entry->context ?? [],
+            );
+        }
 
-		foreach ( $log as $entry ) {
-			$this->logger->log(
-				strtolower( $entry->Level->name() ),
-				$entry->message,
-				$entry->context ?? [],
-			);
-		}
+        $this->logger->info(
+            "Log aggregation completed in {time}. ",
+            [
+                'time'               => Timer::get( 'log_aggregation' ) . 'ms',
+                Log\Entry::class     => count( $log ),
+                $this->logger::class => $loggerStartCount,
+                'total'              => count( $this->logger->getLogs() ),
+            ],
+        );
 
-		$this->logger->info(
-			"Log aggregation completed in {time}.",
-			[
-				'time'               => Timer::get( 'log_aggregation' ) . 'ms',
-				Log\Entry::class     => count( $log ),
-				$this->logger::class => $loggerStartCount,
-				'total'              => count( $this->logger->getLogs() ),
-			],
-		);
+        $this->logger->info(
+            'PathfinderService has cached {count} paths.',
+            [
+                'count' => count( PathfinderService::getCache() ),
+                'cache' => PathfinderService::getCache(),
+            ],
+        );
+    }
 
-	}
-
-	public static function getSubscribedEvents() : array {
-		return [
-			'kernel.finish_request' => 'logAggregation',
-		];
-	}
+    public static function getSubscribedEvents() : array {
+        return [
+            'kernel.finish_request' => 'logAggregation',
+        ];
+    }
 }
