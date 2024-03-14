@@ -65,7 +65,7 @@ return static function ( ContainerConfigurator $container ) : void {
         //
         //
         // 📥 - Current Request Service
-              ->set( CurrentRequestService::class )
+              ->set( 'core.service.request', CurrentRequestService::class )
               ->args(
                   [
                       service( 'request_stack' ),
@@ -73,8 +73,7 @@ return static function ( ContainerConfigurator $container ) : void {
                   ],
               )
               ->autowire()
-              ->private()
-              ->alias( 'core.service.request', CurrentRequestService::class )
+              ->alias( CurrentRequestService::class, 'core.service.request' )
         //
         //
         // 🧭 - Pathfinder Service
@@ -85,7 +84,6 @@ return static function ( ContainerConfigurator $container ) : void {
                       service( 'logger' )->nullOnInvalid(),
                   ],
               )
-              ->public()
               ->autowire()
               ->alias( PathfinderService::class, 'core.service.pathfinder' )
         //

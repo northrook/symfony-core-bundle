@@ -102,7 +102,7 @@ class PathfinderService
     public static function getCache( bool $parameterCache = false ) : array {
 
         if ( $parameterCache ) {
-            return self::$parametersCache;
+            return self::$parametersCache ?? [];
         }
 
         return self::$pathfinderCache;
