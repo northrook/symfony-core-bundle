@@ -4,17 +4,17 @@ namespace Northrook\Symfony\Core;
 
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Support\Str;
-use Northrook\Types as Type;
+use Northrook\Types\Path;
 
-final class Path extends SymfonyCoreFacade
+final class Get extends SymfonyCoreFacade
 {
 
     /**
      * Only valid Paths will be cached
      *
-     * @var Type\Path[]
+     * @var Path[]
      */
-    private static array $cache = [];
+    private static array $pathfinderCache = [];
 
     /**
      * @var string[]
@@ -22,56 +22,56 @@ final class Path extends SymfonyCoreFacade
     private static array $parametersCache;
 
     /**
-     * @param string  $path  {@see ParameterBagInterface::get}
+     * @param string  $get  {@see ParameterBagInterface::get}
      *
-     * @return Type\Path|string
+     * @return Path|string
      */
-    public static function get( string $path ) : Type\Path | string {
+    public static function path( string $get ) : Path | string {
 
-        if ( isset( self::$cache[ $path ] ) ) {
-            return self::$cache[ $path ];
+        if ( isset( self::$pathfinderCache[ $get ] ) ) {
+            return self::$pathfinderCache[ $get ];
         }
 
-        $key = $path;
+        $key = $get;
 
-        $separator = Str::contains( $path, [ '/', '\\' ], true, true );
+        $separator = Str::contains( $get, [ '/', '\\' ], true, true );
 
         if ( $separator ) {
 
-            [ $root, $path ] = explode( $separator[ 0 ], $path, 2 );
+            [ $root, $get ] = explode( $separator[ 0 ], $get, 2 );
 
             $root = self::getParameters( $root );
 
             if ( null === $root ) {
                 Log::Alert(
                     message : 'Failed getting container parameter {get}, the parameter does not exist. Using {value} instead.',
-                    context : [ 'get' => $path, 'value' => 'null', ],
+                    context : [ 'get' => $get, 'value' => 'null', ],
                 );
                 $root = '/';
             }
 
 
-            $path = $root . $path;
+            $get = $root . $get;
         }
 
-        $path = new Type\Path( $path );
+        $get = new Path( $get );
 
-        if ( $path->isValid ) {
-            return Path::$cache[ $key ] = $path;
+        if ( $get->isValid ) {
+            return Get::$pathfinderCache[ $key ] = $get;
         }
 
         Log::Error(
             'Unable to resolve path {path}, the file or directory does not exist. The returned {type::class} is invalid.',
             [
-                'cacheKey'    => $path,
-                'path'        => $path->value,
-                'type'        => $path,
-                'type::class' => $path::class,
-                'cache'       => Path::$cache,
+                'cacheKey'    => $get,
+                'path'        => $get->value,
+                'type'        => $get,
+                'type::class' => $get::class,
+                'cache'       => Get::$pathfinderCache,
             ],
         );
 
-        return $path;
+        return $get;
     }
 
     private static function getParameters( string $get ) : array | string | null {
