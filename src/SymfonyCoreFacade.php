@@ -3,6 +3,7 @@
 namespace Northrook\Symfony\Core;
 
 use Northrook\Logger\Log;
+use Northrook\Symfony\Core\Services\PathfinderService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -27,7 +28,27 @@ abstract class SymfonyCoreFacade
                 ],
             );
             trigger_error(
-                'Failed getting container parameter {get}, the parameter does not exist. Returned {return} instead.',
+                'Failed getting container parameter "kernel", the parameter does not exist.',
+                E_USER_ERROR,
+            );
+        }
+    }
+
+    protected static function pathfinderService() : PathfinderService {
+        try {
+            return self::$container->get( 'core.service.pathfinder' );
+        }
+        catch ( NotFoundExceptionInterface | ContainerExceptionInterface $e ) {
+            Log::Emergency(
+                'Failed getting container parameter {get}, the {get} does not exist. {action} triggered.',
+                [
+                    'get'       => 'core.service.pathfinder',
+                    'action'    => 'E_USER_ERROR',
+                    'exception' => $e,
+                ],
+            );
+            trigger_error(
+                'Failed getting container parameter "core.service.pathfinder", the parameter does not exist.',
                 E_USER_ERROR,
             );
         }
