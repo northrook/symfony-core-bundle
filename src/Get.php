@@ -28,6 +28,7 @@ final class Get extends SymfonyCoreFacade
      */
     public static function path( string $get ) : Path | string {
 
+
         if ( isset( self::$pathfinderCache[ $get ] ) ) {
             return self::$pathfinderCache[ $get ];
         }
@@ -53,6 +54,9 @@ final class Get extends SymfonyCoreFacade
 
             $get = $root . $get;
         }
+        else {
+            $get = self::getParameters( $get ) ?? $get;
+        }
 
         $get = new Path( $get );
 
@@ -75,6 +79,7 @@ final class Get extends SymfonyCoreFacade
     }
 
     private static function getParameters( string $get ) : array | string | null {
+
 
         if ( isset( self::$parametersCache ) ) {
             return self::$parametersCache[ $get ] ?? null;
