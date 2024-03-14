@@ -12,6 +12,6 @@ final class File extends SymfonyCoreFacade
      * @return Path
      */
     public static function path( string $get ) : Path {
-        return self::pathfinderService()->get( $get );
+        return self::getPathfinderService()->get( $get );
     }
 }

@@ -3,18 +3,20 @@
 namespace Northrook\Symfony\Core;
 
 use Northrook\Logger\Log;
+use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel as App;
 
 abstract class SymfonyCoreFacade
 {
     protected static ContainerInterface $container;
 
-    protected static function kernel() : App\Kernel {
+    protected static function getKernel() : App\Kernel {
         try {
             return self::$container->get( 'kernel' );
         }
@@ -34,7 +36,47 @@ abstract class SymfonyCoreFacade
         }
     }
 
-    protected static function pathfinderService() : PathfinderService {
+    protected static function getRequestStack() : RequestStack {
+        try {
+            return self::$container->get( 'request_stack' );
+        }
+        catch ( NotFoundExceptionInterface | ContainerExceptionInterface $e ) {
+            Log::Emergency(
+                'Failed getting container parameter {get}, the {get} does not exist. {action} triggered.',
+                [
+                    'get'       => 'request_stack',
+                    'action'    => 'E_USER_ERROR',
+                    'exception' => $e,
+                ],
+            );
+            trigger_error(
+                'Failed getting container parameter "request_stack", the parameter does not exist.',
+                E_USER_ERROR,
+            );
+        }
+    }
+
+    protected static function getCurrentRequestService() : CurrentRequestService {
+        try {
+            return self::$container->get( 'core.service.request' );
+        }
+        catch ( NotFoundExceptionInterface | ContainerExceptionInterface $e ) {
+            Log::Emergency(
+                'Failed getting container parameter {get}, the {get} does not exist. {action} triggered.',
+                [
+                    'get'       => 'core.service.request',
+                    'action'    => 'E_USER_ERROR',
+                    'exception' => $e,
+                ],
+            );
+            trigger_error(
+                'Failed getting container parameter "core.service.request", the parameter does not exist.',
+                E_USER_ERROR,
+            );
+        }
+    }
+
+    protected static function getPathfinderService() : PathfinderService {
         try {
             return self::$container->get( 'core.service.pathfinder' );
         }
@@ -54,8 +96,8 @@ abstract class SymfonyCoreFacade
         }
     }
 
-    protected static function parameterBag() : ParameterBagInterface {
-        return self::kernel()->getContainer()->getParameterBag();
+    protected static function getParameterBag() : ParameterBagInterface {
+        return self::getKernel()->getContainer()->getParameterBag();
     }
 
     public static function set( ContainerInterface $container ) : void {

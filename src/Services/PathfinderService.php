@@ -99,7 +99,12 @@ class PathfinderService
         return self::$parametersCache[ $name ] ?? null;
     }
 
-    public static function getCache() : array {
+    public static function getCache( bool $parameterCache = false ) : array {
+
+        if ( $parameterCache ) {
+            return self::$parametersCache;
+        }
+
         return self::$pathfinderCache;
     }
 

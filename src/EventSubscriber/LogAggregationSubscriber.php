@@ -57,8 +57,9 @@ final class LogAggregationSubscriber implements EventSubscriberInterface
         $this->logger->info(
             'PathfinderService has cached {count} paths.',
             [
-                'count' => count( PathfinderService::getCache() ),
-                'cache' => PathfinderService::getCache(),
+                'count'      => count( PathfinderService::getCache() ),
+                'paths'      => PathfinderService::getCache(),
+                'parameters' => PathfinderService::getCache( true ),
             ],
         );
     }
