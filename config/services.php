@@ -8,22 +8,21 @@ use Northrook\Symfony\Core\Latte\DocumentParameters;
 use Northrook\Symfony\Core\Services\ContentManagementService;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\PathfinderService;
-use Northrook\Symfony\Core\Support\Path;
+use Northrook\Symfony\Core\Support\Str;
 
 return static function ( ContainerConfigurator $container ) : void {
-    
+    //
     // Parameters
     $container->parameters()
-              ->set( 'env', '%kernel.environment%' )
-              ->set( 'dir.root', Path::from( '%kernel.project_dir%' ) )
-              ->set( 'dir.assets', Path::from( '%kernel.project_dir%/assets' ) )
-              ->set( 'dir.public', Path::from( "%kernel.project_dir%/public" ) )
-              ->set( 'dir.public.assets', Path::from( "%kernel.project_dir%/public/assets" ) )
-              ->set( 'dir.cache', Path::from( "%kernel.project_dir%/var/cache" ) )
-              ->set( 'dir.templates', Path::from( "%kernel.project_dir%/templates" ) )
+              ->set( 'dir.root', Str::parameterDirname( '%kernel.project_dir%' ) )
+              ->set( 'dir.assets', Str::parameterDirname( '%kernel.project_dir%/assets' ) )
+              ->set( 'dir.public', Str::parameterDirname( "%kernel.project_dir%/public" ) )
+              ->set( 'dir.public.assets', Str::parameterDirname( "%kernel.project_dir%/public/assets" ) )
+              ->set( 'dir.cache', Str::parameterDirname( "%kernel.project_dir%/var/cache" ) )
+              ->set( 'dir.templates', Str::parameterDirname( "%kernel.project_dir%/templates" ) )
               ->set( 'ttl.cache', 86400 )
     ;
-
+    //
     // Services
     $container->services()
         //
@@ -99,6 +98,4 @@ return static function ( ContainerConfigurator $container ) : void {
               )
               ->tag( 'kernel.event_subscriber', [ 'priority' => 100 ] )
     ;
-
-
 };
