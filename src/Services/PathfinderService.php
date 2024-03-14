@@ -2,7 +2,7 @@
 
 namespace Northrook\Symfony\Core\Services;
 
-use Northrook\Symfony\Core\Get;
+use Northrook\Symfony\Core\File;
 use Northrook\Types\Path;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -11,7 +11,7 @@ class PathfinderService
 {
 
     /**
-     * @var Get[]
+     * @var File[]
      */
     private array $parameterCache = [];
 
@@ -30,6 +30,6 @@ class PathfinderService
         string  $path,
         ?string $add = null,
     ) : Path {
-        return Get::path( $path );
+        return File::get( $path );
     }
 }

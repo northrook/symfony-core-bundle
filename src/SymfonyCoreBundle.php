@@ -25,7 +25,7 @@ final class SymfonyCoreBundle extends AbstractBundle
         $container->import( '../config/services.php' );
     }
 
-    public function boot() {
+    public function boot() : void {
         parent::boot();
         SymfonyCoreFacade::set( $this->container );
     }

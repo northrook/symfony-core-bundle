@@ -6,7 +6,7 @@ use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Support\Str;
 use Northrook\Types\Path;
 
-final class Get extends SymfonyCoreFacade
+final class File extends SymfonyCoreFacade
 {
 
     /**
@@ -22,60 +22,60 @@ final class Get extends SymfonyCoreFacade
     private static array $parametersCache;
 
     /**
-     * @param string  $get  {@see ParameterBagInterface::get}
+     * @param string  $path  {@see ParameterBagInterface::get}
      *
-     * @return Path|string
+     * @return Path
      */
-    public static function path( string $get ) : Path | string {
+    public static function get( string $path ) : Path {
 
 
-        if ( isset( self::$pathfinderCache[ $get ] ) ) {
-            return self::$pathfinderCache[ $get ];
+        if ( isset( self::$pathfinderCache[ $path ] ) ) {
+            return self::$pathfinderCache[ $path ];
         }
 
-        $key = $get;
+        $key = $path;
 
-        $separator = Str::contains( $get, [ '/', '\\' ], true, true );
+        $separator = Str::contains( $path, [ '/', '\\' ], true, true );
 
         if ( $separator ) {
 
-            [ $root, $get ] = explode( $separator[ 0 ], $get, 2 );
+            [ $root, $path ] = explode( $separator[ 0 ], $path, 2 );
 
             $root = self::getParameters( $root );
 
             if ( null === $root ) {
                 Log::Alert(
                     message : 'Failed getting container parameter {get}, the parameter does not exist. Using {value} instead.',
-                    context : [ 'get' => $get, 'value' => 'null', ],
+                    context : [ 'get' => $path, 'value' => 'null', ],
                 );
                 $root = '/';
             }
 
 
-            $get = $root . $get;
+            $path = $root . $path;
         }
         else {
-            $get = self::getParameters( $get ) ?? $get;
+            $path = self::getParameters( $path ) ?? $path;
         }
 
-        $get = new Path( $get );
+        $path = new Path( $path );
 
-        if ( $get->isValid ) {
-            return Get::$pathfinderCache[ $key ] = $get;
+        if ( $path->isValid ) {
+            return File::$pathfinderCache[ $key ] = $path;
         }
 
         Log::Error(
             'Unable to resolve path {path}, the file or directory does not exist. The returned {type::class} is invalid.',
             [
-                'cacheKey'    => $get,
-                'path'        => $get->value,
-                'type'        => $get,
-                'type::class' => $get::class,
-                'cache'       => Get::$pathfinderCache,
+                'cacheKey'    => $path,
+                'path'        => $path->value,
+                'type'        => $path,
+                'type::class' => $path::class,
+                'cache'       => File::$pathfinderCache,
             ],
         );
 
-        return $get;
+        return $path;
     }
 
     private static function getParameters( string $get ) : array | string | null {
