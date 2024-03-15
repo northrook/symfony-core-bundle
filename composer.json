@@ -23,7 +23,6 @@
     "symfony/http-kernel": "^7.0",
     "northrook/symfony-latte-bundle": "dev-main",
     "northrook/symfony-stylesheets-bundle": "dev-main",
-    "northrook/symfony-components-bundle": "dev-main",
     "northrook/logger": "dev-main",
     "northrook/types": "dev-main",
     "symfony/event-dispatcher": "^7.0",
