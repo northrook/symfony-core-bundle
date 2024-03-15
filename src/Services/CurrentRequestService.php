@@ -3,49 +3,40 @@
 namespace Northrook\Symfony\Core\Services;
 
 use Northrook\Logger\Debug;
-use Northrook\Logger\Log;
-use Northrook\Support\Attributes\Development;
-use Northrook\Support\Attributes\EntryPoint;
-use Northrook\Symfony\Core\Controller\AbstractCoreController;
+use Northrook\Symfony\Core as Core;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\HeaderBag;
-use Symfony\Component\HttpFoundation\InputBag;
-use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation as Http;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Current Request Service
  *
- * @property Request $request   Get the current request from the container request stack.
- * @property string  $routeName Get the current `root:route` name.
- * @property string  $routeRoot Get the current `root` name.
- * @property string  $pathInfo  Get the current path info. Always starts with a /. Not urlecoded.
+ * @property Http\Request $request   Get the current request from the container request stack.
+ * @property string       $routeName Get the current `root:route` name.
+ * @property string       $routeRoot Get the current `root` name.
+ * @property string       $pathInfo  Get the current path info. Always starts with a /. Not urlecoded.
  *
  * @author Martin Nielsen <mn@northrook.com>
  */
-#[Development( 'beta' )]
 class CurrentRequestService
 {
-    private static CurrentRequestService $instance;
-
-    #[EntryPoint( 'autowire', AbstractCoreController::class )]
+    /**
+     * Injected into {@see Core\Controller\AbstractCoreController} as $current, and available via {@see Core\Request} om-demand.
+     *
+     * @param Http\RequestStack     $requestStack
+     * @param null|LoggerInterface  $logger
+     */
     public function __construct(
-        private readonly RequestStack     $requestStack,
-        private readonly ?LoggerInterface $logger = null,
-    ) {
-        if ( !isset( self::$instance ) ) {
-            self::$instance = $this;
-        }
-    }
+        private readonly Http\RequestStack $requestStack,
+        private readonly ?LoggerInterface  $logger = null,
+    ) {}
 
     /**
      * @param string  $name
      *
-     * @return Request|string|null
+     * @return Http\Request|string|null
      */
-    public function __get( string $name ) : Request | string | null {
+    public function __get( string $name ) : Http\Request | string | null {
 
         $get = match ( $name ) {
             'request'   => $this->currentRequest(),
@@ -75,20 +66,20 @@ class CurrentRequestService
     }
 
     /**
-     * @param  ?string  $get  {@see Request::get}
+     * @param  ?string  $get  {@see Http\Request::get}
      *
-     * @return ParameterBag|array|string|int|bool|float|null
+     * @return Http\ParameterBag|array|string|int|bool|float|null
      */
-    public function parameter( ?string $get = null ) : ParameterBag | array | string | int | bool | float | null {
+    public function parameter( ?string $get = null ) : Http\ParameterBag | array | string | int | bool | float | null {
         return $get ? $this->currentRequest()->get( $get ) : $this->currentRequest()->attributes;
     }
 
     /**
      * @param string|null  $get  {@see  InputBag::get}
      *
-     * @return InputBag|string|int|float|bool|null
+     * @return Http\InputBag|string|int|float|bool|null
      */
-    public function query( ?string $get = null ) : InputBag | string | int | float | bool | null {
+    public function query( ?string $get = null ) : Http\InputBag | string | int | float | bool | null {
         return $get ? $this->currentRequest()->query->get( $get ) : $this->currentRequest()->query;
     }
 
@@ -105,20 +96,20 @@ class CurrentRequestService
     }
 
     /**
-     * @param string|null  $get  {@see HeaderBag::get}
+     * @param string|null  $get  {@see Http\HeaderBag::get}
      *
-     * @return HeaderBag|string|null
+     * @return Http\HeaderBag|string|null
      */
-    public function headers( ?string $get = null ) : HeaderBag | string | null {
+    public function headers( ?string $get = null ) : Http\HeaderBag | string | null {
         return $get ? $this->currentRequest()->headers->get( $get ) : $this->currentRequest()->headers;
     }
 
     /**
-     * @param string|null  $get  {@see InputBag::get}
+     * @param string|null  $get  {@see Http\InputBag::get}
      *
-     * @return InputBag|string|int|float|bool|null
+     * @return Http\InputBag|string|int|float|bool|null
      */
-    public function cookies( ?string $get = null ) : InputBag | string | int | float | bool | null {
+    public function cookies( ?string $get = null ) : Http\InputBag | string | int | float | bool | null {
         return $get ? $this->currentRequest()->cookies->get( $get ) : $this->currentRequest()->cookies;
     }
 
@@ -144,33 +135,15 @@ class CurrentRequestService
         return $this->currentRequest()->getPathInfo();
     }
 
-    protected static function getCurrentRequestService() : self {
-
-        if ( isset( self::$instance ) ) {
-            return self::$instance;
-        }
-
-        Log::Error(
-            message : 'Could not find the current request. Returned new {return}.',
-            context : [ 'return' => 'Request()' ],
-        );
-
-        trigger_error(
-            message     : 'Could not find the current request. Returned new {return}.',
-            error_level : E_USER_ERROR,
-        );
-    }
-
     /** Get the current request from the container request stack.
      *
      * * Will return the current request if it exists, otherwise it will return a new request.
      *
-     * @return Request The current request
+     * @return Http\Request The current request
      * @version 1.0 ✅
-     * @uses    \Symfony\Component\HttpFoundation\RequestStack
+     * @uses    Http\RequestStack
      */
-    private function currentRequest() : Request {
-
+    private function currentRequest() : Http\Request {
         $request = $this->requestStack->getCurrentRequest();
 
         if ( null !== $request && $this->logger ) {
@@ -178,12 +151,12 @@ class CurrentRequestService
                 'Could not find the current request. Returned new {return}.',
                 [
                     'return' => 'Request()',
-                    'class'  => Request::class,
+                    'class'  => Http\Request::class,
                     'caller' => debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS )[ 0 ],
                 ],
             );
         }
 
-        return $request ?? new Request();
+        return $request ?? new Http\Request();
     }
 }
