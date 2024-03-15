@@ -3,6 +3,7 @@
 namespace Northrook\Symfony\Core\Services;
 
 use Northrook\Logger\Debug;
+use Northrook\Logger\Log;
 use Northrook\Support\Attributes\Development;
 use Northrook\Support\Attributes\EntryPoint;
 use Northrook\Symfony\Core\Controller\AbstractCoreController;
@@ -27,12 +28,17 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 #[Development( 'beta' )]
 class CurrentRequestService
 {
+    private static CurrentRequestService $instance;
 
     #[EntryPoint( 'autowire', AbstractCoreController::class )]
     public function __construct(
         private readonly RequestStack     $requestStack,
         private readonly ?LoggerInterface $logger = null,
-    ) {}
+    ) {
+        if ( !isset( self::$instance ) ) {
+            self::$instance = $this;
+        }
+    }
 
     /**
      * @param string  $name
@@ -138,6 +144,22 @@ class CurrentRequestService
         return $this->currentRequest()->getPathInfo();
     }
 
+    protected static function getCurrentRequestService() : self {
+
+        if ( isset( self::$instance ) ) {
+            return self::$instance;
+        }
+
+        Log::Error(
+            message : 'Could not find the current request. Returned new {return}.',
+            context : [ 'return' => 'Request()' ],
+        );
+
+        trigger_error(
+            message     : 'Could not find the current request. Returned new {return}.',
+            error_level : E_USER_ERROR,
+        );
+    }
 
     /** Get the current request from the container request stack.
      *
@@ -148,6 +170,7 @@ class CurrentRequestService
      * @uses    \Symfony\Component\HttpFoundation\RequestStack
      */
     private function currentRequest() : Request {
+
         $request = $this->requestStack->getCurrentRequest();
 
         if ( null !== $request && $this->logger ) {

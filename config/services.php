@@ -73,6 +73,7 @@ return static function ( ContainerConfigurator $container ) : void {
                   ],
               )
               ->autowire()
+              ->public()
               ->alias( CurrentRequestService::class, 'core.service.request' )
         //
         //
@@ -85,6 +86,7 @@ return static function ( ContainerConfigurator $container ) : void {
                   ],
               )
               ->autowire()
+              ->public()
               ->alias( PathfinderService::class, 'core.service.pathfinder' )
         //
         //
