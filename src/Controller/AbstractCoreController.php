@@ -7,8 +7,6 @@ use Northrook\Elements\Element;
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Latte;
-use Northrook\Symfony\Latte\LatteBundleExtension;
-use Northrook\Symfony\Latte\LatteEnvironment;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -30,7 +28,7 @@ abstract class AbstractCoreController extends AbstractController
 {
     protected ContainerInterface    $container;
     protected CurrentRequestService $request;
-    protected ?LatteEnvironment     $latte;
+    protected ?Latte\Environment    $latte;
 
     /** Runs on container initialization.
      *
@@ -68,8 +66,8 @@ abstract class AbstractCoreController extends AbstractController
             [
                 'core.service.request'    => '?' . CurrentRequestService::class,
                 'core.latte.preprocessor' => '?' . LatteComponentPreprocessor::class,
-                'latte.environment'       => '?' . LatteEnvironment::class,
-                'latte.core.extension'    => '?' . LatteBundleExtension::class,
+                'latte.environment'       => '?' . Latte\Environment::class,
+                'latte.core.extension'    => '?' . Latte\CoreExtension::class,
             ],
         );
     }
@@ -85,7 +83,7 @@ abstract class AbstractCoreController extends AbstractController
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    protected function getLatte() : LatteEnvironment {
+    protected function getLatte() : Latte\Environment {
 
         if ( !$this->container->has( 'latte.environment' ) || !$this->container->has( 'core.latte.preprocessor' ) ) {
             throw new LogicException(
