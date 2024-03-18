@@ -27,7 +27,9 @@
     "northrook/types": "dev-main",
     "symfony/event-dispatcher": "^7.0",
     "ext-dom": "*",
-    "ext-libxml": "*"
+    "ext-libxml": "*",
+    "symfony/stopwatch": "7",
+    "northrook/symfony-components-bundle": "dev-main"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
@@ -37,7 +39,6 @@
     "doctrine/doctrine-bundle": "^2.8",
     "doctrine/annotations": "^1.0",
     "symfony/web-profiler-bundle": "^7",
-    "symfony/stopwatch": "7",
     "symfony/profiler-pack": "dev-main"
   }
 }

@@ -21,12 +21,12 @@ final class File extends SymfonyCoreFacade
     }
 
     public static function getMimeType( Path | string $path ) : ?string {
-        $types = File::$cache[ 'mime.types' ] ??= include( Str::parameterDirname( '../resources/mimetypes.php' ) );
+        $types = File::$cache[ 'mime.types' ] ??= include( Str::parameterDirname( '../../resources/mimetypes.php' ) );
 
         if ( array_key_exists( $path->extension, $types ) ) {
             return $types[ $path->extension ];
         }
-        
+
         return null;
     }
 

@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * This file is part of the Northrook Core Symfony Bundle.
+ *
+ * Contains mimetypes for simple .extension lookup.
+ *
+ * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+ */
+
 return [
 
     // Text and XML
