@@ -4,6 +4,7 @@ namespace Northrook\Symfony\Core\Controller;
 
 use LogicException;
 use Northrook\Elements\Element;
+use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Latte;
@@ -21,6 +22,8 @@ use Symfony\Contracts\Service\Attribute\SubscribedService;
  *
  * * Integrates {@see Latte\Environment} from `northrook/symfony-latte-bundle`
  *
+ * @property ?Latte\Environment $latte
+ *
  * @version 0.1.0 ☑️
  * @author  Martin Nielsen <mn@northrook.com>
  */
@@ -28,7 +31,22 @@ abstract class AbstractCoreController extends AbstractController
 {
     protected ContainerInterface    $container;
     protected CurrentRequestService $request;
-    protected ?Latte\Environment    $latte;
+
+//    protected ?Latte\Environment    $latte;
+
+
+    public function __get( string $name ) : mixed {
+        $name = "get" . ucfirst( $name ) . 'Service';
+        if ( method_exists( $this, $name ) ) {
+            try {
+                return $this->$name() ?? null;
+            }
+            catch ( ContainerExceptionInterface | NotFoundExceptionInterface$e ) {
+                Log::error( $e->getMessage() );
+            }
+        }
+        return null;
+    }
 
     /** Runs on container initialization.
      *
@@ -83,7 +101,7 @@ abstract class AbstractCoreController extends AbstractController
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    protected function getLatte() : Latte\Environment {
+    protected function getLatteService() : Latte\Environment {
 
         if ( !$this->container->has( 'latte.environment' ) || !$this->container->has( 'core.latte.preprocessor' ) ) {
             throw new LogicException(
@@ -105,15 +123,13 @@ abstract class AbstractCoreController extends AbstractController
      * @param object|array|null  $parameters
      *
      * @return string
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function latte(
         string                $view,
         object | array | null $parameters = null,
     ) : string {
 
-        $this->latte ??= $this->getLatte();
+//        $this->latte ??= $this->getLatte();
 
         $this->__onLatteRender();
 
@@ -124,8 +140,6 @@ abstract class AbstractCoreController extends AbstractController
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function modalResponse(
         string         $view,
