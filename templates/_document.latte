@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="{$get->language}" id="top" theme="{$get->theme}" status="init">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    
+    {*    <script n:foreach="$document->scripts as $path" src="{$path->value}" defer></script>*}
+
+    {*    {$get->coreScripts()}*}
+</head>
+{*{$get->}*}
+{*{$get->sitename ?? null | echo}*}
+{*<!-- {$document->echo('open')} -->*}
+{block 'body'}{/block}
+{*<!-- {$document->echo('close')} -->*}
+</html> 

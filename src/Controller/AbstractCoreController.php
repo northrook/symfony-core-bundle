@@ -3,7 +3,7 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use LogicException;
-use Northrook\Components\Element;
+use Northrook\Elements\Element;
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Latte;
@@ -30,7 +30,7 @@ abstract class AbstractCoreController extends AbstractController
     protected ContainerInterface    $container;
     protected CurrentRequestService $request;
     protected ?Latte\Environment    $latte;
-    
+
     /** Runs on container initialization.
      *
      * * Modified from the Symfony AbstractController
