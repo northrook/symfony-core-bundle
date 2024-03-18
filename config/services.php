@@ -4,7 +4,6 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
-use Northrook\Symfony\Core\Latte\DocumentParameters;
 use Northrook\Symfony\Core\Services\ContentManagementService;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\PathfinderService;
@@ -36,21 +35,6 @@ return static function ( ContainerConfigurator $container ) : void {
                   ],
               )
               ->alias( LatteComponentPreprocessor::class, 'core.latte.preprocessor' )
-        //
-        //
-        // ☕ - Document Parameters
-              ->set( 'core.latte.document.parameters', DocumentParameters::class )
-              ->args(
-                  [
-                      service( 'core.service.request' ),
-                      service( 'core.service.content' ),
-                      service( 'core.service.pathfinder' ),
-                      service( 'logger' )->nullOnInvalid(),
-                  ],
-              )
-              ->autowire()
-              ->public()
-              ->alias( DocumentParameters::class, 'core.latte.document.parameters' )
         //
         //
         // 🗃️️ - Content Management Service

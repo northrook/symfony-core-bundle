@@ -8,6 +8,7 @@ use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Latte;
+use Northrook\Symfony\Latte\Parameters\DocumentParameters;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -31,6 +32,7 @@ abstract class AbstractCoreController extends AbstractController
 {
     protected ContainerInterface    $container;
     protected CurrentRequestService $request;
+    protected DocumentParameters    $document;
 
 //    protected ?Latte\Environment    $latte;
 
@@ -132,6 +134,17 @@ abstract class AbstractCoreController extends AbstractController
 //        $this->latte ??= $this->getLatte();
 
         $this->__onLatteRender();
+
+        $parameters ??= [];
+
+//        dd( property_exists( $this, 'document' ), $this->document::class, DocumentParameters::class );
+
+        if ( is_array( $parameters )
+             && isset( $this->document ) ) {
+            $parameters[ 'document' ] = $this->document;
+            dd( $parameters );
+        }
+
 
         return $this->latte->render(
             template   : $view,

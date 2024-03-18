@@ -19,6 +19,8 @@ use Psr\Log\LoggerInterface;
  * @property string $description
  * @property string $keywords
  *
+ * @deprecated
+ *
  */
 final class DocumentParameters
 {
