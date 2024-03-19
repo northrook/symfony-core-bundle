@@ -84,19 +84,16 @@ class PathfinderService
         return $path;
     }
 
-    private function getParameter( string $name ) : ?string {
-
-        if ( isset( self::$parametersCache ) ) {
-            return self::$parametersCache[ $name ] ?? null;
-        }
-
-        self::$parametersCache = array_filter(
+    public function getParameters() : array {
+        return self::$parametersCache ??= self::$parametersCache = array_filter(
             array    : $this->parameter->all(),
             callback : static fn ( $value, $key ) => is_string( $value ) && str_contains( $key, 'dir' ),
             mode     : ARRAY_FILTER_USE_BOTH,
         );
+    }
 
-        return self::$parametersCache[ $name ] ?? null;
+    private function getParameter( string $name ) : ?string {
+        return $this->getParameters()[ $name ] ?? null;
     }
 
     public static function getCache( bool $parameterCache = false ) : array {

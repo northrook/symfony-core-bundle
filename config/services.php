@@ -19,6 +19,7 @@ return static function ( ContainerConfigurator $container ) : void {
               ->set( 'dir.public.assets', Str::parameterDirname( "%kernel.project_dir%/public/assets" ) )
               ->set( 'dir.cache', Str::parameterDirname( "%kernel.project_dir%/var/cache" ) )
               ->set( 'dir.templates', Str::parameterDirname( "%kernel.project_dir%/templates" ) )
+              ->set( 'dir.latte.templates.core', Str::parameterDirname( '../../templates' ) )
               ->set( 'ttl.cache', 86400 )
     ;
     //
