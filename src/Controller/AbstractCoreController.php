@@ -30,12 +30,10 @@ use Symfony\Contracts\Service\Attribute\SubscribedService;
  */
 abstract class AbstractCoreController extends AbstractController
 {
+    private ?Latte\Environment      $latte = null;
     protected ContainerInterface    $container;
     protected CurrentRequestService $request;
     protected DocumentParameters    $document;
-
-//    protected ?Latte\Environment    $latte;
-
 
     public function __get( string $name ) : mixed {
         $name = "get" . ucfirst( $name ) . 'Service';
