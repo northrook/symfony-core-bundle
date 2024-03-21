@@ -7,8 +7,8 @@ use Northrook\Elements\Element;
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
-use Northrook\Symfony\Latte;
-use Northrook\Symfony\Latte\Parameters\DocumentParameters;
+use Northrook\Symfony\Latte\Core;
+use Northrook\Symfony\Latte\Parameters;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -21,19 +21,20 @@ use Symfony\Contracts\Service\Attribute\SubscribedService;
 /**
  * Abstract Core Controller
  *
- * * Integrates {@see Latte\Environment} from `northrook/symfony-latte-bundle`
+ * * Integrates {@see Core\Environment} from `northrook/symfony-latte-bundle`
  *
- * @property ?Latte\Environment $latte
+ * @property ?Core\Environment $latte
  *
  * @version 0.1.0 ☑️
  * @author  Martin Nielsen <mn@northrook.com>
  */
 abstract class AbstractCoreController extends AbstractController
 {
-    private ?Latte\Environment      $latte = null;
+    private ?Core\Environment       $latteEnvironment = null;
     protected ContainerInterface    $container;
     protected CurrentRequestService $request;
-    protected DocumentParameters    $document;
+    protected Parameters\Document   $document;
+    protected Parameters\Content    $content;
 
     public function __get( string $name ) : mixed {
         $name = "get" . ucfirst( $name ) . 'Service';
@@ -84,14 +85,13 @@ abstract class AbstractCoreController extends AbstractController
             [
                 'core.service.request'    => '?' . CurrentRequestService::class,
                 'core.latte.preprocessor' => '?' . LatteComponentPreprocessor::class,
-                'latte.environment'       => '?' . Latte\Environment::class,
-                'latte.core.extension'    => '?' . Latte\CoreExtension::class,
+                'latte.environment'       => '?' . Core\Environment::class,
             ],
         );
     }
 
     /**
-     * Run at the very start of the {@see Latte\Environment} render chain.
+     * Run at the very start of the {@see Core\Environment} render chain.
      *
      * @return void
      */
@@ -101,7 +101,7 @@ abstract class AbstractCoreController extends AbstractController
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    protected function getLatteService() : Latte\Environment {
+    protected function getLatteService() : Core\Environment {
 
         if ( !$this->container->has( 'latte.environment' ) || !$this->container->has( 'core.latte.preprocessor' ) ) {
             throw new LogicException(
@@ -109,13 +109,13 @@ abstract class AbstractCoreController extends AbstractController
             );
         }
 
-        $this->latte ??= $this->container->get( 'latte.environment' );
+        $this->latteEnvironment ??= $this->container->get( 'latte.environment' );
 
-        $this->latte->addExtension();
-        $this->latte->addPreprocessor( $this->container->get( 'core.latte.preprocessor' ) );
+        // $this->latteEnvironment->addExtension();
 
+        $this->latteEnvironment->addPreprocessor( $this->container->get( 'core.latte.preprocessor' ) );
 
-        return $this->latte;
+        return $this->latteEnvironment;
     }
 
     /**
@@ -129,7 +129,7 @@ abstract class AbstractCoreController extends AbstractController
         object | array | null $parameters = null,
     ) : string {
 
-//        $this->latte ??= $this->getLatte();
+//        $this->latteEnviroment ??= $this->getLatte();
 
         $this->__onLatteRender();
 
@@ -137,10 +137,9 @@ abstract class AbstractCoreController extends AbstractController
 
 //        dd( property_exists( $this, 'document' ), $this->document::class, DocumentParameters::class );
 
-        if ( is_array( $parameters )
-             && isset( $this->document ) ) {
+        if ( is_array( $parameters ) && isset( $this->document ) ) {
             $parameters[ 'document' ] = $this->document;
-            dd( $parameters );
+//            dd( $parameters );
         }
 
 
@@ -188,8 +187,6 @@ abstract class AbstractCoreController extends AbstractController
      * @param array         $headers
      *
      * @return Response
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function latteResponse(
         string         $view,

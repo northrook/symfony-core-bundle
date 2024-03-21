@@ -2,12 +2,8 @@
 
 namespace Northrook\Symfony\Core\Components;
 
-use Northrook\Components\Asset;
-use Northrook\Components\Element;
-use Northrook\Components\Icon;
-use Northrook\Components\Image;
 use Northrook\Support\Regex;
-use Northrook\Symfony\Latte\Preprocessor;
+use Northrook\Symfony\Latte\Preprocessor\Preprocessor;
 
 final class LatteComponentPreprocessor extends Preprocessor
 {
