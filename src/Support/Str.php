@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\Support;
 
+use JetBrains\PhpStorm\Deprecated;
 use JetBrains\PhpStorm\ExpectedValues;
 use Northrook\Logger\Log;
 use Northrook\Types as Type;
@@ -9,6 +10,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 final class Str
 {
+
+    #[Deprecated( 'Use ' . \Northrook\Support\Str::class . '::contains() instead.' )]
     public static function contains(
         string         $string,
         string | array $needle,
