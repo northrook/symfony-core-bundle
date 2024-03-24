@@ -2,16 +2,41 @@
 <html lang="{$get->language}" id="top" theme="{$get->theme}" status="init">
 <head>
 
+    <!-- Document Meta -->
     <meta charset="UTF-8">
-    <title>{$get->document->title}</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="{$document->robots}">
+
+    <!-- Content Tags -->
+    <title>{$document->title}</title>
+    <meta n:foreach="$document->meta('info') as $name => $content" name="{$name}" content="{$content}"/>
+
+    <!-- Favicon -->
+    <meta n:foreach="$document->meta('favicon') as $name => $content" name="{$name}" content="{$content}"/>
+
+    <!-- Theme -->
+    <meta name="theme-color" content="{$get->theme->color}">
+    <meta name="color-scheme" content="{$get->theme->scheme}">
+
+    <!-- Facebook -->
+    <!-- Twitter -->
+    <!-- LinkedIn -->
+
+
+    <!-- Preload Assets -->
+
+    <!-- Styles -->
+
+
+    <!-- Scripts -->
+
 
     {*    <script n:foreach="$document->scripts as $path" src="{$path->value}" defer></script>*}
 
     {*    {$get->coreScripts()}*}
 </head>
 
-{dump( $get, $document )}}
+{dump( $get, $document )}
 {*{$get->}*}
 {*{$get->sitename ?? null | echo}*}
 {*<!-- {$document->echo('open')} -->*}

@@ -7,6 +7,8 @@ use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Symfony\Core\Support\Str;
 use Northrook\Types\Path;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 final class File extends SymfonyCoreFacade
@@ -108,5 +110,84 @@ final class File extends SymfonyCoreFacade
         };
 
         return $path;
+    }
+
+
+    /**
+     * Copies a file.
+     *
+     * If the target file is older than the origin file, it's always overwritten.
+     * If the target file is newer, it is overwritten only when the
+     * $overwriteNewerFiles option is set to true.
+     *
+     */
+    public static function copy( string $originFile, string $targetFile, bool $overwriteNewerFiles = false ) : void {
+        try {
+            ( new Filesystem() )->copy( $originFile, $targetFile, $overwriteNewerFiles );
+        }
+        catch ( FileNotFoundException | IOException $e ) {
+            Log::Error( message : $e->getMessage(), context : [ 'exception' => $e ] );
+        }
+    }
+
+
+    /**
+     * Creates a directory recursively.
+     */
+    public static function mkdir( string | iterable $dirs, int $mode = 0777 ) : void {
+        try {
+            ( new Filesystem() )->mkdir( $dirs, $mode );
+        }
+        catch ( IOException $e ) {
+            Log::Error( message : $e->getMessage(), context : [ 'exception' => $e ] );
+        }
+    }
+
+
+    /**
+     * Checks the existence of files or directories.
+     */
+    public static function exists( string | iterable $files ) : bool {
+        return ( new Filesystem() )->exists( $files );
+    }
+
+    /**
+     * Sets access and modification time of file.
+     *
+     * @param int|null  $time   The touch time as a Unix timestamp, if not supplied the current system time is used
+     * @param int|null  $atime  The access time as a Unix timestamp, if not supplied the current system time is used
+     *
+     */
+    public static function touch( string | iterable $files, ?int $time = null, ?int $atime = null ) : void {
+        try {
+            ( new Filesystem() )->touch( $files, $time, $atime );
+        }
+        catch ( IOException $e ) {
+            Log::Error( message : $e->getMessage(), context : [ 'exception' => $e ] );
+        }
+    }
+
+    /**
+     * Removes files or directories.
+     */
+    public static function remove( string | iterable $files ) : void {
+        try {
+            ( new Filesystem() )->remove( $files );
+        }
+        catch ( IOException $e ) {
+            Log::Error( message : $e->getMessage(), context : [ 'exception' => $e ] );
+        }
+    }
+
+    /**
+     * Renames a file or a directory.
+     */
+    public static function rename( string $origin, string $target, bool $overwrite = false ) : void {
+        try {
+            ( new Filesystem() )->rename( $origin, $target, $overwrite );
+        }
+        catch ( IOException $e ) {
+            Log::Error( message : $e->getMessage(), context : [ 'exception' => $e ] );
+        }
     }
 }
