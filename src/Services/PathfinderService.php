@@ -84,7 +84,7 @@ class PathfinderService
         return $path;
     }
 
-    public function getParameters() : array {
+    private function getParameters() : array {
         return self::$parametersCache ??= self::$parametersCache = array_filter(
             array    : $this->parameter->all(),
             callback : static fn ( $value, $key ) => is_string( $value ) && str_contains( $key, 'dir' ),
@@ -92,7 +92,7 @@ class PathfinderService
         );
     }
 
-    private function getParameter( string $name ) : ?string {
+    public function getParameter( string $name ) : ?string {
         return $this->getParameters()[ $name ] ?? null;
     }
 
