@@ -26,12 +26,11 @@
     <!-- Preload Assets -->
 
     <!-- Styles -->
-
+    <link n:foreach="$document->stylesheets as $path" href="{$path}" rel="stylesheet">
 
     <!-- Scripts -->
+    <script n:foreach="$document->scripts as $path" src="{$path}" defer></script>
 
-
-    {*    <script n:foreach="$document->scripts as $path" src="{$path->value}" defer></script>*}
 
     {*    {$get->coreScripts()}*}
 </head>

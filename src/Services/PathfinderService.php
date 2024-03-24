@@ -85,11 +85,30 @@ class PathfinderService
     }
 
     private function getParameters() : array {
-        return self::$parametersCache ??= self::$parametersCache = array_filter(
+
+        if ( isset( self::$parametersCache ) ) {
+            return self::$parametersCache;
+        }
+
+        $parameters = array_filter(
             array    : $this->parameter->all(),
             callback : static fn ( $value, $key ) => is_string( $value ) && str_contains( $key, 'dir' ),
             mode     : ARRAY_FILTER_USE_BOTH,
         );
+
+        foreach ( $parameters as $key => $value ) {
+
+            // Simple sorting:
+            // Unset bundle-defined directories at their current position
+            // They will be appended to the array after all Symfony-defined directories
+            if ( str_starts_with( $key, 'dir' ) ) {
+                unset( $parameters[ $key ] );
+            }
+            
+            $parameters[ $key ] = Path::normalize( $value );
+        }
+
+        return self::$parametersCache = $parameters;
     }
 
     public function getParameter( string $name ) : ?string {
