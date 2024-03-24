@@ -128,18 +128,13 @@ abstract class AbstractCoreController extends AbstractController
         string                $view,
         object | array | null $parameters = null,
     ) : string {
-
-//        $this->latteEnviroment ??= $this->getLatte();
-
+        
         $this->__onLatteRender();
 
         $parameters ??= [];
 
-//        dd( property_exists( $this, 'document' ), $this->document::class, DocumentParameters::class );
-
         if ( is_array( $parameters ) && isset( $this->document ) ) {
             $parameters[ 'document' ] = $this->document;
-//            dd( $parameters );
         }
 
 

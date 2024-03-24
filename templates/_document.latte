@@ -2,6 +2,8 @@
 <html lang="{$get->language}" id="top" theme="{$get->theme}" status="init">
 <head>
 
+    <!-- Remove HTML comments if the next line is empty, or another comment. -->
+
     <!-- Document Meta -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -11,18 +13,6 @@
     <title>{$document->title}</title>
     <meta n:foreach="$document->meta('info') as $name => $content" name="{$name}" content="{$content}"/>
 
-    <!-- Favicon -->
-    <meta n:foreach="$document->meta('favicon') as $name => $content" name="{$name}" content="{$content}"/>
-
-    <!-- Theme -->
-    <meta name="theme-color" content="{$get->theme->color}">
-    <meta name="color-scheme" content="{$get->theme->scheme}">
-
-    <!-- Facebook -->
-    <!-- Twitter -->
-    <!-- LinkedIn -->
-
-
     <!-- Preload Assets -->
 
     <!-- Styles -->
@@ -31,14 +21,20 @@
     <!-- Scripts -->
     <script n:foreach="$document->scripts as $path" src="{$path}" defer></script>
 
+    <!-- Favicon -->
+    <meta n:foreach="$document->meta('favicon') as $name => $content" name="{$name}" content="{$content}"/>
 
-    {*    {$get->coreScripts()}*}
+    <!-- Theme -->
+    <meta name="theme-color" content="{$get->theme->color}">
+    <meta name="color-scheme" content="{$get->theme->scheme}">
+
+    <!-- Facebook -->
+
+    <!-- Twitter -->
+
+    <!-- LinkedIn -->
+
+
 </head>
-
-{dump( $get, $document )}
-{*{$get->}*}
-{*{$get->sitename ?? null | echo}*}
-{*<!-- {$document->echo('open')} -->*}
-{block 'body'}{/block}
-{*<!-- {$document->echo('close')} -->*}
+<body n:block="body" id="{$document->body->id()}"></body>
 </html>

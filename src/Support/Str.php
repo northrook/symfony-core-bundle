@@ -47,6 +47,7 @@ final class Str
         return $count;
     }
 
+    #[Deprecated( 'Use ' . Type\Path::class . '::parameterDirname() instead.' )]
     public static function parameterDirname(
         string  $path = '%kernel.project_dir%',
         #[ExpectedValues( [ 'log', 'error', 'exception' ] )]
