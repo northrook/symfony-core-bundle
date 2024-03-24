@@ -2,7 +2,7 @@
 
 namespace Northrook\Symfony\Core\Services;
 
-use Northrook\Symfony\Core\Support\Str;
+use Northrook\Support\Str;
 use Northrook\Types\Path;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
