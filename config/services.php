@@ -80,8 +80,10 @@ return static function ( ContainerConfigurator $container ) : void {
               ->set( 'core.service.stylesheets', StylesheetGenerationService::class )
               ->args(
                   [
-                      service( 'parameter_bag' ),
+                      service( 'core.service.pathfinder' ),
+                      service( 'core.service.request' ),
                       service( 'logger' )->nullOnInvalid(),
+                      service( 'debug.stopwatch' )->nullOnInvalid(),
                   ],
               )
               ->autowire()
@@ -93,10 +95,7 @@ return static function ( ContainerConfigurator $container ) : void {
               ->set( LogAggregationSubscriber::class )
               ->args(
                   [
-                      service( 'core.service.pathfinder' ),
-                      service( 'core.service.request' ),
                       service( 'logger' )->nullOnInvalid(),
-                      service( 'debug.stopwatch' )->nullOnInvalid(),
                   ],
               )
               ->tag( 'kernel.event_subscriber', [ 'priority' => 100 ] )
