@@ -8,6 +8,8 @@ use Northrook\Stylesheets\ColorPalette;
 use Northrook\Stylesheets\DynamicRules;
 use Northrook\Stylesheets\Stylesheet;
 use Northrook\Types\Path;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class StylesheetGenerationService
 {
