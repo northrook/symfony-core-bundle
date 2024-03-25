@@ -16,13 +16,13 @@
     <!-- Preload Assets -->
 
     <!-- Styles -->
-    <link n:foreach="$document->stylesheets as $path" href="{$path}" rel="stylesheet">
+    <link n:foreach="$document->stylesheets as $stylesheet" href="{$stylesheet}" rel="stylesheet">
 
     <!-- Scripts -->
-    <script n:foreach="$document->scripts as $path" src="{$path}" defer></script>
+    <script n:foreach="$document->scripts as $script" src="{$script}" defer></script>
 
     <!-- Favicon -->
-    <link n:foreach="$document->favicon->link} as $link" n:attr="{$link}">
+    <link n:foreach="$document->favicon->link as $favicon" n:attr="{$favicon}">
 
     <!-- Theme -->
     <meta name="theme-color" content="{$get->theme->color}">
