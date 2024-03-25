@@ -12,6 +12,9 @@ use Northrook\Types\Path;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
+/**
+ * TODO : Create a Palette cache file. Readable from {@see Settings::site()->palette}
+ */
 class StylesheetGenerationService
 {
     // @todo Move this to config, as primary only.
@@ -115,7 +118,7 @@ class StylesheetGenerationService
         $this->updated = File::save( $this->savePath->value, $this->stylesheet );
 
         $this->stopwatch->stop( 'save' );
-        
+
         return $this->updated;
     }
 }
