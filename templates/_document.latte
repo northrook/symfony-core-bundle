@@ -36,5 +36,8 @@
 
 
 </head>
-<body n:block="body" id="{$document->body->id()}"></body>
+
+<body n:attr="$document->body->attributes">
+{block 'body'}{/block}
+</body>
 </html>

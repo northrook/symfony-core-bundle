@@ -22,14 +22,14 @@
     "symfony/deprecation-contracts": "^3.0",
     "symfony/http-kernel": "^7.0",
     "northrook/symfony-latte-bundle": "dev-main",
-    "northrook/symfony-stylesheets-bundle": "dev-main",
     "northrook/logger": "dev-main",
     "northrook/types": "dev-main",
     "symfony/event-dispatcher": "^7.0",
     "ext-dom": "*",
     "ext-libxml": "*",
     "symfony/stopwatch": "7",
-    "northrook/symfony-components-bundle": "dev-main"
+    "northrook/symfony-components-bundle": "dev-main",
+    "northrook/stylesheets": "dev-main"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
