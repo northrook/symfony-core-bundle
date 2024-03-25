@@ -22,11 +22,13 @@
     <script n:foreach="$document->scripts as $path" src="{$path}" defer></script>
 
     <!-- Favicon -->
-    <meta n:foreach="$document->meta('favicon') as $name => $content" name="{$name}" content="{$content}"/>
+    <link n:foreach="$document->favicon->link} as $link" n:attr="{$link}">
 
     <!-- Theme -->
     <meta name="theme-color" content="{$get->theme->color}">
     <meta name="color-scheme" content="{$get->theme->scheme}">
+    <meta name="msapplication-TileColor" content="#{$document->favicon->tileColor}">
+    <meta name="msapplication-config" content="{$document->favicon->browserconfig}">
 
     <!-- Facebook -->
 
