@@ -7,6 +7,7 @@ namespace Northrook\Symfony\Core\Services;
 use Northrook\Stylesheets\ColorPalette;
 use Northrook\Stylesheets\DynamicRules;
 use Northrook\Stylesheets\Stylesheet;
+use Northrook\Symfony\Core\File;
 use Northrook\Types\Path;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
@@ -32,6 +33,7 @@ class StylesheetGenerationService
     public readonly string        $stylesheet;
     public ?ColorPalette          $palette = null;
     public bool                   $force   = false;
+    public readonly bool          $updated;
 
 
     public function __construct(
@@ -64,6 +66,9 @@ class StylesheetGenerationService
      * @return bool True when saved, false when not
      */
     public function save( Path | string $path ) : bool {
+
+        $this->stopwatch->start( 'save', 'StylesheetGenerationService' );
+
         $this->savePath = $path instanceof Path ? $path : $this->pathfinder->get( $path );
 
         $this->palette ??= new ColorPalette( self::PALETTE );
@@ -99,8 +104,18 @@ class StylesheetGenerationService
 
         $this->stylesheet = (string) $this->generator;
 
-        dd( $this );
+        if ( !$this->stylesheet ) {
+            $this->logger?->error(
+                'Stylesheet was empty',
+                [ 'service' => $this ],
+            );
+            return false;
+        }
 
-        return true;
+        $this->updated = File::save( $this->savePath->value, $this->stylesheet );
+
+        $this->stopwatch->stop( 'save' );
+        
+        return $this->updated;
     }
 }

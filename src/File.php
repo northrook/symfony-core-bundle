@@ -114,6 +114,26 @@ final class File extends SymfonyCoreFacade
 
 
     /**
+     * Atomically dumps content into a file.
+     *
+     * @param string|resource  $content  The data to write into the file
+     *
+     * @throws IOException if the file cannot be written to
+     */
+    public static function save( string $path, $content ) : bool {
+        try {
+            ( new Filesystem() )->dumpFile( $path, $content );
+            return true;
+        }
+        catch ( IOException $e ) {
+            Log::Error( message : $e->getMessage(), context : [ 'exception' => $e ] );
+        }
+
+        return false;
+    }
+
+
+    /**
      * Copies a file.
      *
      * If the target file is older than the origin file, it's always overwritten.
