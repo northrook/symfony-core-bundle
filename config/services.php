@@ -7,6 +7,7 @@ use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
 use Northrook\Symfony\Core\Services\ContentManagementService;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\PathfinderService;
+use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Northrook\Symfony\Core\Support\Str;
 
 return static function ( ContainerConfigurator $container ) : void {
@@ -75,11 +76,27 @@ return static function ( ContainerConfigurator $container ) : void {
               ->alias( PathfinderService::class, 'core.service.pathfinder' )
         //
         //
+        // 🧭 - Pathfinder Service
+              ->set( 'core.service.stylesheets', StylesheetGenerationService::class )
+              ->args(
+                  [
+                      service( 'parameter_bag' ),
+                      service( 'logger' )->nullOnInvalid(),
+                  ],
+              )
+              ->autowire()
+              ->public()
+              ->alias( StylesheetGenerationService::class, 'core.service.stylesheets' )
+        //
+        //
         // 🗂 - Log Aggregating Event Subscriber
               ->set( LogAggregationSubscriber::class )
               ->args(
                   [
+                      service( 'core.service.pathfinder' ),
+                      service( 'core.service.request' ),
                       service( 'logger' )->nullOnInvalid(),
+                      service( 'debug.stopwatch' )->nullOnInvalid(),
                   ],
               )
               ->tag( 'kernel.event_subscriber', [ 'priority' => 100 ] )
