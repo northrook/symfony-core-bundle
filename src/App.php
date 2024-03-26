@@ -3,6 +3,7 @@
 namespace Northrook\Symfony\Core;
 
 use JetBrains\PhpStorm\ExpectedValues;
+use Northrook\Logger\Log;
 
 final class App extends SymfonyCoreFacade
 {
@@ -26,7 +27,14 @@ final class App extends SymfonyCoreFacade
         };
     }
 
-    public static function baseUrl() : string {
-        return Request::currentRequest()->getSchemeAndHttpHost();
+    public static function baseUrl( ?string $append = null ) : string {
+        $url = rtrim( Request::currentRequest()->getSchemeAndHttpHost(), '/' ) . '/';
+        if ( $append ) {
+            $url .= ltrim( str_replace( '\\', '/', $append ), '/' );
+        }
+        if ( !filter_var( $url, FILTER_VALIDATE_URL ) ) {
+            Log::Error( 'Invalid URL: {url}', [ 'url' => $url ] );
+        };
+        return $url;
     }
 }
