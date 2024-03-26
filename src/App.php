@@ -25,4 +25,8 @@ final class App extends SymfonyCoreFacade
             default => false,
         };
     }
+
+    public static function baseUrl() : string {
+        return Request::currentRequest()->getSchemeAndHttpHost();
+    }
 }
