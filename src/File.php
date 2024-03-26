@@ -120,7 +120,7 @@ final class File extends SymfonyCoreFacade
      *
      * @throws IOException if the file cannot be written to
      */
-    public static function save( string $path, $content ) : bool {
+    public static function save( string $path, mixed $content ) : bool {
         try {
             ( new Filesystem() )->dumpFile( $path, $content );
             return true;
@@ -141,26 +141,31 @@ final class File extends SymfonyCoreFacade
      * $overwriteNewerFiles option is set to true.
      *
      */
-    public static function copy( string $originFile, string $targetFile, bool $overwriteNewerFiles = false ) : void {
+    public static function copy( string $originFile, string $targetFile, bool $overwriteNewerFiles = false ) : bool {
         try {
             ( new Filesystem() )->copy( $originFile, $targetFile, $overwriteNewerFiles );
+            return true;
         }
         catch ( FileNotFoundException | IOException $e ) {
             Log::Error( message : $e->getMessage(), context : [ 'exception' => $e ] );
         }
+
+        return false;
     }
 
 
     /**
      * Creates a directory recursively.
      */
-    public static function mkdir( string | iterable $dirs, int $mode = 0777 ) : void {
+    public static function mkdir( string | iterable $dirs, int $mode = 0777 ) : bool {
         try {
             ( new Filesystem() )->mkdir( $dirs, $mode );
+            return true;
         }
         catch ( IOException $e ) {
             Log::Error( message : $e->getMessage(), context : [ 'exception' => $e ] );
         }
+        return false;
     }
 
 
@@ -178,36 +183,42 @@ final class File extends SymfonyCoreFacade
      * @param int|null  $atime  The access time as a Unix timestamp, if not supplied the current system time is used
      *
      */
-    public static function touch( string | iterable $files, ?int $time = null, ?int $atime = null ) : void {
+    public static function touch( string | iterable $files, ?int $time = null, ?int $atime = null ) : bool {
         try {
             ( new Filesystem() )->touch( $files, $time, $atime );
+            return true;
         }
         catch ( IOException $e ) {
             Log::Error( message : $e->getMessage(), context : [ 'exception' => $e ] );
         }
+        return false;
     }
 
     /**
      * Removes files or directories.
      */
-    public static function remove( string | iterable $files ) : void {
+    public static function remove( string | iterable $files ) : bool {
         try {
             ( new Filesystem() )->remove( $files );
+            return true;
         }
         catch ( IOException $e ) {
             Log::Error( message : $e->getMessage(), context : [ 'exception' => $e ] );
         }
+        return false;
     }
 
     /**
      * Renames a file or a directory.
      */
-    public static function rename( string $origin, string $target, bool $overwrite = false ) : void {
+    public static function rename( string $origin, string $target, bool $overwrite = false ) : bool {
         try {
             ( new Filesystem() )->rename( $origin, $target, $overwrite );
+            return true;
         }
         catch ( IOException $e ) {
             Log::Error( message : $e->getMessage(), context : [ 'exception' => $e ] );
         }
+        return false;
     }
 }
