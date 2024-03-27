@@ -29,7 +29,8 @@
     "ext-libxml": "*",
     "symfony/stopwatch": "7",
     "northrook/symfony-components-bundle": "dev-main",
-    "northrook/stylesheets": "dev-main"
+    "northrook/stylesheets": "dev-main",
+    "northrook/support": "dev-main"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

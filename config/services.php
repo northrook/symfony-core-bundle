@@ -4,23 +4,23 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
+use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Services\ContentManagementService;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
-use Northrook\Symfony\Core\Support\Str;
 
 return static function ( ContainerConfigurator $container ) : void {
     //
     // Parameters
     $container->parameters()
-              ->set( 'dir.root', Str::parameterDirname( '%kernel.project_dir%' ) )
-              ->set( 'dir.assets', Str::parameterDirname( '%kernel.project_dir%/assets' ) )
-              ->set( 'dir.public', Str::parameterDirname( "%kernel.project_dir%/public" ) )
-              ->set( 'dir.public.assets', Str::parameterDirname( "%kernel.project_dir%/public/assets" ) )
-              ->set( 'dir.cache', Str::parameterDirname( "%kernel.project_dir%/var/cache" ) )
-              ->set( 'dir.templates', Str::parameterDirname( "%kernel.project_dir%/templates" ) )
-              ->set( 'dir.latte.templates.core', Str::parameterDirname( '../../templates' ) )
+              ->set( 'dir.root', File::parameterDirname( '%kernel.project_dir%' ) )
+              ->set( 'dir.assets', File::parameterDirname( '%kernel.project_dir%/assets' ) )
+              ->set( 'dir.public', File::parameterDirname( "%kernel.project_dir%/public" ) )
+              ->set( 'dir.public.assets', File::parameterDirname( "%kernel.project_dir%/public/assets" ) )
+              ->set( 'dir.cache', File::parameterDirname( "%kernel.project_dir%/var/cache" ) )
+              ->set( 'dir.templates', File::parameterDirname( "%kernel.project_dir%/templates" ) )
+              ->set( 'dir.latte.templates.core', File::parameterDirname( '../../templates' ) )
               ->set( 'ttl.cache', 86400 )
     ;
     //

@@ -34,7 +34,7 @@ final class App extends SymfonyCoreFacade
         }
         if ( !filter_var( $url, FILTER_VALIDATE_URL ) ) {
             Log::Error( 'Invalid URL: {url}', [ 'url' => $url ] );
-        };
+        }
         return $url;
     }
 }
