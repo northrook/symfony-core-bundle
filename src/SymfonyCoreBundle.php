@@ -18,6 +18,7 @@ use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
  */
 final class SymfonyCoreBundle extends AbstractBundle
 {
+
     public function loadExtension(
         array                 $config,
         ContainerConfigurator $container,
@@ -28,9 +29,10 @@ final class SymfonyCoreBundle extends AbstractBundle
 
     }
 
+
     public function build( ContainerBuilder $container ) : void {
-        $container->addCompilerPass( new ControllerRegistrationPass() );
         parent::build( $container );
+        $container->addCompilerPass( new ControllerRegistrationPass() );
     }
 
     public function boot() : void {
