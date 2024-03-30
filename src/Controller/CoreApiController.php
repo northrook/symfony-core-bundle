@@ -6,21 +6,10 @@ use Northrook\Favicon\FaviconBundle;
 use SVG\SVG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Attribute\Route;
 
-#[Route(
-    path     : 'api/favicon',
-    name     : 'api:favicon',
-    priority : 100
-)]
-class FaviconGeneratorController extends AbstractController
+class CoreApiController extends AbstractController
 {
-    #[Route(
-        path     : 'generate',
-        name     : 'generate',
-        priority : 100
-    )]
-    public function generate( FaviconBundle $generator ) : JsonResponse {
+    public function favicon( string $action, FaviconBundle $generator ) : JsonResponse {
         $generator->load(
             SVG::fromString(
                 '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
