@@ -14,6 +14,7 @@ final class ControllerRegistrationPass implements CompilerPassInterface
     }
 
     private function registerCoreApiController( ContainerBuilder $container ) : void {
+        
         $container->register(
             CoreApiController::class,
             CoreApiController::class,
