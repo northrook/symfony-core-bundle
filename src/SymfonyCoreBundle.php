@@ -8,8 +8,6 @@ use Northrook\Symfony\Core\DependencyInjection\ControllerRegistrationPass;
 use Northrook\Symfony\Core\DependencyInjection\SymfonyCoreExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
 /**
  * @version 1.0 ☑️
@@ -18,24 +16,26 @@ use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
  * @link    https://github.com/northrook Documentation
  * @todo    Update URL to documentation : root of symfony-core-bundle
  */
-final class SymfonyCoreBundle extends AbstractBundle
+final class SymfonyCoreBundle extends Bundle
 {
 
     public function getContainerExtension() : ?ExtensionInterface {
         return new SymfonyCoreExtension();
     }
 
-    public function loadExtension(
-        array                 $config,
-        ContainerConfigurator $container,
-        ContainerBuilder      $builder,
-    ) : void {
-
-        // $this->loadExtension();
-
-        $container->import( '../config/services.php' );
-
-    }
+    // public function loadExtension(
+    //     array                 $config,
+    //     ContainerConfigurator $container,
+    //     ContainerBuilder      $builder,
+    // ) : void {
+    //
+    //     $builder->set
+    //
+    //     // $this->loadExtension();
+    //
+    //     $container->import( '../config/services.php' );
+    //
+    // }
 
     public function load() : void {}
 
