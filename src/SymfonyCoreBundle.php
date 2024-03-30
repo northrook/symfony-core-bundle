@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core;
 
+use Northrook\Symfony\Core\DependencyInjection\ControllerRegistrationPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
@@ -22,7 +23,12 @@ final class SymfonyCoreBundle extends AbstractBundle
         ContainerConfigurator $container,
         ContainerBuilder      $builder,
     ) : void {
+        
         $container->import( '../config/services.php' );
+
+        $builder->addCompilerPass(
+            new ControllerRegistrationPass(),
+        );
     }
 
     public function boot() : void {
