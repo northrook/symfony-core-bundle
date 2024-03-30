@@ -23,12 +23,14 @@ final class SymfonyCoreBundle extends AbstractBundle
         ContainerConfigurator $container,
         ContainerBuilder      $builder,
     ) : void {
-        
+
         $container->import( '../config/services.php' );
 
-        $builder->addCompilerPass(
-            new ControllerRegistrationPass(),
-        );
+    }
+
+    public function build( ContainerBuilder $container ) : void {
+        $container->addCompilerPass( new ControllerRegistrationPass() );
+        parent::build( $container );
     }
 
     public function boot() : void {
