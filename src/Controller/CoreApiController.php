@@ -6,8 +6,10 @@ use Northrook\Favicon\FaviconBundle;
 use SVG\SVG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[AsController]
 #[Route(
     path     : 'api',
     name     : 'api',
