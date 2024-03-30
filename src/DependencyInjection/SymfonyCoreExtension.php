@@ -2,7 +2,6 @@
 
 namespace Northrook\Symfony\Core\DependencyInjection;
 
-use Northrook\Symfony\Core\Controller\CoreApiController;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -14,9 +13,7 @@ class SymfonyCoreExtension extends Extension
 
     public function load( array $configs, ContainerBuilder $container ) : void {
 
-        // $configs = $this->processConfiguration( new Configuration(), $configs );
-
-        $locator = new FileLocator( __DIR__ . '/../Resources/config' );
+        $locator = new FileLocator( dirname( __DIR__, 2 ) . '/config' );
         $loader  = new Loader\PhpFileLoader(
             $container,
             $locator,
@@ -24,10 +21,8 @@ class SymfonyCoreExtension extends Extension
         $loader->load( 'services.php' );
 
         $this->addAnnotatedClassesToCompile(
-
-
             [
-                CoreApiController::class,
+                'Northrook\\Symfony\\Core\\Controller\\CoreApiController',
             ],
         );
     }

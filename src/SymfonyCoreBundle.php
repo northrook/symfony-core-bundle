@@ -8,6 +8,7 @@ use Northrook\Symfony\Core\DependencyInjection\ControllerRegistrationPass;
 use Northrook\Symfony\Core\DependencyInjection\SymfonyCoreExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * @version 1.0 ☑️

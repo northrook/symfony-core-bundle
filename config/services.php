@@ -3,6 +3,7 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
+use Northrook\Symfony\Core\Controller\CoreApiController;
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
 use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Services\ContentManagementService;
@@ -29,9 +30,9 @@ return static function ( ContainerConfigurator $container ) : void {
         //
         //
         // ☕ - Core API Controller
-        //       ->set( 'core.controller.api', CoreApiController::class )
-        //       ->tag( 'controller.service_arguments' )
-        //       ->alias( CoreApiController::class, 'core.controller.api' )
+              ->set( 'core.controller.api', CoreApiController::class )
+              ->public()
+              ->tag( 'controller.service_arguments' )
         //
         //
         // ☕ - Core Latte Preprocessor
