@@ -10,7 +10,6 @@ class SymfonyCoreExtension extends Extension
 {
 
     public function load( array $configs, ContainerBuilder $container ) : void {
-        $container->import( __DIR__ . '/../config/services.php' );
         $this->addAnnotatedClassesToCompile(
             [
                 CoreApiController::class,
