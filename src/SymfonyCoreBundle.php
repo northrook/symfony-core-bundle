@@ -23,6 +23,7 @@ final class SymfonyCoreBundle extends AbstractBundle
         ContainerBuilder      $builder,
     ) : void {
         $container->import( '../config/services.php' );
+        $container->import( '../config/routes.php' );
     }
 
     public function boot() : void {
