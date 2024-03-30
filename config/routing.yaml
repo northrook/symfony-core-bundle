@@ -1,0 +1,5 @@
+controllers:
+  resource:
+    path: '@SymfonyCoreBundle/src/Controller/'
+    namespace: SymfonyCoreBundle\Controller
+  type: attribute
