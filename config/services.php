@@ -32,7 +32,6 @@ return static function ( ContainerConfigurator $container ) : void {
         // ☕ - Core API Controller
               ->set( 'core.controller.api', CoreApiController::class )
               ->tag( 'controller.service_arguments' )
-              ->autowire()
               ->alias( CoreApiController::class, 'core.controller.api' )
         //
         //
