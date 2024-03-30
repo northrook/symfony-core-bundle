@@ -91,6 +91,18 @@ return static function ( ContainerConfigurator $container ) : void {
               ->alias( StylesheetGenerationService::class, 'core.service.stylesheets' )
         //
         //
+        // 📥 - Current Request Service
+              ->set( 'core.service.favicon', CurrentRequestService::class )
+              ->args(
+                  [
+                      service( 'debug.stopwatch' )->nullOnInvalid(),
+                  ],
+              )
+              ->autowire()
+              ->public()
+              ->alias( CurrentRequestService::class, 'core.service.favicon' )
+        //
+        //
         // 🗂 - Log Aggregating Event Subscriber
               ->set( LogAggregationSubscriber::class )
               ->args(
