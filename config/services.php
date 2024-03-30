@@ -32,7 +32,12 @@ return static function ( ContainerConfigurator $container ) : void {
         // ☕ - Core API Controller
               ->set( 'core.controller.api', CoreApiController::class )
               ->public()
-              ->tag( 'controller.service_arguments' )
+              ->args(
+                  [
+                      service( 'core.service.pathfinder' ),
+                      service( 'logger' )->nullOnInvalid(),
+                  ],
+              )
         //
         //
         // ☕ - Core Latte Preprocessor
