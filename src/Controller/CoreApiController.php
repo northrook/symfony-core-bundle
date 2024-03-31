@@ -4,23 +4,16 @@ namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Favicon\FaviconBundle;
 use SVG\SVG;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\Routing\Attribute\Route;
 
-#[AsController]
-#[Route(
-    path     : 'api',
-    name     : 'api',
-    priority : 100
-)]
-class CoreApiController extends AbstractController
+
+class CoreApiController
 {
-    #[Route(
-        path : 'favicon/{action}',
-        name : 'favicon',
-    )]
+
+    public function test() : JsonResponse {
+        return new JsonResponse( 'test' );
+    }
+
     public function favicon( string $action, FaviconBundle $generator ) : JsonResponse {
         $generator->load(
             SVG::fromString(
