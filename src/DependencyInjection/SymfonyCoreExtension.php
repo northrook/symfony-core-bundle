@@ -20,11 +20,11 @@ class SymfonyCoreExtension extends Extension
         );
         $loader->load( 'services.php' );
 
-        $this->addAnnotatedClassesToCompile(
-            [
-                'Northrook\\Symfony\\Core\\Controller\\CoreApiController',
-            ],
-        );
+        // $this->addAnnotatedClassesToCompile(
+        //     [
+        //         'Northrook\\Symfony\\Core\\Controller\\CoreApiController',
+        //     ],
+        // );
     }
 
 }

@@ -3,6 +3,8 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Favicon\FaviconBundle;
+use Northrook\Symfony\Core\Services\PathfinderService;
+use Psr\Log\LoggerInterface;
 use SVG\SVG;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -10,11 +12,17 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class CoreApiController
 {
 
+    public function __construct(
+        private readonly PathfinderService $pathfinder,
+        private readonly ?LoggerInterface  $logger,
+    ) {}
+
     public function test() : JsonResponse {
         return new JsonResponse( 'test' );
     }
 
     public function favicon( string $action, FaviconBundle $generator ) : JsonResponse {
+
         $generator->load(
             SVG::fromString(
                 '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -47,6 +55,8 @@ class CoreApiController
 
         $generator->manifest->title = 'Symfony Playground';
 
-        return new JsonResponse( $generator->notices() );
+        $response = new JsonResponse( $generator->notices() );
+        dump( $action, $generator, $response );
+        return $response;
     }
 }

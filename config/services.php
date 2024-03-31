@@ -2,6 +2,7 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Northrook\Favicon\FaviconBundle;
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Controller\CoreApiController;
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
@@ -38,6 +39,11 @@ return static function ( ContainerConfigurator $container ) : void {
                       service( 'logger' )->nullOnInvalid(),
                   ],
               )
+        //
+        //
+        // ☕ - Favicon Generator
+              ->set( 'northrook.favicon', FaviconBundle::class )
+              ->autowire()
         //
         //
         // ☕ - Core Latte Preprocessor
