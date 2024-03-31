@@ -21,6 +21,13 @@ use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 final class SymfonyCoreBundle extends AbstractBundle
 {
 
+    private const ROUTES = [
+        'core.controller.api' => [
+            'resource' => '@SymfonyCoreBundle/config/routes/api.php',
+            'prefix'   => '/api',
+        ],
+    ];
+
     private readonly string $projectDir;
     private bool            $booted = false;
 
@@ -55,19 +62,20 @@ final class SymfonyCoreBundle extends AbstractBundle
         }
 
         $apiController = new Path( $this->projectDir . '/config/routes/core.yaml' );
+        $coreConfig    = [];
 
         if ( $apiController->exists ) {
             echo Console::info( 'northrook.core.api', 'Config exists: ' . $apiController->value );
             return;
         }
 
+        foreach ( self::ROUTES as $key => $value ) {
+            $coreConfig[] = "$key:\n    resource: '{$value['resource']}'\n    prefix: {$value['prefix']}\n";
+        }
+
         $status = File::save(
             $this->projectDir . '/config/routes/core.yaml',
-            <<<YAML
-            northrook.core.api:
-              resource: '@SymfonyCoreBundle/config/routes.php'
-              prefix: /api
-            YAML,
+            implode( PHP_EOL, $coreConfig ),
         );
 
         if ( !$status ) {

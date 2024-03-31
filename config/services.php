@@ -23,6 +23,7 @@ return static function ( ContainerConfigurator $container ) : void {
               ->set( 'dir.cache', File::parameterDirname( "%kernel.project_dir%/var/cache" ) )
               ->set( 'dir.templates', File::parameterDirname( "%kernel.project_dir%/templates" ) )
               ->set( 'dir.latte.templates.core', File::parameterDirname( '../../templates' ) )
+              ->set( 'path.favicon', File::parameterDirname( '../../assets/icons/favicon.default.svg' ) )
               ->set( 'ttl.cache', 86400 )
     ;
     //
