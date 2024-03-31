@@ -52,7 +52,7 @@ return static function ( ContainerConfigurator $container ) : void {
                       service( 'core.service.request' ),
                       service( 'core.service.pathfinder' ),
                       service( 'parameter_bag' ),
-                      service( 'core.service.stylesheet' ),
+                      service( 'core.service.stylesheets' ),
                       service( 'logger' )->nullOnInvalid(),
                   ],
               )
