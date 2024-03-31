@@ -32,7 +32,7 @@ return static function ( ContainerConfigurator $container ) : void {
         //
         // ☕ - Core API Controller
               ->set( 'core.controller.api', CoreApiController::class )
-              ->public()
+              ->tag( 'controller.service_arguments' )
               ->args(
                   [
                       service( 'core.service.pathfinder' ),
@@ -42,8 +42,7 @@ return static function ( ContainerConfigurator $container ) : void {
         //
         //
         // ☕ - Favicon Generator
-              ->set( 'northrook.favicon', FaviconBundle::class )
-              ->autowire()
+              ->set( FaviconBundle::class )
         //
         //
         // ☕ - Core Latte Preprocessor

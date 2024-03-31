@@ -3,13 +3,15 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Favicon\FaviconBundle;
+use Northrook\Logger\Status\HTTP;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Psr\Log\LoggerInterface;
 use SVG\SVG;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 
-class CoreApiController
+final class CoreApiController
 {
 
     public function __construct(
@@ -17,11 +19,7 @@ class CoreApiController
         private readonly ?LoggerInterface  $logger,
     ) {}
 
-    public function test() : JsonResponse {
-        return new JsonResponse( 'test' );
-    }
-
-    public function favicon( string $action, FaviconBundle $generator ) : JsonResponse {
+    public function favicon( string $action, FaviconBundle $generator ) : Response {
 
         $generator->load(
             SVG::fromString(
@@ -55,8 +53,27 @@ class CoreApiController
 
         $generator->manifest->title = 'Symfony Playground';
 
-        $response = new JsonResponse( $generator->notices() );
-        dump( $action, $generator, $response );
-        return $response;
+        if ( 'generate' === $action ) {
+            $generator->save( $this->pathfinder->get( 'dir.public' ) );
+            $data = $generator->notices();
+            $this->logger->info( 'Favicon generated', [ 'data' => $data ] );
+            return new JsonResponse( $data, HTTP::CREATED );
+        }
+
+        if ( 'purge' === $action ) {
+            $data = $generator->purge( $this->pathfinder->get( 'dir.public' ) );
+            $this->logger->info( 'Favicon purged', [ 'data' => $data ] );
+            return new JsonResponse( $data, HTTP::OK );
+        }
+
+        // TODO: expand with more info from Support::UserAgent
+        $this->logger->error(
+            'Unexpected action {action} for {route}.', [
+            'route'  => __METHOD__,
+            'action' => $action,
+            'ip'     => $_SERVER[ 'REMOTE_ADDR' ],
+        ],
+        );
+        return new Response( status : HTTP::ACCEPTED );
     }
 }
