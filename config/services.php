@@ -4,6 +4,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Favicon\FaviconBundle;
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
+use Northrook\Symfony\Core\Controller\CoreAdminController;
 use Northrook\Symfony\Core\Controller\CoreApiController;
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
 use Northrook\Symfony\Core\File;
@@ -37,6 +38,21 @@ return static function ( ContainerConfigurator $container ) : void {
               ->args(
                   [
                       service( 'core.service.pathfinder' ),
+                      service( 'parameter_bag' ),
+                      service( 'logger' )->nullOnInvalid(),
+                  ],
+              )
+        //
+        //
+        // ☕ - Core Admin Controller
+              ->set( 'core.controller.admin', CoreAdminController::class )
+              ->tag( 'controller.service_arguments' )
+              ->args(
+                  [
+                      service( 'core.service.request' ),
+                      service( 'core.service.pathfinder' ),
+                      service( 'parameter_bag' ),
+                      service( 'core.service.stylesheet' ),
                       service( 'logger' )->nullOnInvalid(),
                   ],
               )

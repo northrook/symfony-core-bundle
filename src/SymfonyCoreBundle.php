@@ -22,9 +22,13 @@ final class SymfonyCoreBundle extends AbstractBundle
 {
 
     private const ROUTES = [
-        'core.controller.api' => [
+        'core.controller.api'   => [
             'resource' => '@SymfonyCoreBundle/config/routes/api.php',
             'prefix'   => '/api',
+        ],
+        'core.controller.admin' => [
+            'resource' => '@SymfonyCoreBundle/config/routes/admin.php',
+            'prefix'   => '/admin',
         ],
     ];
 
