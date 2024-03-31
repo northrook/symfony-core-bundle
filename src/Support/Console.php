@@ -9,6 +9,20 @@ final class Console
 
     private function __construct() {}
 
+    private static function print(
+        string $output,
+        array  $messages,
+    ) {
+        array_walk(
+            $messages,
+            static function ( $message ) use ( &$print ) {
+                $print[] = " $message";
+            },
+        );
+
+        return $output . implode( PHP_EOL, $print ) . PHP_EOL;
+    }
+
     public static function info(
         string ...$messages
     ) : string {
@@ -17,12 +31,8 @@ final class Console
         $output->setBackground( 'cyan' );
         $output->setForeground( 'black' );
         $output->setOption( 'bold' );
-        $print[] = $output->apply( ' [ INFO ] ' );
-        foreach ( $messages as $message ) {
-            $print[] = " $message";
-        }
 
-        return implode( PHP_EOL, $print ) . PHP_EOL;
+        return self::print( $output->apply( ' [ INFO ] ' ), $messages );
     }
 
     public static function OK(
@@ -33,12 +43,8 @@ final class Console
         $output->setBackground( 'green' );
         $output->setForeground( 'black' );
         $output->setOption( 'bold' );
-        $print[] = $output->apply( ' [ OK ] ' );
-        foreach ( $messages as $message ) {
-            $print[] = " $message";
-        }
 
-        return implode( PHP_EOL, $print ) . PHP_EOL;
+        return self::print( $output->apply( ' [ OK ] ' ), $messages );
     }
 
     public static function error(
@@ -49,11 +55,7 @@ final class Console
         $output->setBackground( 'red' );
         $output->setForeground( 'black' );
         $output->setOption( 'bold' );
-        $print[] = $output->apply( ' [ ERROR ] ' );
-        foreach ( $messages as $message ) {
-            $print[] = " $message";
-        }
 
-        return implode( PHP_EOL, $print ) . PHP_EOL;
+        return self::print( $output->apply( ' [ ERROR ] ' ), $messages );
     }
 }

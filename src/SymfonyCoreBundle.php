@@ -37,24 +37,15 @@ final class SymfonyCoreBundle extends AbstractBundle
         $this->booted = true;
     }
 
-    // public function load() : void {
-    //     dump( $this->getContainerExtension() );
-    // }
-
-    // public function build( ContainerBuilder $container ) : void {
-    //
-    //     // $container->addCompilerPass( new ControllerRegistrationPass() );
-    //     parent::build( $container );
-    // }
-
     public function boot() : void {
         parent::boot();
 
-        SymfonyCoreFacade::set( $this->container );
+        if ( $this->container && !$this->booted ) {
+            SymfonyCoreFacade::set( $this->container );
+        }
     }
 
     public function getPath() : string {
-
         return dirname( __DIR__ );
     }
 
@@ -66,19 +57,7 @@ final class SymfonyCoreBundle extends AbstractBundle
         $apiController = new Path( $this->projectDir . '/config/routes/core.yaml' );
 
         if ( $apiController->exists ) {
-
-            echo Console::info(
-                'northrook.core.api:',
-                'Config exists: ' . $apiController->value,
-            );
-
-            // $outout = new OutputFormatterStyle();
-            // $outout->setBackground( 'cyan' );
-            // $outout->setForeground( 'black' );
-            // $outout->setOption( 'bold' );
-            // echo $outout->apply( ' [ OK ] ' );
-            // echo ' northrook.core.api' . PHP_EOL;
-            // echo ' Config exists: ' . $apiController->value . PHP_EOL . PHP_EOL;
+            echo Console::info( 'northrook.core.api', 'Config exists: ' . $apiController->value );
             return;
         }
 
@@ -89,37 +68,13 @@ final class SymfonyCoreBundle extends AbstractBundle
               resource: '@SymfonyCoreBundle/config/routes.php'
               prefix: /api
             YAML,
-
         );
 
         if ( !$status ) {
-            echo Console::error(
-                'northrook.core.api:',
-                'Config file not created: ' . $apiController->value,
-            );
-            // $outout = new OutputFormatterStyle();
-            // $outout->setBackground( 'red' );
-            // $outout->setForeground( 'black' );
-            // $outout->setOption( 'bold' );
-            // echo $outout->apply( ' [ ERROR ] ' );
-            // echo ' northrook.core.api' . PHP_EOL;
-            // echo ' Config file not created: ' . $apiController->value . PHP_EOL . PHP_EOL;
+            echo Console::error( 'northrook.core.api:', 'Config file not created: ' . $apiController->value );
         }
         else {
-            echo Console::OK(
-                'northrook.core.api:',
-                'Config created: ' . $apiController->value,
-            );
-            // $outout = new OutputFormatterStyle();
-            // $outout->setBackground( 'green' );
-            // $outout->setForeground( 'black' );
-            // $outout->setOption( 'bold' );
-            // echo $outout->apply( ' [ OK ] ' );
-            // echo ' northrook.core.api' . PHP_EOL;
-            // echo ' Config created: ' . $apiController->value . PHP_EOL . PHP_EOL;
+            echo Console::OK( 'northrook.core.api:', 'Config created: ' . $apiController->value );
         }
-
-        // dump( $this->projectDir, $this->projectDir . '/config/routes/core.yaml'  );
-
     }
 }
