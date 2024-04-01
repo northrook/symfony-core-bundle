@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-final readonly class CoreAdminController
+final  class CoreAdminController extends CoreController
 {
     public function __construct(
         private CurrentRequestService       $request,
@@ -30,7 +30,6 @@ final readonly class CoreAdminController
     }
 
     public function index() : Response {
-
         return $this->response(
             template : 'admin/_admin.latte',
         );

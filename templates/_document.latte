@@ -5,7 +5,7 @@
     <!-- Document Meta -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="robots" content="{$document->robots}">
+    <meta n:foreach="$document->meta('robots') as $robots" n:attr="{$robots}">
 
     <!-- Content Tags -->
     <title>{$document->title}</title>
@@ -25,7 +25,7 @@
     <!-- Theme -->
     <meta name="theme-color" content="{$get->theme->color}">
     <meta name="color-scheme" content="{$get->theme->scheme}">
-    <meta n:foreach="$document->meta('msapplication') as $msapplication" n:attr="{$msapplication}"/>
+    <meta n:foreach="$document->meta('msapplication') as $msapplication" n:attr="{$msapplication}">
 
     <!-- Facebook -->
 
