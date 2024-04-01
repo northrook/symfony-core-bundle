@@ -95,7 +95,7 @@ abstract class AbstractCoreController extends AbstractController
      *
      * @return void
      */
-    protected function __onLatteRender() : void {}
+    protected function onLatteRender() : void {}
 
     /**
      * @throws ContainerExceptionInterface
@@ -105,7 +105,7 @@ abstract class AbstractCoreController extends AbstractController
 
         if ( !$this->container->has( 'latte.environment' ) || !$this->container->has( 'core.latte.preprocessor' ) ) {
             throw new LogicException(
-                'You cannot use the "latte" or "latteResponse" method if the Latte Bundle is not available.\nTry running "composer require northrook/symfony-latte-bundle".'
+                'You cannot use the "latte" or "latteResponse" method if the Latte Bundle is not available.\nTry running "composer require northrook/symfony-latte-bundle".',
             );
         }
 
@@ -128,8 +128,8 @@ abstract class AbstractCoreController extends AbstractController
         string                $view,
         object | array | null $parameters = null,
     ) : string {
-        
-        $this->__onLatteRender();
+
+        $this->onLatteRender();
 
         $parameters ??= [];
 

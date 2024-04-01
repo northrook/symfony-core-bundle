@@ -20,7 +20,7 @@ final class Console
             },
         );
 
-        return $output . implode( PHP_EOL, $print ) . PHP_EOL;
+        return $output . implode( PHP_EOL, $print ) . PHP_EOL . PHP_EOL;
     }
 
     public static function info(

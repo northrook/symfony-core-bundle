@@ -5,6 +5,7 @@ namespace Northrook\Symfony\Core;
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\PathfinderService;
+use Northrook\Symfony\Latte\Core\Environment;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -98,6 +99,23 @@ abstract class SymfonyCoreFacade
 
     protected static function getParameterBag() : ParameterBagInterface {
         return self::getKernel()->getContainer()->getParameterBag();
+    }
+
+    protected static function getLatteEnvironment() : ?Environment {
+        try {
+            return self::$container->get( 'latte.environment' );
+        }
+        catch ( NotFoundExceptionInterface | ContainerExceptionInterface $e ) {
+            Log::Emergency(
+                'Failed getting container parameter {get}, it does not exist. {action} triggered.',
+                [
+                    'get'       => 'latte.environment',
+                    'action'    => 'null return',
+                    'exception' => $e,
+                ],
+            );
+            return null;
+        }
     }
 
     public static function set( ContainerInterface $container ) : void {

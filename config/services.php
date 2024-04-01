@@ -53,7 +53,10 @@ return static function ( ContainerConfigurator $container ) : void {
                       service( 'core.service.pathfinder' ),
                       service( 'parameter_bag' ),
                       service( 'core.service.stylesheets' ),
+                      service( 'latte.environment' ),
+                      service( 'latte.parameters.document' ),
                       service( 'logger' )->nullOnInvalid(),
+                      service( 'debug.stopwatch' )->nullOnInvalid(),
                   ],
               )
         //
