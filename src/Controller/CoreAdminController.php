@@ -31,13 +31,8 @@ final readonly class CoreAdminController
 
     public function index() : Response {
 
-        dump( $this->request );
-
         return $this->response(
-            template   : 'admin/_admin.latte',
-            parameters : [
-                             'document' => $this->document,
-                         ],
+            template : 'admin/_admin.latte',
         );
     }
 

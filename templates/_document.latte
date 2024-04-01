@@ -2,8 +2,6 @@
 <html lang="{$get->language}" id="top" theme="{$get->theme}" status="init">
 <head>
 
-    <!-- Remove HTML comments if the next line is empty, or another comment. -->
-
     <!-- Document Meta -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -11,7 +9,7 @@
 
     <!-- Content Tags -->
     <title>{$document->title}</title>
-    <meta n:foreach="$document->meta('info') as $name => $content" name="{$name}" content="{$content}"/>
+    <meta n:foreach="$document->meta('info') as $info" n:attr="{$info}"/>
 
     <!-- Preload Assets -->
 
@@ -22,20 +20,18 @@
     <script n:foreach="$document->scripts as $script" src="{$script}" defer></script>
 
     <!-- Favicon -->
-    <link n:foreach="$document->favicon() as $favicon" n:attr="{$favicon}">
+    <meta n:foreach="$document->favicon() as $favicon" n:attr="{$favicon}">
 
     <!-- Theme -->
     <meta name="theme-color" content="{$get->theme->color}">
     <meta name="color-scheme" content="{$get->theme->scheme}">
-    <meta name="msapplication-TileColor" content="#{$document->favicon->tileColor}">
-    <meta name="msapplication-config" content="{$document->favicon->browserconfig}">
+    <meta n:foreach="$document->meta('msapplication') as $msapplication" n:attr="{$msapplication}"/>
 
     <!-- Facebook -->
 
     <!-- Twitter -->
 
     <!-- LinkedIn -->
-
 
 </head>
 
