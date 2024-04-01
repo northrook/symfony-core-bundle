@@ -47,6 +47,7 @@ return static function ( ContainerConfigurator $container ) : void {
         // ☕ - Core Admin Controller
               ->set( 'core.controller.admin', CoreAdminController::class )
               ->tag( 'controller.service_arguments' )
+              ->call( 'setContainer', [ service( 'service_container' ) ] )
               ->args(
                   [
                       service( 'core.service.request' ),
