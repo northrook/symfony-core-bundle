@@ -11,6 +11,7 @@ use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Services\ContentManagementService;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\HttpService;
+use Northrook\Symfony\Core\Services\MailerService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Symfony\Core\Services\SecurityService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
@@ -69,6 +70,11 @@ return static function ( ContainerConfigurator $container ) : void {
         //
         // ☕ - Favicon Generator
               ->set( FaviconBundle::class )
+        //
+        //
+        // 📧 - Mailer Service
+              ->set( 'core.service.mailer', MailerService::class )
+              ->alias( MailerService::class, 'core.service.mailer' )
         //
         //
         // ☕ - Core Latte Preprocessor

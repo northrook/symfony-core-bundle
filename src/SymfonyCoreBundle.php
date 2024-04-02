@@ -43,6 +43,10 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         $container->import( '../config/services.php' );
 
+
+        // Autoconfigure Notes
+        // Look for .yaml files in config folder, remove them if adding .php version and vice versa
+        // TODO : Autoconfigure Security
         $this->autoconfigureRoutes();
         $this->booted = true;
     }

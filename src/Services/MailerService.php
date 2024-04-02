@@ -55,7 +55,7 @@ class MailerService
     }
 
     public function getDSN() : ?string {
-        $this->DSN ??= $this->settings->MAILER_DSN ?? self::MAILER_DSN;
+        $this->DSN ??= $this->settings->MAILER_DSN ?? $_ENV[ 'MAILER_DSN' ] ?? self::MAILER_DSN;
 
         return $this->DSN;
     }
