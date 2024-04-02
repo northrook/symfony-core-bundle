@@ -10,7 +10,9 @@ use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
 use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Services\ContentManagementService;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
+use Northrook\Symfony\Core\Services\HttpService;
 use Northrook\Symfony\Core\Services\PathfinderService;
+use Northrook\Symfony\Core\Services\SecurityService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 
 return static function ( ContainerConfigurator $container ) : void {
@@ -47,9 +49,12 @@ return static function ( ContainerConfigurator $container ) : void {
         // ☕ - Core Admin Controller
               ->set( 'core.controller.admin', CoreAdminController::class )
               ->tag( 'controller.service_arguments' )
-              ->call( 'setContainer', [ service( 'service_container' ) ] )
               ->args(
                   [
+                      service( 'router' ),
+                      service( 'http_kernel' ),
+                      service( 'serializer' )->nullOnInvalid(),
+                      service( 'core.service.security' ),
                       service( 'core.service.request' ),
                       service( 'core.service.pathfinder' ),
                       service( 'parameter_bag' ),
@@ -75,6 +80,27 @@ return static function ( ContainerConfigurator $container ) : void {
                   ],
               )
               ->alias( LatteComponentPreprocessor::class, 'core.latte.preprocessor' )
+        //
+        //
+        // 🗃️️ - Content Management Service
+              ->set( 'core.service.router', HttpService::class )
+              ->args(
+                  [
+                      service( 'router' ),
+                      service( 'http_kernel' ),
+                  ],
+              )
+        //
+        //
+        // 🗃️️ - Content Management Service
+              ->set( 'core.service.security', SecurityService::class )
+              ->args(
+                  [
+                      service( 'security.authorization_checker' ),
+                      service( 'security.token_storage' ),
+                      service( 'security.csrf.token_manager' ),
+                  ],
+              )
         //
         //
         // 🗃️️ - Content Management Service

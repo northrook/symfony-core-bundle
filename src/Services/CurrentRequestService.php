@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 /**
  * Current Request Service
  *
- * @property Http\Request $request   Get the current request from the container request stack.
+ * @property Http\Request $current   Get the current request from the container request stack.
  * @property string       $routeName Get the current `root:route` name.
  * @property string       $routeRoot Get the current `root` name.
  * @property string       $pathInfo  Get the current path info. Always starts with a /. Not urlecoded.
@@ -39,7 +39,7 @@ class CurrentRequestService
     public function __get( string $name ) : Http\Request | string | null {
 
         $get = match ( $name ) {
-            'request'   => $this->currentRequest(),
+            'current'   => $this->currentRequest(),
             'routeName' => $this->currentRoute(),
             'routeRoot' => $this->currentRoute( true ),
             'pathInfo'  => $this->currentPathInfo(),

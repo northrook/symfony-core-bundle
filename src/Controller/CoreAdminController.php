@@ -6,28 +6,41 @@ use Northrook\Logger\Status\HTTP;
 use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\PathfinderService;
+use Northrook\Symfony\Core\Services\SecurityService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Northrook\Symfony\Latte\Core;
 use Northrook\Symfony\Latte\Parameters;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-final  class CoreAdminController extends CoreController
+final readonly class CoreAdminController
 {
+
+    use CoreControllerMethodsTrait;
+
     public function __construct(
-        private CurrentRequestService       $request,
+        protected RouterInterface           $router,
+        protected HttpKernelInterface       $httpKernel,
+        protected ?SerializerInterface      $serializer,
+        protected SecurityService           $security,
+        protected CurrentRequestService     $request,
         private PathfinderService           $pathfinder,
         private ParameterBagInterface       $parameters,
         private StylesheetGenerationService $stylesheet,
-        private Core\Environment            $latte,
-        private Parameters\Document         $document,
+        protected Core\Environment          $latte,
+        protected Parameters\Document       $document,
         private ?LoggerInterface            $logger,
         private ?Stopwatch                  $stopwatch,
     ) {
         $this->stylesheet->save( File::path( 'dir.assets/build/styles.css' ) );
     }
+
+    public function setControllerDependencies() : void {}
 
     public function index() : Response {
         return $this->response(
