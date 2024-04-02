@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
@@ -37,10 +38,12 @@ final readonly class CoreAdminController
         private ?LoggerInterface            $logger,
         private ?Stopwatch                  $stopwatch,
     ) {
-        $this->stylesheet->save( File::path( 'dir.assets/build/styles.css' ) );
-    }
+        $this->security->denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
 
-    public function setControllerDependencies() : void {}
+        $this->stylesheet->save( File::path( 'dir.assets/build/styles.css' ) );
+
+
+    }
 
     public function index() : Response {
         return $this->response(

@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\Services;
 
+use JetBrains\PhpStorm\ExpectedValues;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\UsageTrackingTokenStorage;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
@@ -10,12 +11,6 @@ use Symfony\Component\Security\Csrf\CsrfTokenManager;
 
 final readonly class SecurityService
 {
-    public const AUTHENTICATED_FULLY      = AuthenticatedVoter::IS_AUTHENTICATED_FULLY;
-    public const AUTHENTICATED_REMEMBERED = AuthenticatedVoter::IS_AUTHENTICATED_REMEMBERED;
-    public const AUTHENTICATED            = AuthenticatedVoter::IS_AUTHENTICATED;
-    public const IMPERSONATOR             = AuthenticatedVoter::IS_IMPERSONATOR;
-    public const REMEMBERED               = AuthenticatedVoter::IS_REMEMBERED;
-    public const PUBLIC_ACCESS            = AuthenticatedVoter::PUBLIC_ACCESS;
 
     public function __construct(
         public AuthorizationChecker      $authorization,
@@ -29,7 +24,8 @@ final readonly class SecurityService
      * @throws AccessDeniedException
      */
     public function denyAccessUnlessGranted(
-        mixed  $attribute = self::AUTHENTICATED_FULLY,
+        #[ExpectedValues( valuesFromClass : AuthenticatedVoter::class )]
+        mixed  $attribute,
         mixed  $subject = null,
         string $message = 'Access Denied.',
     ) : void {
