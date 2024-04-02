@@ -34,7 +34,8 @@
     "northrook/symfony-components-bundle": "dev-main",
     "northrook/symfony-latte-bundle": "dev-main",
     "ext-dom": "*",
-    "ext-libxml": "*"
+    "ext-libxml": "*",
+    "symfony/mailer": "7.1.x-dev"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

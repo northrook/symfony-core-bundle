@@ -4,6 +4,7 @@ namespace Northrook\Symfony\Core\Controller;
 
 use LogicException;
 use Northrook\Elements\Element;
+use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Latte\Core;
@@ -22,17 +23,31 @@ use Symfony\Contracts\Service\Attribute\SubscribedService;
  *
  * * Integrates {@see Core\Environment} from `northrook/symfony-latte-bundle`
  *
+ * @property ?Core\Environment $latte
  *
  * @version 0.1.0 ☑️
  * @author  Martin Nielsen <mn@northrook.com>
  */
 abstract class AbstractCoreController extends AbstractController
 {
-    private ?Core\Environment       $latte = null;
+    private ?Core\Environment       $latteEnvironment = null;
     protected ContainerInterface    $container;
     protected CurrentRequestService $request;
     protected Parameters\Document   $document;
     protected Parameters\Content    $content;
+
+    public function __get( string $name ) : mixed {
+        $name = "get" . ucfirst( $name ) . 'Service';
+        if ( method_exists( $this, $name ) ) {
+            try {
+                return $this->$name() ?? null;
+            }
+            catch ( ContainerExceptionInterface | NotFoundExceptionInterface$e ) {
+                Log::error( $e->getMessage() );
+            }
+        }
+        return null;
+    }
 
     /** Runs on container initialization.
      *
@@ -54,10 +69,6 @@ abstract class AbstractCoreController extends AbstractController
         }
 
         return $previous;
-    }
-
-    public function setLatteEnvironment( Core\Environment $latte ) : void {
-        $this->latte = $latte;
     }
 
     /** Get subscribed services

@@ -20,7 +20,6 @@ use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
  */
 final class SymfonyCoreBundle extends AbstractBundle
 {
-
     private const ROUTES = [
         'core.controller.api'   => [
             'resource' => '@SymfonyCoreBundle/config/routes/api.php',
@@ -69,7 +68,9 @@ final class SymfonyCoreBundle extends AbstractBundle
         $coreConfig    = [];
 
         if ( $apiController->exists ) {
-            echo Console::info( 'northrook.core.api', 'Config exists: ' . $apiController->value );
+            if ( 'cli' === PHP_SAPI ) {
+                echo Console::info( 'northrook.core.api', 'Config exists: ' . $apiController->value );
+            }
             return;
         }
 
@@ -81,6 +82,10 @@ final class SymfonyCoreBundle extends AbstractBundle
             $this->projectDir . '/config/routes/core.yaml',
             implode( PHP_EOL, $coreConfig ),
         );
+
+        if ( 'cli' !== PHP_SAPI ) {
+            return;
+        }
 
         if ( !$status ) {
             echo Console::error( 'northrook.core.api:', 'Config file not created: ' . $apiController->value );
