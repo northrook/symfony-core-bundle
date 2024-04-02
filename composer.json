@@ -23,6 +23,7 @@
     "symfony/deprecation-contracts": "^3.0",
     "symfony/event-dispatcher": "^7.0",
     "symfony/security-bundle": "^7",
+    "symfony/serializer": "^7",
     "symfony/form": "^7",
     "symfony/stopwatch": "^7",
     "northrook/support": "dev-main",
@@ -33,8 +34,7 @@
     "northrook/symfony-components-bundle": "dev-main",
     "northrook/symfony-latte-bundle": "dev-main",
     "ext-dom": "*",
-    "ext-libxml": "*",
-    "symfony/serializer": "7.1.x-dev"
+    "ext-libxml": "*"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
