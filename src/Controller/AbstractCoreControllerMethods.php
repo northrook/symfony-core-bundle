@@ -5,6 +5,9 @@ namespace Northrook\Symfony\Core\Controller;
 use Exception;
 use LogicException;
 use Northrook\Logger\Status\HTTP;
+use Northrook\Symfony\Core\Services\CurrentRequestService;
+use Northrook\Symfony\Core\Services\SecurityService;
+use Psr\Log\LoggerInterface;
 use SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
@@ -16,14 +19,35 @@ use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Throwable;
 
-trait CoreControllerMethodsTrait
+readonly abstract class AbstractCoreControllerMethods
 {
-    // protected RouterInterface           $router;
+    private readonly ?string $currentPath;
+    private readonly ?string $currentRoute;
+
+    protected RouterInterface       $router;
+    protected SecurityService       $security;
+    protected CurrentRequestService $request;
+    protected ?LoggerInterface      $logger;
+
+
+    final protected function route( ?string $is = null ) : string | bool {
+
+        $this->currentPath  ??= $this->request->pathInfo;
+        $this->currentRoute ??= trim( $this->currentPath, '/' );
+
+        if ( $is ) {
+            return $this->currentRoute === $is;
+        }
+
+        return $this->currentRoute;
+    }
+
     /**
      * Generates a URL from the given parameters.
      *
@@ -63,7 +87,7 @@ trait CoreControllerMethodsTrait
      *
      * @param int  $status  The HTTP status code (302 "Found" by default)
      */
-    protected function redirect( string $url, int $status = 302 ) : RedirectResponse {
+    final protected function redirect( string $url, int $status = 302 ) : RedirectResponse {
         return new RedirectResponse( $url, $status );
     }
 
@@ -72,7 +96,8 @@ trait CoreControllerMethodsTrait
      *
      * @param int  $status  The HTTP status code (302 "Found" by default)
      */
-    protected function redirectToRoute( string $route, array $parameters = [], int $status = 302 ) : RedirectResponse {
+    final protected function redirectToRoute( string $route, array $parameters = [], int $status = 302,
+    ) : RedirectResponse {
         return $this->redirect( $this->generateUrl( $route, $parameters ), $status );
     }
 

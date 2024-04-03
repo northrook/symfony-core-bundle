@@ -19,10 +19,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-final readonly class CoreAdminController
+final readonly class CoreAdminController extends AbstractCoreControllerMethods
 {
-
-    use CoreControllerMethodsTrait;
 
     public function __construct(
         protected RouterInterface           $router,
@@ -35,7 +33,7 @@ final readonly class CoreAdminController
         private StylesheetGenerationService $stylesheet,
         protected Core\Environment          $latte,
         protected Parameters\Document       $document,
-        private ?LoggerInterface            $logger,
+        protected ?LoggerInterface          $logger,
         private ?Stopwatch                  $stopwatch,
     ) {
         $this->security->denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
