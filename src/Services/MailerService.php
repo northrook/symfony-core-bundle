@@ -3,6 +3,8 @@
 namespace Northrook\Symfony\Core\Services;
 
 use JetBrains\PhpStorm\ExpectedValues;
+use Northrook\Elements\Render\Template;
+use Northrook\Symfony\Latte\Core as Latte;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Envelope;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -11,7 +13,8 @@ use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\RawMessage;
-use Twig\Environment;
+use Throwable;
+use Twig as Twig;
 
 class MailerService
 {
@@ -24,7 +27,8 @@ class MailerService
 
     public function __construct(
         private readonly SettingsManagementService $settings,
-        private readonly Environment               $twig,
+        private readonly Twig\Environment          $twig,
+        private readonly Latte\Environment         $latte,
     ) {
         // Set DSN from Settings if exists, else check $_ENV, if none; throw exception
     }
@@ -109,21 +113,31 @@ class MailerService
                 );
             }
 
-            try {
-                $html = $this->twig->render(
-                    $message->getHtmlTemplate(),
-                    $message->getContext(),
-                );
-            }
-            catch ( \Throwable $exception ) {
-                return [
-                    'sent'    => false,
-                    'status'  => 'error',
-                    'message' => $exception->getMessage(),
-                ];
+            $template = $message->getHtmlTemplate();
+            $context  = $message->getContext();
+
+            if ( $template ) {
+                try {
+                    if ( str_ends_with( $template, '.latte' ) ) {
+                        $html = $this->latte->render( $template, $context, );
+                    }
+                    elseif ( str_ends_with( $template, '.twig' ) ) {
+                        $html = $this->twig->render( $template, $context );
+                    }
+                    else {
+                        $html = new Template( $template, $context );
+                    }
+                    $message->html( $html );
+                }
+                catch ( Throwable $exception ) {
+                    return [
+                        'sent'    => false,
+                        'status'  => 'error',
+                        'message' => $exception->getMessage(),
+                    ];
+                }
             }
 
-            $message->html( $html );
         }
 
         $mailer = $this->mailer();

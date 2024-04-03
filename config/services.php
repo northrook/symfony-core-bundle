@@ -80,6 +80,7 @@ return static function ( ContainerConfigurator $container ) : void {
                   [
                       service( 'core.service.settings' ),
                       service( 'twig' ),
+                      service( 'latte.environment' ),
                   ],
               )
               ->alias( MailerService::class, 'core.service.mailer' )
