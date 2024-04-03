@@ -3,6 +3,7 @@
 namespace Northrook\Symfony\Core\Services;
 
 use JetBrains\PhpStorm\ExpectedValues;
+use JetBrains\PhpStorm\Language;
 use Northrook\Elements\Render\Template;
 use Northrook\Symfony\Latte\Core as Latte;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -16,12 +17,23 @@ use Symfony\Component\Mime\RawMessage;
 use Throwable;
 use Twig as Twig;
 
+/**
+ * @property TemplatedEmail $message
+ * @property Mailer         $mailer
+ * @property Transport      $transport
+ */
 class MailerService
 {
+    private const VALID_ELEMENTS = [
+        'hr', 'br', 'p', 'img', 'div', 'a', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span', 'b', 'i', 'u',
+        'strong', 'em', 'small', 'blockquote',
+    ];
+
     // FOR DEVELOPMENT
     private const MAILER_DSN = 'smtp://f624a425533ae5:82657c57465a24@sandbox.smtp.mailtrap.io:2525';
 
     private readonly Mailer     $mailer;
+    private readonly RawMessage $message;
     private ?string             $DSN       = null;
     private ?TransportInterface $transport = null;
 
@@ -32,6 +44,21 @@ class MailerService
     ) {
         // Set DSN from Settings if exists, else check $_ENV, if none; throw exception
     }
+
+    public function __isset( string $name ) : bool {
+        return isset( $this->$name );
+    }
+
+    public function __get( string $name ) : mixed {
+        return match ( $name ) {
+            'mailer'    => $this->mailer ?? new Mailer( $this->getTransport() ),
+            'transport' => $this->transport ?? $this->getTransport(),
+            'message'   => $this->message ?? new TemplatedEmail(),
+            default     => null
+        };
+    }
+
+    public function __set( string $name, $value ) : void {}
 
     /**
      * # Set SMTP DSN
@@ -97,10 +124,36 @@ class MailerService
         return $this->mailer ??= new Mailer( $this->getTransport() );
     }
 
+    public function message(
+        string          $subject,
+        array | Address $to,
+        ?Address        $from = null,
+        #[Language( 'Smarty' )]
+        ?string         $template = null,
+        array           $context = [],
+    ) : self {
+
+        $this->message = new TemplatedEmail();
+        $from          ??= new Address(
+            address : $this->settings->app( 'MAILER_FROM' ),
+            name    : $this->settings->app( 'MAILER_NAME' ),
+        );
+
+        $this->message->subject( $subject )
+                      ->to( $to )
+                      ->from( $from )
+                      ->htmlTemplate( $template, $context )
+        ;
+
+        return $this;
+    }
+
     public function send(
-        RawMessage $message,
-        ?Envelope  $envelope = null,
+        ?RawMessage $message,
+        ?Envelope   $envelope = null,
     ) : array {
+
+        $message ??= $this->message;
 
         if ( $message instanceof TemplatedEmail ) {
             $headers = $message->getHeaders();

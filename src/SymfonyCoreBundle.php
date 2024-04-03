@@ -64,9 +64,6 @@ final class SymfonyCoreBundle extends AbstractBundle
     }
 
     private function autoconfigureRoutes() : void {
-        if ( $this->booted ) {
-            return;
-        }
 
         $apiController = new Path( $this->projectDir . '/config/routes/core.yaml' );
         $coreConfig    = [];
