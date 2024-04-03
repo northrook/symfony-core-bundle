@@ -14,6 +14,7 @@ use Northrook\Symfony\Core\Services\HttpService;
 use Northrook\Symfony\Core\Services\MailerService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Symfony\Core\Services\SecurityService;
+use Northrook\Symfony\Core\Services\SettingsManagementService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 
 return static function ( ContainerConfigurator $container ) : void {
@@ -74,6 +75,13 @@ return static function ( ContainerConfigurator $container ) : void {
         //
         // 📧 - Mailer Service
               ->set( 'core.service.mailer', MailerService::class )
+              ->tag( 'controller.service_arguments' )
+              ->args(
+                  [
+                      service( 'core.service.settings' ),
+                      service( 'twig' ),
+                  ],
+              )
               ->alias( MailerService::class, 'core.service.mailer' )
         //
         //
@@ -86,6 +94,10 @@ return static function ( ContainerConfigurator $container ) : void {
                   ],
               )
               ->alias( LatteComponentPreprocessor::class, 'core.latte.preprocessor' )
+        //
+        //
+        // 🗃️️ - Content Management Service
+              ->set( 'core.service.settings', SettingsManagementService::class )
         //
         //
         // 🗃️️ - Content Management Service

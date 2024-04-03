@@ -3,23 +3,28 @@
 namespace Northrook\Symfony\Core\Services;
 
 use JetBrains\PhpStorm\ExpectedValues;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Envelope;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Transport\TransportInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\RawMessage;
+use Twig\Environment;
 
 class MailerService
 {
     // FOR DEVELOPMENT
     private const MAILER_DSN = 'smtp://f624a425533ae5:82657c57465a24@sandbox.smtp.mailtrap.io:2525';
 
+    private readonly Mailer     $mailer;
     private ?string             $DSN       = null;
     private ?TransportInterface $transport = null;
 
     public function __construct(
         private readonly SettingsManagementService $settings,
+        private readonly Environment               $twig,
     ) {
         // Set DSN from Settings if exists, else check $_ENV, if none; throw exception
     }
@@ -84,18 +89,47 @@ class MailerService
         return $this->transport ??= Transport::fromDsn( $this->getDSN() ?? '' );
     }
 
-    private function getMailer() : Mailer {
-        return new Mailer(
-            transport : $this->getTransport(),
-        );
+    private function mailer() : Mailer {
+        return $this->mailer ??= new Mailer( $this->getTransport() );
     }
 
     public function send(
         RawMessage $message,
         ?Envelope  $envelope = null,
     ) : array {
+
+        if ( $message instanceof TemplatedEmail ) {
+            $headers = $message->getHeaders();
+            if ( !$headers->has( 'From' ) ) {
+                $message->from(
+                    new Address(
+                        address : $this->settings->app( 'MAILER_FROM' ),
+                        name    : $this->settings->app( 'MAILER_NAME' ),
+                    ),
+                );
+            }
+
+            try {
+                $html = $this->twig->render(
+                    $message->getHtmlTemplate(),
+                    $message->getContext(),
+                );
+            }
+            catch ( \Throwable $exception ) {
+                return [
+                    'sent'    => false,
+                    'status'  => 'error',
+                    'message' => $exception->getMessage(),
+                ];
+            }
+
+            $message->html( $html );
+        }
+
+        $mailer = $this->mailer();
+
         try {
-            $this->getMailer()->send( $message, $envelope );
+            $mailer->send( $message, $envelope );
             $status = [
                 'sent'   => true,
                 'status' => 'success',
@@ -108,6 +142,14 @@ class MailerService
                 'message' => $transportException->getMessage(),
             ];
         }
+
+        dd(
+            $mailer,
+            $message,
+            $envelope,
+            $status,
+            $this,
+        );
 
         return $status;
     }
