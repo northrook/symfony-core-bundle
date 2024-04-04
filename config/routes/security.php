@@ -9,7 +9,7 @@ return static function ( RoutingConfigurator $routes ) : void {
     $routes->add( 'core:security:login', '/login' )
            ->controller( [ 'core.controller.security', 'login' ] )
            ->schemes( [ 'https' ] )
-           ->methods( [ 'GET' ] )
+           ->methods( [ 'GET', 'POST' ] )
     ;
 
     $routes->add( 'core:security:logout', '/logout' )

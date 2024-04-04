@@ -33,6 +33,8 @@ final readonly class SecurityController extends AbstractCoreControllerMethods
         CsrfTokenManagerInterface $csrfTokenManager,
     ) : Response {
 
+        dd( $this->security->getUser() );
+
         return $this->response(
             template   : 'security/login.latte',
             parameters : [

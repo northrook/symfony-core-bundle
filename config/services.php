@@ -3,7 +3,6 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Favicon\FaviconBundle;
-use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Controller\CoreAdminController;
 use Northrook\Symfony\Core\Controller\CoreApiController;
 use Northrook\Symfony\Core\Controller\SecurityController;
@@ -102,17 +101,6 @@ return static function ( ContainerConfigurator $container ) : void {
                   ],
               )
               ->alias( MailerService::class, 'core.service.mailer' )
-        //
-        //
-        // ☕ - Core Latte Preprocessor
-              ->set( 'core.latte.preprocessor', LatteComponentPreprocessor::class )
-              ->args(
-                  [
-                      service( 'logger' )->nullOnInvalid(),
-                      service( 'debug.stopwatch' )->nullOnInvalid(),
-                  ],
-              )
-              ->alias( LatteComponentPreprocessor::class, 'core.latte.preprocessor' )
         //
         //
         // 🗃️️ - Content Management Service

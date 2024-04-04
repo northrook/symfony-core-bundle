@@ -5,12 +5,15 @@
 {block 'body'}
     This is the login page
     <form method="post">
-        <div n:ifcontent="$error" class="alert alert-danger">
+
+        <div n:ifcontent class="alert alert-danger">
+
             {$error}
+
         </div>
 
-        <div n:ifcontent="$currentUser" class="mb-3">
-            You are logged in as {$get->user->userIdentifier}, <a href="{$get->path('core:security:logout')}">Logout</a>
+        <div n:if="$currentUser" class="mb-3">
+            You are logged in as {$get->user->getUserIdentifier()}, <a href="{$get->path('core:security:logout')}">Logout</a>
         </div>
 
         <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
