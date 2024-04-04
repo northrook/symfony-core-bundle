@@ -5,7 +5,6 @@ namespace Northrook\Symfony\Core\Controller;
 use LogicException;
 use Northrook\Elements\Element;
 use Northrook\Logger\Log;
-use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Latte\Core;
 use Northrook\Symfony\Latte\Parameters;
@@ -79,13 +78,11 @@ abstract class AbstractCoreController extends AbstractController
      * @return string[]|SubscribedService[]
      *  */
     public static function getSubscribedServices() : array {
-
         return array_merge(
             parent::getSubscribedServices(),
             [
-                'core.service.request'    => '?' . CurrentRequestService::class,
-                'core.latte.preprocessor' => '?' . LatteComponentPreprocessor::class,
-                'latte.environment'       => '?' . Core\Environment::class,
+                'core.service.request' => '?' . CurrentRequestService::class,
+                'latte.environment'    => '?' . Core\Environment::class,
             ],
         );
     }
@@ -103,7 +100,7 @@ abstract class AbstractCoreController extends AbstractController
      */
     protected function getLatteService() : Core\Environment {
 
-        if ( !$this->container->has( 'latte.environment' ) || !$this->container->has( 'core.latte.preprocessor' ) ) {
+        if ( !$this->container->has( 'latte.environment' ) || !$this->container->has( 'latte.core.preprocessor' ) ) {
             throw new LogicException(
                 'You cannot use the "latte" or "latteResponse" method if the Latte Bundle is not available.\nTry running "composer require northrook/symfony-latte-bundle".',
             );
@@ -113,7 +110,7 @@ abstract class AbstractCoreController extends AbstractController
 
         // $this->latteEnvironment->addExtension();
 
-        $this->latteEnvironment->addPreprocessor( $this->container->get( 'core.latte.preprocessor' ) );
+        $this->latteEnvironment->addPreprocessor( $this->container->get( 'latte.core.preprocessor' ) );
 
         return $this->latteEnvironment;
     }

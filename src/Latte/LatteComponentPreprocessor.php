@@ -1,18 +1,32 @@
 <?php
 
-namespace Northrook\Symfony\Core\Components;
+namespace Northrook\Symfony\Core\Latte;
 
 use Northrook\Support\Regex;
 use Northrook\Symfony\Latte\Preprocessor\Preprocessor;
 
+// NOTE : This is a "source" file, use it to template a new core component
+//
+
 final class LatteComponentPreprocessor extends Preprocessor
 {
-    /**
-     * @var Component[]
-     */
-    private mixed $components = [];
 
-    public function construct() : void {
+    public function __construct(
+        /**
+         * @var Component[]
+         */
+        private array $components = [],
+    ) {}
+
+    public function addComponent(
+        Component ...$component
+    ) : self {
+        $this->components = array_merge( $this->components, $component );
+
+        return $this;
+    }
+
+    public function process() : self {
         $this->prepareContent();
         $this->matchComponents();
         $this->processButtons();
@@ -21,6 +35,8 @@ final class LatteComponentPreprocessor extends Preprocessor
         foreach ( $this->components as $component ) {
             $this->updateContent( $component->templateString, $component );
         }
+
+        return $this;
     }
 
     /**
