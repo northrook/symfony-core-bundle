@@ -17,9 +17,8 @@ use Throwable;
 use Twig as Twig;
 
 /**
- * @property TemplatedEmail $message
- * @property Mailer         $mailer
- * @property Transport      $transport
+ * @property Mailer    $mailer
+ * @property Transport $transport
  */
 class MailerService
 {
@@ -149,11 +148,9 @@ class MailerService
     // }
 
     public function send(
-        ?RawMessage $message = null,
-        ?Envelope   $envelope = null,
+        RawMessage $message,
+        ?Envelope  $envelope = null,
     ) : array {
-
-        $message ??= $this->message;
 
         if ( $message instanceof TemplatedEmail ) {
             $headers = $message->getHeaders();
