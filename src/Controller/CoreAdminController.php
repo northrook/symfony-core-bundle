@@ -3,7 +3,6 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Elements\Render\Template;
-use Northrook\Logger\Status\HTTP;
 use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\MailerService;
@@ -93,33 +92,6 @@ final readonly class CoreAdminController extends AbstractCoreControllerMethods
 
         return $this->response(
             template : 'admin/_admin.latte',
-        );
-    }
-
-    private function response(
-        string         $template,
-        object | array $parameters = [],
-        int | HTTP     $status = HTTP::OK,
-    ) : Response {
-
-        if ( is_array( $parameters ) && isset( $this->document ) ) {
-            $parameters[ 'document' ] = $this->document;
-        }
-
-        return new Response(
-            content : $this->render( $template, $parameters ),
-            status  : $status,
-        );
-    }
-
-    private function render(
-        string         $template,
-        object | array $parameters = [],
-    ) : string {
-
-        return $this->latte->render(
-            template   : $template,
-            parameters : $parameters,
         );
     }
 

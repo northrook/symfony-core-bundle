@@ -28,8 +28,8 @@ final readonly class SecurityController extends AbstractCoreControllerMethods
 
     public function login() : Response {
 
-        return new Response(
-            content : 'Login Route',
+        return $this->response(
+            template : 'security/login.latte',
         );
     }
 

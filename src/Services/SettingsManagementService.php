@@ -39,12 +39,33 @@ final class SettingsManagementService
     public function __construct() {}
 
     public function public( ?string $name = null ) : mixed {
-        $this->public ??= array_merge( self::PUBLIC, $this->public );
+
+
+        if ( !isset( $this->public ) ) {
+
+            $public = array_merge(
+                self::PUBLIC,
+            // get from database and .env firstly
+            );
+
+            $this->public = $public;
+        }
+
         return $name === null ? $this->public : $this->public[ $name ] ?? null;
     }
 
     public function admin( ?string $name = null ) : mixed {
-        $this->admin ??= array_merge( self::ADMIN, $this->admin );
+
+        if ( !isset( $this->admin ) ) {
+
+
+            $admin = array_merge(
+                self::APP,
+            // get from database and .env firstly
+            );
+
+            $this->admin = $admin;
+        }
         return $name === null ? $this->admin : $this->admin[ $name ] ?? null;
     }
 
