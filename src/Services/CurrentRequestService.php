@@ -74,6 +74,10 @@ class CurrentRequestService
         return $get ? $this->currentRequest()->get( $get ) : $this->currentRequest()->attributes;
     }
 
+    public function attributes( ?string $get = null ) : Http\ParameterBag | array | string | int | bool | float | null {
+        return $get ? $this->currentRequest()->attributes->get( $get ) : $this->currentRequest()->attributes;
+    }
+
     /**
      * @param string|null  $get  {@see  InputBag::get}
      *
