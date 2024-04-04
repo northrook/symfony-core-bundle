@@ -6,6 +6,7 @@ use Northrook\Favicon\FaviconBundle;
 use Northrook\Symfony\Core\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Controller\CoreAdminController;
 use Northrook\Symfony\Core\Controller\CoreApiController;
+use Northrook\Symfony\Core\Controller\SecurityController;
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
 use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Services\ContentManagementService;
@@ -68,6 +69,18 @@ return static function ( ContainerConfigurator $container ) : void {
                   ],
               )
               ->alias( CoreAdminController::class, 'core.controller.admin' )
+        //
+        //
+        // ☕ - Core API Controller
+              ->set( 'core.controller.security', SecurityController::class )
+              ->tag( 'controller.service_arguments' )
+              ->args(
+                  [
+                      service( 'core.service.security' ),
+                      service( 'logger' )->nullOnInvalid(),
+                  ],
+              )
+              ->alias( SecurityController::class, 'core.controller.security' )
         //
         //
         // ☕ - Favicon Generator

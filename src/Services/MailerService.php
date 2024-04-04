@@ -3,7 +3,6 @@
 namespace Northrook\Symfony\Core\Services;
 
 use JetBrains\PhpStorm\ExpectedValues;
-use Northrook\Elements\Render\Template;
 use Northrook\Symfony\Latte\Core as Latte;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Envelope;
@@ -28,7 +27,7 @@ class MailerService
     ];
 
     // FOR DEVELOPMENT
-    private const MAILER_DSN = 'smtp://placeholder:PLuYThbZEZjHFJAHpWcs@mail.northrook.com:587';
+    private const MAILER_DSN = 'smtp://placeholder@northrook.com:PLuYThbZEZjHFJAHpWcs@mail.northrook.com:587';
 
     private readonly Mailer     $mailer;
     private readonly RawMessage $message;
@@ -175,9 +174,8 @@ class MailerService
                         $html = $this->twig->render( $template, $context );
                     }
                     else {
-                        $html = new Template( $template, $context );
+                        $html = $template;
                     }
-                    // dd( $html->render(), $template, $context, $this );
                     $message->html( $html );
                 }
                 catch ( Throwable $exception ) {
@@ -207,14 +205,6 @@ class MailerService
                 'message' => $transportException->getMessage(),
             ];
         }
-
-        dd(
-            $mailer,
-            $message,
-            $envelope,
-            $status,
-            $this,
-        );
 
         return $status;
     }

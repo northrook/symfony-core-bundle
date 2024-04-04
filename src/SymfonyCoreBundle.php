@@ -21,13 +21,17 @@ use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 final class SymfonyCoreBundle extends AbstractBundle
 {
     private const ROUTES = [
-        'core.controller.api'   => [
+        'core.controller.api'      => [
             'resource' => '@SymfonyCoreBundle/config/routes/api.php',
             'prefix'   => '/api',
         ],
-        'core.controller.admin' => [
+        'core.controller.admin'    => [
             'resource' => '@SymfonyCoreBundle/config/routes/admin.php',
             'prefix'   => '/admin',
+        ],
+        'core.controller.security' => [
+            'resource' => '@SymfonyCoreBundle/config/routes/security.php',
+            'prefix'   => '/',
         ],
     ];
 

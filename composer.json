@@ -14,6 +14,7 @@
       "Northrook\\Symfony\\Core\\": "src/"
     }
   },
+  "prefer-stable": true,
   "minimum-stability": "dev",
   "require": {
     "php": ">=8.2",
@@ -24,9 +25,12 @@
     "symfony/event-dispatcher": "^7.0",
     "symfony/security-bundle": "^7",
     "symfony/mailer": "^7",
+    "symfonycasts/reset-password-bundle": "^1.21",
+    "symfonycasts/verify-email-bundle": "^1.17",
     "symfony/twig-bundle": "^7",
     "symfony/serializer": "^7",
     "symfony/form": "^7",
+    "symfony/validator": "^7",
     "symfony/stopwatch": "^7",
     "northrook/support": "dev-main",
     "northrook/elements": "dev-main",
@@ -36,8 +40,6 @@
     "northrook/stylesheets": "dev-main",
     "northrook/symfony-components-bundle": "dev-main",
     "northrook/symfony-latte-bundle": "dev-main",
-    "symfonycasts/reset-password-bundle": "^1.21",
-    "symfonycasts/verify-email-bundle": "^1.17",
     "ext-dom": "*",
     "ext-libxml": "*"
   },
