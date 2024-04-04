@@ -6,8 +6,13 @@ use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 return static function ( RoutingConfigurator $routes ) : void {
 
+    $routes->add( 'core:security:login', '/login' )
+           ->controller( [ 'core.controller.security', 'login' ] )
+           ->methods( [ 'GET' ] )
+    ;
+
     $routes->add( 'core:security:logout', '/logout' )
-        // ->controller( [ 'core.controller.api', 'favicon' ] )
+           ->controller( [ 'core.controller.security', 'logout' ] )
            ->methods( [ 'GET' ] )
     ;
 

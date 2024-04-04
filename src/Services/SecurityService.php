@@ -7,6 +7,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\UsageTrackingTo
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
 
 final readonly class SecurityService
@@ -17,6 +18,17 @@ final readonly class SecurityService
         public UsageTrackingTokenStorage $tokenStorage,
         public CsrfTokenManager          $csrf,
     ) {}
+
+    /**
+     * Retrieve the current user from {@see $tokenStorage}.
+     *
+     * Returns {@see null} if the no user is authenticated.
+     *
+     * @return null|UserInterface
+     */
+    public function getUser() : ?UserInterface {
+        return $this->tokenStorage->getToken() ? $this->tokenStorage->getToken()->getUser() : null;
+    }
 
     /**
      * Checks if the attribute is granted against the current authentication token and optionally supplied subject.
