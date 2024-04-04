@@ -7,7 +7,7 @@ use Northrook\Symfony\Core\App;
 /**
  * @property string $MAILER_DSN
  */
-class SettingsManagementService
+final class SettingsManagementService
 {
 
     public const APP = [
@@ -68,8 +68,8 @@ class SettingsManagementService
             $app[ 'NAME' ]        ??= $_ENV[ 'APP_NAME' ] ?? 'symfony-core'; // TODO : This is a placeholder
             $app[ 'HOME_URL' ]    ??= $_ENV[ 'HOME_URL' ] ?? 'https://example.com';
             $app[ 'MAILER_DSN' ]  = $_ENV[ 'MAILER_DSN' ] ?? null;
-            $app[ 'MAILER_FROM' ] = $_ENV[ 'MAILER_FROM' ] ?? null;
-            $app[ 'MAILER_NAME' ] = $_ENV[ 'MAILER_NAME' ] ?? null;
+            $app[ 'MAILER_FROM' ] = $_ENV[ 'MAILER_FROM' ] ?? 'placeholder@northrook.com';
+            $app[ 'MAILER_NAME' ] = $_ENV[ 'MAILER_NAME' ] ?? 'Placeholder';
 
             if ( $app[ 'MAILER_FROM' ] === null ) {
                 $app[ 'MAILER_FROM' ] = 'no-reply@' . trim( strstr( $app[ 'HOME_URL' ], '//' ), " \n\r\t\v\0/", );

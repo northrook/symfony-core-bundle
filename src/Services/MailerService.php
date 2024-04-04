@@ -3,7 +3,6 @@
 namespace Northrook\Symfony\Core\Services;
 
 use JetBrains\PhpStorm\ExpectedValues;
-use JetBrains\PhpStorm\Language;
 use Northrook\Elements\Render\Template;
 use Northrook\Symfony\Latte\Core as Latte;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -30,7 +29,7 @@ class MailerService
     ];
 
     // FOR DEVELOPMENT
-    private const MAILER_DSN = 'smtp://f624a425533ae5:82657c57465a24@sandbox.smtp.mailtrap.io:2525';
+    private const MAILER_DSN = 'smtp://placeholder:PLuYThbZEZjHFJAHpWcs@mail.northrook.com:587';
 
     private readonly Mailer     $mailer;
     private readonly RawMessage $message;
@@ -123,33 +122,34 @@ class MailerService
     private function mailer() : Mailer {
         return $this->mailer ??= new Mailer( $this->getTransport() );
     }
-
-    public function message(
-        string          $subject,
-        array | Address $to,
-        ?Address        $from = null,
-        #[Language( 'Smarty' )]
-        ?string         $template = null,
-        array           $context = [],
-    ) : self {
-
-        $this->message = new TemplatedEmail();
-        $from          ??= new Address(
-            address : $this->settings->app( 'MAILER_FROM' ),
-            name    : $this->settings->app( 'MAILER_NAME' ),
-        );
-
-        $this->message->subject( $subject )
-                      ->to( $to )
-                      ->from( $from )
-                      ->htmlTemplate( $template, $context )
-        ;
-
-        return $this;
-    }
+    //
+    // public function message(
+    //     string          $subject,
+    //     array | Address $to,
+    //     #[Language( 'Smarty' )]
+    //     ?string         $template = null,
+    //     array           $context = [],
+    //     ?Address        $from = null,
+    // ) : self {
+    //
+    //     $this->message = new TemplatedEmail();
+    //     $from          ??= new Address(
+    //         address : $this->settings->app( 'MAILER_FROM' ),
+    //         name    : $this->settings->app( 'MAILER_NAME' ),
+    //     );
+    //
+    //     $this->message->subject( $subject )
+    //                   ->to( $to )
+    //                   ->from( $from )
+    //                   ->htmlTemplate( $template )
+    //                   ->context( $context )
+    //     ;
+    //
+    //     return $this;
+    // }
 
     public function send(
-        ?RawMessage $message,
+        ?RawMessage $message = null,
         ?Envelope   $envelope = null,
     ) : array {
 
@@ -180,6 +180,7 @@ class MailerService
                     else {
                         $html = new Template( $template, $context );
                     }
+                    // dd( $html->render(), $template, $context, $this );
                     $message->html( $html );
                 }
                 catch ( Throwable $exception ) {

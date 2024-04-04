@@ -67,6 +67,7 @@ return static function ( ContainerConfigurator $container ) : void {
                       service( 'debug.stopwatch' )->nullOnInvalid(),
                   ],
               )
+              ->alias( CoreAdminController::class, 'core.controller.admin' )
         //
         //
         // ☕ - Favicon Generator
