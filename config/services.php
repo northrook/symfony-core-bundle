@@ -71,12 +71,16 @@ return static function ( ContainerConfigurator $container ) : void {
               ->alias( CoreAdminController::class, 'core.controller.admin' )
         //
         //
-        // ☕ - Core API Controller
+        // 🛡️ - Security Controller
               ->set( 'core.controller.security', SecurityController::class )
               ->tag( 'controller.service_arguments' )
               ->args(
                   [
                       service( 'core.service.security' ),
+                      service( 'core.service.request' ),
+                      service( 'core.service.settings' ),
+                      service( 'latte.environment' ),
+                      service( 'latte.parameters.document' ),
                       service( 'logger' )->nullOnInvalid(),
                   ],
               )
@@ -125,7 +129,7 @@ return static function ( ContainerConfigurator $container ) : void {
               )
         //
         //
-        // 🗃️️ - Content Management Service
+        // 🛡️️ - Security Service
               ->set( 'core.service.security', SecurityService::class )
               ->args(
                   [
