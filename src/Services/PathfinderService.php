@@ -104,7 +104,7 @@ class PathfinderService
             if ( str_starts_with( $key, 'dir' ) ) {
                 unset( $parameters[ $key ] );
             }
-            
+
             $parameters[ $key ] = Path::normalize( $value );
         }
 
