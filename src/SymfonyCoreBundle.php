@@ -47,6 +47,11 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         $container->import( '../config/services.php' );
 
+        dd(
+            $config,
+            $container,
+            $builder,
+        );
 
         // Autoconfigure Notes
         // Look for .yaml files in config folder, remove them if adding .php version and vice versa
