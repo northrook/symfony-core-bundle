@@ -3,6 +3,7 @@
 namespace Northrook\Symfony\Core\Latte;
 
 use Northrook\Support\Regex;
+use Northrook\Symfony\Core\Components\Button;
 use Northrook\Symfony\Latte\Preprocessor\Preprocessor;
 
 // NOTE : This is a "source" file, use it to template a new core component
@@ -11,17 +12,39 @@ use Northrook\Symfony\Latte\Preprocessor\Preprocessor;
 final class LatteComponentPreprocessor extends Preprocessor
 {
 
-    public function __construct(
-        /**
-         * @var Component[]
-         */
-        private array $components = [],
-    ) {}
+    /**
+     * @var Component[]
+     */
+    private array $components = [];
+
+    public function __construct() {
+        $this->components = [
+            Button::class,
+        ];
+    }
 
     public function addComponent(
-        Component ...$component
+        string  ...$component
     ) : self {
-        $this->components = array_merge( $this->components, $component );
+        foreach ( $component as $object ) {
+
+            if ( !is_subclass_of( $object, Component::class ) ) {
+                $this->logger->error(
+                    message : "{object} is not a subclass of {component}.",
+                    context : [
+                                  '$object'   => $object,
+                                  'component' => Component::class,
+                              ],
+                );
+                continue;
+            }
+
+            if ( in_array( $object, $this->components, true ) ) {
+                continue;
+            }
+            $this->components[] = $object;
+        }
+
 
         return $this;
     }
@@ -54,55 +77,57 @@ final class LatteComponentPreprocessor extends Preprocessor
             return;
         }
 
-        foreach ( $components as $match ) {
+        dd( $components );
 
-            $element = Component::element( $match, $this->logger, $this->stopwatch );
-
-            // Looks forwards to find innerHTML
-            if (
-                false === str_ends_with( $match->string, '/>' )
-                &&
-                false !== preg_match( "/<\s*?\/\s*?$match->component\s*?>/ms", $this->content, $closingTag )
-            ) {
-
-                $closingTag = $closingTag[ 0 ] ?? false;
-
-                if ( $closingTag === false ) {
-                    $this->logger->error(
-                        'Closing tag expected, but not found for {match}',
-                        [ 'match' => $match->component ],
-                    );
-                }
-
-                $component = strpos( $this->content, $match->string );
-                $closing   = strpos( $this->content, $closingTag );
-
-                $outerHTML = substr(
-                    string : $this->content,
-                    offset : $component,
-                    length : $closing - $component + strlen( $closingTag ),
-                );
-
-                $innerHTML = substr(
-                    $outerHTML,
-                    strlen( $match->string ),
-                    (
-                        strlen( $outerHTML )
-                        - strlen( $match->string )
-                        - strlen( $closingTag )
-                    ),
-                );
-
-                $innerHTML     = trim( $innerHTML );
-                $this->content = str_ireplace( $outerHTML, $match->string, $this->content );
-
-                $element->innerHTML = $innerHTML;
-//				$node[ 'innerHTML' ] = $innerHTML;
-            }
-            $this->components[] = $element;
-
-//			$this->components[] = $node;
-        }
+//         foreach ( $components as $match ) {
+//
+//             $element = Component::element( $match, $this->logger, $this->stopwatch );
+//
+//             // Looks forwards to find innerHTML
+//             if (
+//                 false === str_ends_with( $match->string, '/>' )
+//                 &&
+        /*                false !== preg_match( "/<\s*?\/\s*?$match->component\s*?>/ms", $this->content, $closingTag )*/
+//             ) {
+//
+//                 $closingTag = $closingTag[ 0 ] ?? false;
+//
+//                 if ( $closingTag === false ) {
+//                     $this->logger->error(
+//                         'Closing tag expected, but not found for {match}',
+//                         [ 'match' => $match->component ],
+//                     );
+//                 }
+//
+//                 $component = strpos( $this->content, $match->string );
+//                 $closing   = strpos( $this->content, $closingTag );
+//
+//                 $outerHTML = substr(
+//                     string : $this->content,
+//                     offset : $component,
+//                     length : $closing - $component + strlen( $closingTag ),
+//                 );
+//
+//                 $innerHTML = substr(
+//                     $outerHTML,
+//                     strlen( $match->string ),
+//                     (
+//                         strlen( $outerHTML )
+//                         - strlen( $match->string )
+//                         - strlen( $closingTag )
+//                     ),
+//                 );
+//
+//                 $innerHTML     = trim( $innerHTML );
+//                 $this->content = str_ireplace( $outerHTML, $match->string, $this->content );
+//
+//                 $element->innerHTML = $innerHTML;
+// //				$node[ 'innerHTML' ] = $innerHTML;
+//             }
+//             $this->components[] = $element;
+//
+// //			$this->components[] = $node;
+//         }
 //		dd( $this->components );
     }
 

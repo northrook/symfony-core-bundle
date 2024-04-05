@@ -2,119 +2,40 @@
 
 namespace Northrook\Symfony\Core\Latte;
 
-use DOMDocument;
-use Northrook\Components\Element\Properties;
+use Northrook\Support\Get;
 use Psr\Log\LoggerInterface;
-use stdClass;
 use Stringable;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-abstract class Component extends stdClass implements Stringable
+abstract class Component implements Stringable
 {
     protected const TAG = 'field';
-    protected Properties       $properties;
-    protected ?LoggerInterface $logger    = null;
-    protected ?Stopwatch       $stopwatch = null;
-    public readonly string $templateString;
-public readonly string $id;    // type:field:name
-    public readonly string $field; // input, select, textarea etc
-    public readonly string $type;  // email, combobox, editor etc
 
-    private function __construct() {}
+    public readonly string $string;
 
-    public static function element(
-        $match,
-        ?LoggerInterface $logger = null,
-        ?Stopwatch $stopwatch = null,
-    ) : static {
-
-        $component = match ( $match->type ) {
-            // input
-            'password' => new Input\Password(),
-            'email'    => new Input\Email(),
-            'text'     => new Input\Text(),
-            // select
-            'combobox' => new Select\Combobox(),
-            default    => new static(),
-        };
-
-        $component->templateString = $match->string;
-        $component->field          = $match->tag;
-        $component->type           = $match->type;
-        $component->assignProperties()
-                  ->assignComponentId(
-                      $component->field,
-                      $component->type,
-                      $component->properties->name,
-                  )
-        ;
-
-        $component->logger    = $logger;
-        $component->stopwatch = $stopwatch;
-        $component->stopwatch->start( $component->id, 'component' );
-
-        return $component;
+    public function __construct(
+        protected readonly ?LoggerInterface $logger = null,
+        protected readonly ?Stopwatch       $stopwatch = null,
+    ) {
+        $this->stopwatch->start( Get::className(), 'Component' );
+        $this->construct();
     }
 
-    private function assignComponentId( ?string ...$string ) : self {
-        $this->id = implode(
-            ':', array_filter( $string ),
-        ) ?: uniqid();
+    protected function construct() : void {}
 
-        return $this;
+    abstract public function build() : string;
+
+    final protected function renderComponentString() : string {
+        $this->string ??= $this->build();
+        $this->stopwatch->stop( Get::className() );
+        return $this->string;
     }
 
-    public function print() : string {
-        return $this;
+    final public function print( bool $pretty = false ) : string {
+        return $this->renderComponentString();
     }
 
-    public function __toString() : string {
-        $this->stopwatch->stop( $this->id );
-        // TODO: Implement __toString() method.
-
-        return '';
-    }
-
-    private function assignProperties() : self {
-
-        $string = trim( $this->templateString );
-
-        if ( !$string ) {
-            return $this;
-        }
-
-        if ( str_starts_with( $string, '<' ) ) {
-            $string = '<input' . strstr( $string, ' ' );
-        }
-
-        $tag = $this->field;
-
-        if ( false === str_starts_with( $string, '<' ) && false === str_starts_with( $string, '>' ) ) {
-            $string = "<$tag $string > ";
-        }
-
-        $dom = new DOMDocument();
-
-        $dom->loadHTML( $string, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOERROR );
-
-        $node = $dom->getElementsByTagName( $tag )->item( 0 );
-
-        if ( !$node->attributes ) {
-            return $this;
-        }
-
-        $attributes = [];
-
-        foreach ( $node->attributes as $attribute ) {
-            $attributes[ $attribute->nodeName ] = $attribute->nodeValue;
-        }
-
-        if ( !$attributes ) {
-            return $this;
-        }
-
-        $this->properties = new Properties( $attributes );
-
-        return $this;
+    final public function __toString() : string {
+        return $this->renderComponentString();
     }
 }

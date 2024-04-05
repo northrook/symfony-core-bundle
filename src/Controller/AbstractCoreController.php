@@ -1,10 +1,11 @@
-<?php /** @noinspection PhpUnused */
+<?php
+
 
 namespace Northrook\Symfony\Core\Controller;
 
 use LogicException;
-use Northrook\Elements\Element;
-use Northrook\Logger\Log;
+use Northrook\Symfony\Core\App;
+use Northrook\Symfony\Core\Latte\LatteRenderTrait;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Latte\Core;
 use Northrook\Symfony\Latte\Parameters;
@@ -12,7 +13,6 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Service\Attribute\SubscribedService;
 
@@ -29,23 +29,35 @@ use Symfony\Contracts\Service\Attribute\SubscribedService;
  */
 abstract class AbstractCoreController extends AbstractController
 {
+    use LatteRenderTrait;
+
     private ?Core\Environment       $latteEnvironment = null;
     protected ContainerInterface    $container;
     protected CurrentRequestService $request;
     protected Parameters\Document   $document;
     protected Parameters\Content    $content;
 
+    public function __isset( string $name ) : bool {
+        return isset( $this->$name );
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __get( string $name ) : mixed {
-        $name = "get" . ucfirst( $name ) . 'Service';
-        if ( method_exists( $this, $name ) ) {
-            try {
-                return $this->$name() ?? null;
-            }
-            catch ( ContainerExceptionInterface | NotFoundExceptionInterface$e ) {
-                Log::error( $e->getMessage() );
-            }
+        return match ( $name ) {
+            'latte' => $this->getLatteService(),
+            default => $this->$name ?? null,
+        };
+    }
+
+    public function __set( string $name, $value ) : void {
+        if ( !App::env( 'public' ) ) {
+            throw new LogicException(
+                "Dynamic property assignment is not allowed for {$this::class}.",
+            );
         }
-        return null;
     }
 
     /** Runs on container initialization.
@@ -87,12 +99,6 @@ abstract class AbstractCoreController extends AbstractController
         );
     }
 
-    /**
-     * Run at the very start of the {@see Core\Environment} render chain.
-     *
-     * @return void
-     */
-    protected function onLatteRender() : void {}
 
     /**
      * @throws ContainerExceptionInterface
@@ -106,88 +112,6 @@ abstract class AbstractCoreController extends AbstractController
             );
         }
 
-        $this->latteEnvironment ??= $this->container->get( 'latte.environment' );
-
-        dd( $this->latteEnvironment );
-
-        return $this->latteEnvironment;
-    }
-
-    /**
-     * @param string             $view  Template file or template string
-     * @param object|array|null  $parameters
-     *
-     * @return string
-     */
-    protected function latte(
-        string                $view,
-        object | array | null $parameters = null,
-    ) : string {
-
-        $this->onLatteRender();
-
-        $parameters ??= [];
-
-        if ( is_array( $parameters ) && isset( $this->document ) ) {
-            $parameters[ 'document' ] = $this->document;
-        }
-
-
-        return $this->latte->render(
-            template   : $view,
-            parameters : $parameters,
-        );
-    }
-
-    /**
-     */
-    protected function modalResponse(
-        string         $view,
-        object | array $parameters = [],
-        int            $status = Response::HTTP_OK,
-        array          $headers = [],
-        array          $attributes = [],
-        // UI\Button $button -  from Latte Components
-    ) : Response {
-
-        $options = [
-            'Template-Type' => 'modal', // TODO: [?] as Enum from Latte Components
-        ];
-
-        $content = $this->latte( $view, $parameters );
-
-        $modal = ( string) new Element(
-            tag        : 'modal',
-            attributes : $attributes,
-            content    : "<section class='modal-content'>$content</section>", // if array is passed, simple implode
-        );
-
-        return new Response(
-            content : $modal,
-            status  : $status,
-            headers : $options + $headers,
-        );
-    }
-
-
-    /**
-     * @param string        $view
-     * @param object|array  $parameters
-     * @param int           $status
-     * @param array         $headers
-     *
-     * @return Response
-     */
-    protected function latteResponse(
-        string         $view,
-        object | array $parameters = [],
-        int            $status = Response::HTTP_OK,
-        array          $headers = [],
-    ) : Response {
-        return new Response(
-            content : $this->latte( $view, $parameters ),
-            status  : $status,
-            headers : $headers,
-        );
+        return $this->latteEnvironment ??= $this->container->get( 'latte.environment' );
     }
 }

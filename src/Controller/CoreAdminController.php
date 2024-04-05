@@ -14,6 +14,7 @@ use Northrook\Symfony\Latte\Parameters;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -68,7 +69,7 @@ final readonly class CoreAdminController extends AbstractCoreControllerMethods
                         </p>
                         
                         <p>
-                            Did the link expire? <a href="#">Request a new link here.</a>.<br>
+                            Did the link expire? <a href="#">Request a new link here</a>.<br>
                             Note that requesting a new link invalidates any previous links.
                         </p>
                         <p>
@@ -85,9 +86,11 @@ final readonly class CoreAdminController extends AbstractCoreControllerMethods
                 )
             ;
 
-            dump( $message );
             $mail = $mailer->send( $message );
-            dd( $mail );
+
+            return new JsonResponse(
+                $mail,
+            );
         }
 
         return $this->response(
