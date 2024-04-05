@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core;
 
+use Northrook\Symfony\Core\DependencyInjection\Compiler\LatteEnvironmentPass;
 use Northrook\Symfony\Core\Support\Console;
 use Northrook\Types\Path;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -47,11 +48,9 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         $container->import( '../config/services.php' );
 
-        dd(
-            $config,
-            $container,
-            $builder,
-        );
+        $latte = $container->services()->get( 'latte.environment' );
+
+        dd( $latte );
 
         // Autoconfigure Notes
         // Look for .yaml files in config folder, remove them if adding .php version and vice versa
@@ -60,10 +59,15 @@ final class SymfonyCoreBundle extends AbstractBundle
         $this->booted = true;
     }
 
+    public function build( ContainerBuilder $container ) : void {
+        $container->addCompilerPass( new LatteEnvironmentPass() );
+
+    }
+
     public function boot() : void {
         parent::boot();
 
-        if ( $this->container && !$this->booted ) {
+        if ( $this->container ) {
             SymfonyCoreFacade::set( $this->container );
         }
     }
@@ -84,7 +88,7 @@ final class SymfonyCoreBundle extends AbstractBundle
             return;
         }
 
-        foreach ( self::ROUTES as $key => $value ) {
+        foreach ( SymfonyCoreBundle::ROUTES as $key => $value ) {
             $coreConfig[] = "$key:\n    resource: '{$value['resource']}'\n    prefix: {$value['prefix']}\n";
         }
 
