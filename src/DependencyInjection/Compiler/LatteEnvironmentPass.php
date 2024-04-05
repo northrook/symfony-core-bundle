@@ -9,6 +9,13 @@ class LatteEnvironmentPass implements CompilerPassInterface
 {
 
     public function process( ContainerBuilder $container ) : void {
-        dd( $container );
+        $latteEnvironment  = $container->getDefinition( 'latte.environment' );
+        $lattePreprocessor = $container->getDefinition( 'core.latte.preprocessor' );
+        // dd($lattePreprocessor);
+        $latteEnvironment->addMethodCall(
+            'addPreprocessor',
+            [ $lattePreprocessor ],
+        );;
+
     }
 }

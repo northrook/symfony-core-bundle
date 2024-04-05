@@ -48,10 +48,6 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         $container->import( '../config/services.php' );
 
-        $latte = $container->services()->get( 'latte.environment' );
-
-        dd( $latte );
-
         // Autoconfigure Notes
         // Look for .yaml files in config folder, remove them if adding .php version and vice versa
         // TODO : Autoconfigure Security
@@ -59,9 +55,9 @@ final class SymfonyCoreBundle extends AbstractBundle
         $this->booted = true;
     }
 
+    // TODO : Can we set the Static Container here ?
     public function build( ContainerBuilder $container ) : void {
         $container->addCompilerPass( new LatteEnvironmentPass() );
-
     }
 
     public function boot() : void {

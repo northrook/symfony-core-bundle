@@ -8,6 +8,7 @@ use Northrook\Symfony\Core\Controller\CoreApiController;
 use Northrook\Symfony\Core\Controller\SecurityController;
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
 use Northrook\Symfony\Core\File;
+use Northrook\Symfony\Core\Latte\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Services\ContentManagementService;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\HttpService;
@@ -85,8 +86,10 @@ return static function ( ContainerConfigurator $container ) : void {
               )
               ->alias( SecurityController::class, 'core.controller.security' )
         //
+        // ☕ - Latte Preprocessor
+              ->set( 'core.latte.preprocessor', LatteComponentPreprocessor::class )
         //
-        // ☕ - Favicon Generator
+        //  ✨- Favicon Generator
               ->set( FaviconBundle::class )
         //
         //
