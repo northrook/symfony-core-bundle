@@ -28,11 +28,13 @@ abstract class Component implements Stringable
     /**
      * @param string                $content
      * @param Properties|array      $properties
+     * @param null|string           $type
+     * @param string                $tag
      * @param null|LoggerInterface  $logger
      * @param null|Stopwatch        $stopwatch
      */
     public function __construct(
-        protected readonly string           $content,
+        public readonly string              $content,
         Component\Properties | array        $properties,
         protected readonly ?string          $type = null,
         protected string                    $tag = self::TAG,
@@ -75,7 +77,7 @@ abstract class Component implements Stringable
     /**
      * Assembles the {@see Component} into a string.
      *
-     * * Will use {@see Component::$component} unless provided a array.
+     * * Will use {@see Component::$component} unless provided an array.
      *
      * @param null|array   $component
      * @param null|string  $separator
@@ -135,7 +137,7 @@ abstract class Component implements Stringable
             $html = "<div $html>";
         }
         else {
-            $html = strstr( $html, '>' ) . '>';
+            $html = strstr( $html, '>', true ) . '>';
             $html = preg_replace(
                 pattern     : '/^<(\w.+):\w+? /',
                 replacement : '<$1 ',

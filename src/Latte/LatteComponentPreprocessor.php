@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\Latte;
 
+use JetBrains\PhpStorm\NoReturn;
 use Northrook\Symfony\Core\Components\Button;
 use Northrook\Symfony\Core\Components\Input;
 use Northrook\Symfony\Latte\Preprocessor\Preprocessor;
@@ -32,6 +33,7 @@ final class LatteComponentPreprocessor extends Preprocessor
     public function __construct() {}
 
 
+    #[NoReturn]
     public function process() : self {
 
         $this->prepareContent( false )
@@ -39,11 +41,12 @@ final class LatteComponentPreprocessor extends Preprocessor
 
         foreach ( $this->components as $name => $components ) {
 
-            if ( !isset( self::COMPONENTS[ $name ] ) || empty( $components ) ) {
+            if ( !isset( LatteComponentPreprocessor::COMPONENTS[ $name ] ) || empty( $components ) ) {
                 continue;
             }
 
-            $class = self::COMPONENTS[ $name ];
+            /** @var Component $component */
+            $class = LatteComponentPreprocessor::COMPONENTS[ $name ];
 
             if ( !is_subclass_of( $class, Component::class ) ) {
                 $this->logger->error(
@@ -59,20 +62,18 @@ final class LatteComponentPreprocessor extends Preprocessor
             foreach ( $components as $data ) {
 
                 $component = new ( $class )(
-                    ...$data,
-                       $this->logger,
-                       $this->stopwatch,
+                    $data[ 'source' ],
+                    $data[ 'properties' ],
+                    $data[ 'type' ],
+                    $data[ 'tag' ],
+                    $this->logger,
+                    $this->stopwatch,
                 );
 
-                dump( $component );
+                $this->updateContent( $component->content, $component->print() );
             }
-            // $this->updateContent( $component->templateString, $component );
         }
 
-        dd(
-            $this->components,
-            $this->content,
-        );
         return $this;
     }
 
@@ -94,13 +95,13 @@ final class LatteComponentPreprocessor extends Preprocessor
             $component = $this->getComponentNamespace( $element[ 'component' ] );
             [ $tag, $type ] = explode( ':', $component, 2 );
             $source = $element[ 0 ];
+
             if ( str_contains( $this->content, "</$component>", )
                  && false === str_ends_with( trim( $source ), '/>', ) ) {
-                $source = substr(
-                    $this->content,
-                    strpos( $this->content, $source ),
-                    strpos( $this->content, "</{$component}>" ) + strlen( "</{$component}>" ),
-                );
+
+                preg_match( "/<$component.*?>.*?<\/$component>/ms", $this->content, $closingTag );
+
+                $source = $closingTag[ 0 ];
             }
 
 
