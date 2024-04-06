@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://symfony.com/schema/dic/field"
+            elementFormDefault="qualified">
+
+    <xsd:element name="password" type="input-password"/>
+    <xsd:complexType name="input-password">
+        <xsd:attribute name="id" type="xsd:string"/>
+    </xsd:complexType>
+
+    <xsd:element name="email" type="input-email"/>
+    <xsd:complexType name="input-email">
+        <xsd:attribute name="id" type="xsd:string"/>
+    </xsd:complexType>
+
+    <xsd:element name="text" type="input"/>
+    <xsd:complexType name="input">
+        <xsd:attribute name="id" type="xsd:string"/>
+        
+    </xsd:complexType>
+
+    <xsd:element name="combobox" type="select"/>
+
+    <xsd:complexType name="select">
+        <xsd:sequence>
+            <xsd:element name="label" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

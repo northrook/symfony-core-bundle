@@ -55,7 +55,7 @@ abstract class AbstractCoreController extends AbstractController
     public function __set( string $name, $value ) : void {
         if ( !App::env( 'public' ) ) {
             throw new LogicException(
-                "Dynamic property assignment is not allowed for {$this::class}.",
+                'Dynamic property assignment is not allowed for .' . $this::class . '.',
             );
         }
     }
