@@ -53,16 +53,53 @@ final class LatteComponentPreprocessor extends Preprocessor
     }
 
     public function process() : self {
-        $this->prepareContent( true );
-        $this->matchComponents();
+        $this->prepareContent( false );
+        // $this->components = $this->matchElements();
+        // $this->matchComponents();
         // $this->processButtons();
         // $this->processIcons();
 
-        // foreach ( $this->components as $component ) {
-        //     $this->updateContent( $component->templateString, $component );
-        // }
+        foreach ( $this->matchElements() as $component ) {
+            // $this->updateContent( $component->templateString, $component );
+            dump( $component );
+        }
 
+        dd(
+        // $this->components,
+            $this->content,
+        );
         return $this;
+    }
+
+    protected function matchElements() : array {
+
+        $array = [];
+
+        $count = preg_match_all(
+                    "/<(?<component>(\w*?):.*?)>/ms",
+                    $this->content,
+                    $matches,
+            flags : PREG_SET_ORDER,
+        );
+
+        if ( !$count ) {
+            return [];
+        }
+
+        foreach ( $matches as $matched ) {
+            $element                        = new \Northrook\Symfony\Core\Latte\ProcessComponent( $matched );
+            $array[ $element->component ][] = $element;
+        }
+
+        return $array;
+    }
+
+    private function getComponentNamespace( string $string ) : string {
+        if ( str_contains( $string, ' ' ) ) {
+            return trim( explode( ' ', $string, 2 )[ 0 ] );
+        }
+
+        return $string;
     }
 
     /**
@@ -89,7 +126,7 @@ final class LatteComponentPreprocessor extends Preprocessor
 
 //			$this->components[] = $node;
         }
-        dd( $this->components );
+        dump( $this->components );
     }
 
 
