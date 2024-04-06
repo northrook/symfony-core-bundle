@@ -2,8 +2,8 @@
 
 namespace Northrook\Symfony\Core\Latte;
 
-use Northrook\Support\Regex;
 use Northrook\Symfony\Core\Components\Button;
+use Northrook\Symfony\Core\Components\Input;
 use Northrook\Symfony\Latte\Preprocessor\Preprocessor;
 
 /**
@@ -16,7 +16,12 @@ final class LatteComponentPreprocessor extends Preprocessor
 {
 
     private const COMPONENTS = [
-        'button' => Button::class,
+        'button'         => Button::class,
+        'field:text'     => Input::class,
+        'field:email'    => Input\Email::class,
+        'field:password' => Input\Password::class,
+        // 'field:textarea' => TextArea::class,
+
     ];
 
     /**
@@ -26,54 +31,53 @@ final class LatteComponentPreprocessor extends Preprocessor
 
     public function __construct() {}
 
-    public function addComponent(
-        string  ...$component
-    ) : self {
-        foreach ( $component as $object ) {
 
-            if ( !is_subclass_of( $object, Component::class ) ) {
+    public function process() : self {
+
+        $this->prepareContent( false )
+             ->matchElements();
+
+        foreach ( $this->components as $name => $components ) {
+
+            if ( !isset( self::COMPONENTS[ $name ] ) || empty( $components ) ) {
+                continue;
+            }
+
+            $class = self::COMPONENTS[ $name ];
+
+            if ( !is_subclass_of( $class, Component::class ) ) {
                 $this->logger->error(
                     message : "{object} is not a subclass of {component}.",
                     context : [
-                                  '$object'   => $object,
+                                  '$object'   => $class,
                                   'component' => Component::class,
                               ],
                 );
                 continue;
             }
 
-            if ( in_array( $object, $this->components, true ) ) {
-                continue;
+            foreach ( $components as $data ) {
+
+                $component = new ( $class )(
+                    ...$data,
+                       $this->logger,
+                       $this->stopwatch,
+                );
+
+                dump( $component );
             }
-            $this->components[] = $object;
-        }
-
-
-        return $this;
-    }
-
-    public function process() : self {
-        $this->prepareContent( false );
-        // $this->components = $this->matchElements();
-        // $this->matchComponents();
-        // $this->processButtons();
-        // $this->processIcons();
-
-        foreach ( $this->matchElements() as $component ) {
             // $this->updateContent( $component->templateString, $component );
-            dump( $component );
         }
 
         dd(
-        // $this->components,
+            $this->components,
             $this->content,
         );
         return $this;
     }
 
-    protected function matchElements() : array {
+    private function matchElements() : self {
 
-        $array = [];
 
         $count = preg_match_all(
                     "/<(?<component>(\w*?):.*?)>/ms",
@@ -83,50 +87,45 @@ final class LatteComponentPreprocessor extends Preprocessor
         );
 
         if ( !$count ) {
-            return [];
+            return $this;
         }
 
-        foreach ( $matches as $matched ) {
-            $element                        = new \Northrook\Symfony\Core\Latte\ProcessComponent( $matched );
-            $array[ $element->component ][] = $element;
+        foreach ( $matches as $element ) {
+            $component = $this->getComponentNamespace( $element[ 'component' ] );
+            [ $tag, $type ] = explode( ':', $component, 2 );
+            $source = $element[ 0 ];
+            if ( str_contains( $this->content, "</$component>", )
+                 && false === str_ends_with( trim( $source ), '/>', ) ) {
+                $source = substr(
+                    $this->content,
+                    strpos( $this->content, $source ),
+                    strpos( $this->content, "</{$component}>" ) + strlen( "</{$component}>" ),
+                );
+            }
+
+
+            $this->components[ $component ][] = [
+                'source'     => $source,
+                'properties' => $this->getComponentProperties( $element[ 0 ] ),
+                'tag'        => $tag,
+                'type'       => $type,
+            ];
         }
 
-        return $array;
+
+        return $this;
+    }
+
+    private function getComponentProperties( string $source ) : Component\Properties {
+        return new Component\Properties( Component::extractAttributes( $source ) );
     }
 
     private function getComponentNamespace( string $string ) : string {
         if ( str_contains( $string, ' ' ) ) {
-            return trim( explode( ' ', $string, 2 )[ 0 ] );
+            $string = explode( ' ', $string, 2 )[ 0 ];
         }
 
-        return $string;
-    }
-
-    /**
-     * Match components
-     */
-    private function matchComponents() : void {
-
-        $components = Regex::matchNamedGroups(
-            pattern         : "/<(?<component>(?<tag>\w*?):(?<type>\w.*?)) .*?>/ms",
-            subject         : $this->content,
-            matchedProperty : 'string',
-        );
-
-        if ( !$components ) {
-            return;
-        }
-
-        // dd( $components );
-
-        foreach ( $components as $match ) {
-
-            $element            = $match;
-            $this->components[] = $element;
-
-//			$this->components[] = $node;
-        }
-        dump( $this->components );
+        return trim( $string );
     }
 
 
