@@ -79,7 +79,6 @@ final class LatteComponentPreprocessor extends Preprocessor
 
     private function matchElements() : self {
 
-
         $count = preg_match_all(
                     "/<(?<component>(\w*?):.*?)>/ms",
                     $this->content,
