@@ -5,7 +5,7 @@ namespace Northrook\Symfony\Core\Latte;
 use DOMDocument;
 use Northrook\Support\Str;
 
-final readonly class ProcessComponent
+final readonly class ProcessElement
 {
 
     /** `tag:type` */
@@ -67,7 +67,12 @@ final readonly class ProcessComponent
         foreach ( $node->attributes as $attribute ) {
             $attributes[ $attribute->nodeName ] = $attribute->nodeValue;
         }
-        
+
+        // dd(
+        //     $html,
+        //     $tag,
+        //     $dom
+        // );
         return $attributes;
     }
 }
