@@ -23,5 +23,4 @@ use Northrook\Elements\Element as Component;
  */
 final class Properties extends Component\Properties
 {
-
 }

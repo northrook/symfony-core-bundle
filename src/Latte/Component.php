@@ -4,6 +4,7 @@ namespace Northrook\Symfony\Core\Latte;
 
 use DOMDocument;
 use Northrook\Elements\Element;
+use Northrook\Elements\Element\Html;
 use Northrook\Support\Get;
 use Northrook\Support\Str;
 use Northrook\Symfony\Core\Latte\Component\Properties;
@@ -26,7 +27,7 @@ abstract class Component implements Stringable
 
 
     /**
-     * @param string                $content
+     * @param string                $source
      * @param Properties|array      $properties
      * @param null|string           $type
      * @param string                $tag
@@ -34,7 +35,7 @@ abstract class Component implements Stringable
      * @param null|Stopwatch        $stopwatch
      */
     public function __construct(
-        public readonly string              $content,
+        public readonly string              $source,
         Component\Properties | array        $properties,
         protected readonly ?string          $type = null,
         protected string                    $tag = self::TAG,
@@ -53,8 +54,7 @@ abstract class Component implements Stringable
      *
      * @return void
      */
-    protected
-    function construct() : void {}
+    protected function construct() : void {}
 
     /**
      * Build the {@see Component}.
@@ -96,8 +96,11 @@ abstract class Component implements Stringable
      * @return string
      */
     final protected function renderComponentString() : string {
-        $this->string ??= $this->build();
+        $this->string ??= Html::pretty( $this->build() );
         $this->stopwatch->stop( Get::className() );
+        // if ( $this::class === Email::class ) {
+        //     dd( $this );
+        // }
         return $this->string;
     }
 
@@ -112,7 +115,8 @@ abstract class Component implements Stringable
      *
      */
     final public function print( bool $pretty = false ) : string {
-        return $this->renderComponentString();
+        $html = $this->renderComponentString();
+        return $pretty ? Html::pretty( $html ) : $html;
     }
 
     /**

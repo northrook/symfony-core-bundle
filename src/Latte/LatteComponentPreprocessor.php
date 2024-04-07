@@ -70,7 +70,7 @@ final class LatteComponentPreprocessor extends Preprocessor
                     $this->stopwatch,
                 );
 
-                $this->updateContent( $component->content, $component->print() );
+                $this->updateContent( $component->source, $component->print( true ) );
             }
         }
 

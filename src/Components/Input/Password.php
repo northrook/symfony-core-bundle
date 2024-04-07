@@ -11,8 +11,6 @@ class Password extends Component
 {
 
     public function build() : string {
-        dump( $this );
-
         return '<input type="password" name="name" value="value" />';
     }
 }
