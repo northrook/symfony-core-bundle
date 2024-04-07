@@ -6,6 +6,9 @@ use Northrook\Support\Functions\FilesystemFunctions;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Types\Path;
 
+/**
+ * @method static getContent( Path $path )
+ */
 final class File extends SymfonyCoreFacade
 {
 
@@ -17,11 +20,11 @@ final class File extends SymfonyCoreFacade
      * @return Path
      */
     public static function path( string $get ) : Path {
-        return self::getPathfinderService()->get( $get );
+        return File::getPathfinderService()->get( $get );
     }
 
     public static function pathfinder() : PathfinderService {
-        return self::getPathfinderService();
+        return File::getPathfinderService();
     }
 
 }

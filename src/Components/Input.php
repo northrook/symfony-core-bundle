@@ -11,8 +11,6 @@ class Input extends Component
 {
 
     public function build() : string {
-        dump( $this );
-
         return '<input type="text" name="name" value="value" />';
     }
 }

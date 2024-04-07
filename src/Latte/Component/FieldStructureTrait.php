@@ -2,31 +2,45 @@
 
 namespace Northrook\Symfony\Core\Latte\Component;
 
-use JetBrains\PhpStorm\Language;
+use LogicException;
 use Northrook\Elements\Field;
 use Northrook\Elements\Input;
 use Northrook\Elements\Label;
 use Northrook\Elements\Render\Template;
+use Northrook\Support\Get;
 
 trait FieldStructureTrait
 {
-
-    public ?string $id;
-    public ?string $name;
-    public ?string $value = null;
-    public bool    $required;
 
     protected RenderMethod $renderMethod;
     protected Template     $content;
     protected Field        $field;
     protected Input        $input;
     protected Label        $label;
+    public ?string $id;
+    public ?string $name;
+    public ?string $value = null;
+    public bool    $required;
 
     protected function construct() : void {
-        $this->name     = $this->properties?->joink( 'name' );
+        $this->name     = $this->properties->joink( 'name' );
         $this->id       = $this->properties->joink( 'id' ) ?? $this->name;
         $this->value    = $this->properties->joink( 'value' );
         $this->required = (bool) $this->properties->joink( 'required' );
+
+        if ( !$this->name ) {
+            $exception        = new LogicException(
+                'The ' . $this->name . ' of ' . Get::className( $this ) . ' field must have a valid ID and Name.',
+            );
+            $exception->field = $this;
+            $this->logger->error(
+                $exception->getMessage(),
+                [ 'exception' => $exception, 'component' => $this ],
+            );
+
+            throw $exception;
+        }
+
 
         $render = $this->properties->joink( 'render' );
 

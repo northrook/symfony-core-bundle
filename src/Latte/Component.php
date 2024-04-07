@@ -96,11 +96,18 @@ abstract class Component implements Stringable
      * @return string
      */
     final protected function renderComponentString() : string {
+
+        if ( isset( $this->string ) ) {
+            return $this->string;
+        }
+
         $this->string ??= Html::pretty( $this->build() );
         $this->stopwatch->stop( Get::className() );
-        // if ( $this::class === Email::class ) {
+
+        // if ( $this::class === \Northrook\Symfony\Core\Components\Input\Email::class ) {
         //     dd( $this );
         // }
+
         return $this->string;
     }
 

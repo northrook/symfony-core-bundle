@@ -4,28 +4,55 @@
             targetNamespace="http://symfony.com/schema/dic/field"
             elementFormDefault="qualified">
 
-    <xsd:element name="password" type="input-password"/>
-    <xsd:complexType name="input-password">
-        <xsd:attribute name="id" type="xsd:string"/>
-    </xsd:complexType>
 
-    <xsd:element name="email" type="input-email"/>
-    <xsd:complexType name="input-email">
-        <xsd:attribute name="id" type="xsd:string"/>
-    </xsd:complexType>
+    <!-- Input Fields - Text, Email, Password -->
 
+    <xsd:element name="password" type="input"/>
+    <xsd:element name="email" type="input"/>
     <xsd:element name="text" type="input"/>
+
     <xsd:complexType name="input">
         <xsd:attribute name="id" type="xsd:string"/>
-        
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="value" type="xsd:string" use="required"/>
+        <xsd:attribute name="label" type="xsd:string"/>
+        <xsd:attribute name="required" type="xsd:boolean"/>
+        <xsd:attribute name="disabled" type="xsd:boolean"/>
+        <xsd:attribute name="autofocus" type="xsd:boolean"/>
+        <xsd:attribute name="autocomplete" type="xsd:string"/>
     </xsd:complexType>
 
-    <xsd:element name="combobox" type="select"/>
 
-    <xsd:complexType name="select">
-        <xsd:sequence>
-            <xsd:element name="label" type="xsd:string"/>
-        </xsd:sequence>
+    <!-- Choice Fields - Checkbox, Radio, Toggle  -->
+
+    <xsd:element name="checkbox" type="choice"/>
+    <xsd:element name="radio" type="choice"/>
+    <xsd:element name="toggle" type="choice"/>
+
+    <xsd:complexType name="choice">
+        <xsd:attribute name="id" type="xsd:string"/>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="value" type="xsd:string" use="required"/>
+        <xsd:attribute name="label" type="xsd:string"/>
+        <xsd:attribute name="required" type="xsd:boolean"/>
+        <xsd:attribute name="disabled" type="xsd:boolean"/>
+        <xsd:attribute name="autofocus" type="xsd:boolean"/>
+        <xsd:attribute name="checked" type="xsd:boolean"/>
+    </xsd:complexType>
+
+
+    <!-- Select Fields - Select, Combobox -->
+
+    <xsd:element name="combobox" type="combobox"/>
+    <xsd:complexType name="combobox">
+        <xsd:attribute name="id" type="xsd:string"/>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="value" type="xsd:string" use="required"/>
+        <xsd:attribute name="label" type="xsd:string"/>
+        <xsd:attribute name="required" type="xsd:boolean"/>
+        <xsd:attribute name="disabled" type="xsd:boolean"/>
+        <xsd:attribute name="autofocus" type="xsd:boolean"/>
+        <xsd:attribute name="autocomplete" type="xsd:string"/>
     </xsd:complexType>
 
 </xsd:schema>

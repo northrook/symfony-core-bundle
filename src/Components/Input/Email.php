@@ -2,10 +2,9 @@
 
 namespace Northrook\Symfony\Core\Components\Input;
 
-use Northrook\Elements\Field;
-use Northrook\Elements\Input;
-use Northrook\Elements\Label;
+use Northrook\Elements\Render\Template;
 use Northrook\Symfony\Core\Latte\Component;
+use Northrook\Symfony\Core\Latte\Component\FieldStructureTrait;
 
 /**
  * # `<field:email>`
@@ -18,32 +17,19 @@ use Northrook\Symfony\Core\Latte\Component;
  */
 class Email extends Component
 {
-
-    private Field $field;
-    private Input $input;
-    private Label $label;
-
-    protected function construct() : void {
-        $this->field = new Field();
-        $this->input = new Input();
-        $this->label = new Label();
-    }
+    use FieldStructureTrait;
 
     public function build() : string {
-
-        $component = $this->assemble(
-            [
-                'field' => $this->field,
-                'input' => $this->input,
-                'label' => $this->label,
-            ],
+        $this->content = new Template(
+            <<<HTML
+            <div class="label"> {label} </div>
+            <div class="input"> {input} </div>
+        HTML,
         );
 
-        dd(
-            $this,
-            $component,
-        );
+        $this->field->class->add( $this->properties->id, $this->properties->name );
 
-        return $component;
+
+        return ( string ) $this->field();
     }
 }
