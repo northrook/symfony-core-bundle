@@ -30,8 +30,8 @@ return static function ( ContainerConfigurator $container ) : void {
               ->set( 'dir.templates', File::parameterDirname( "%kernel.project_dir%/templates" ) )
               ->set( 'dir.latte.templates.core', File::parameterDirname( '../../templates' ) )
               ->set( 'path.favicon', File::parameterDirname( '../../assets/icons/favicon.default.svg' ) )
-              ->set( 'ttl.cache', 86400 )
-    ;
+              ->set( 'path.core.assets', File::parameterDirname( '../../assets/' ) )
+              ->set( 'ttl.cache', 86400 );
     //
     // Services
     $container->services()
@@ -190,6 +190,5 @@ return static function ( ContainerConfigurator $container ) : void {
                       service( 'logger' )->nullOnInvalid(),
                   ],
               )
-              ->tag( 'kernel.event_subscriber', [ 'priority' => 100 ] )
-    ;
+              ->tag( 'kernel.event_subscriber', [ 'priority' => 100 ] );
 };
