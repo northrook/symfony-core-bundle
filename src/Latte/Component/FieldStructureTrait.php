@@ -61,6 +61,7 @@ trait FieldStructureTrait
             required     : $this->required,
             autofocus    : $this->properties->joink( 'autofocus' ),
             autocomplete : $this->properties->joink( 'autocomplete' ),
+            checked      : $this->properties->joink( 'checked' ),
         );
         $this->label = new Label(
             for     : $this->id,

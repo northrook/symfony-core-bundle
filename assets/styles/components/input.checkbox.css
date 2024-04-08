@@ -1,3 +1,156 @@
-field.input.email {
-    /*background: orange;*/
+field input[type="checkbox"],
+field input[type="radio"]
+{
+    position : absolute;
+    height   : 0;
+    width    : 0;
+    opacity  : 0;
+}
+
+field.checkbox input + label
+{
+    display        : flex;
+    flex-direction : row;
+    align-items    : center;
+    min-height     : var(--line-height);
+    cursor         : pointer;
+    gap            : 1ch;
+    user-select    : none;
+}
+
+field.checkbox input + label > span,
+field.checkbox input + label > p
+{
+    line-height : var(--line-height);
+}
+
+field.checkbox input + label > *:last-child
+{
+    padding-right : 1rem;
+}
+
+field.checkbox input[type="checkbox"]:focus-visible + label i.indicator::after
+{
+    opacity : 0.5;
+}
+
+field.checkbox i.indicator
+{
+    position : relative;
+    outline  : 2px solid hsla(var(--outline));
+}
+
+
+/*#region Checkbox */
+
+field.checkbox i.indicator
+{
+    position         : relative;
+    display          : flex;
+    align-items      : center;
+    justify-content  : center;
+    flex-shrink      : 0;
+    margin-block-end : auto;
+    width            : var(--line-height);
+    height           : var(--line-height);
+    outline-offset   : -2px;
+    border-radius    : var(--radius);
+    transform        : scale(1);
+    transition       : all 0.2s ease;
+}
+
+field.checkbox i.indicator::before
+{
+    content          : "";
+    position         : absolute;
+    width            : 100%;
+    height           : 100%;
+    opacity          : 1;
+    transform        : scale(0);
+    transition-delay : 150ms;
+    border-radius    : calc(var(--radius) * 2);
+    background       : hsla(var(--intent));
+    pointer-events   : none;
+}
+
+field.checkbox input:checked + label i.indicator::before
+{
+    transform  : scale(2.2);
+    opacity    : 0;
+    transition : all 600ms ease;
+}
+
+field.checkbox input:checked + label i.indicator
+{
+    --outline  : var(--active);
+    background : hsla(var(--active));
+    animation  : check 200ms ease;
+}
+
+/*#endregion Checkbox */
+
+
+/*#region Toggle */
+field.toggle i.indicator
+{
+    --height         : 1rem;
+    --offset         : calc(var(--height) * -1);
+    --ratio          : 2;
+    --radius         : var(--height);
+    --indicator      : var(--baseline-500);
+    --background     : hsla(var(--baseline-700));
+
+    height           : var(--height);
+    width            : calc(var(--height) * 2);
+    background-color : hsla(var(--indicator));
+    border-radius    : var(--radius);
+    transition       : background 200ms ease, outline 200ms ease, box-shadow 200ms ease;
+    box-shadow       : var(--offset) 0 0 0.1rem var(--background) inset, 0 0 0 0.1rem var(--background) inset;
+}
+
+field.toggle:hover i.indicator
+{
+    --indicator : var(--intent);
+}
+
+field.toggle input[type="checkbox"]:checked + label i.indicator
+{
+    --offset    : var(--height);
+    --indicator : var(--active);
+}
+
+/*#endregion Toggle */
+
+/*#region Switch */
+
+/*#endregion Switch */
+
+field.checkbox svg
+{
+    fill              : none;
+    stroke            : white;
+    width             : var(--line-height);
+    height            : calc(var(--line-height) * .5);
+    stroke-width      : 2;
+    stroke-linecap    : round;
+    stroke-linejoin   : round;
+    stroke-dasharray  : var(--line-height);
+    stroke-dashoffset : var(--line-height);
+    transition        : all 250ms ease;
+    transition-delay  : 50ms;
+    transform         : translate3d(0, 0, 0);
+}
+
+field.checkbox input:checked + label i.indicator svg
+{
+    stroke-dashoffset : 0;
+}
+
+
+@keyframes check
+{
+    50%
+    {
+        transform : scale(1.2);
+    }
 }

@@ -1,78 +1,83 @@
+html
+{
+    --body-color   : hsl(var(--baseline-200));
+    --body-bg      : hsl(var(--baseline-900));
 
-html {
+    --color        : var(--baseline-300);
+    --background   : var(--baseline-900);
+    --outline      : var(--baseline-600);
+    --disabled     : var(--baseline-400);
+    --inactive     : var(--baseline-600);
+    --intent       : var(--primary-dull);
+    --active       : var(--primary-tint);
 
+    --font-size    : 1rem;
+    --font-size-h1 : min(max(1.8rem, 6vw), 3.05rem);
+    --font-size-h2 : min(max(1.6rem, 6vw), 2rem);
+    --font-size-h3 : min(max(1.25rem, 6vw), 1.8rem);
+    --font-size-h4 : min(max(1.1rem, 6vw), 2rem);
 
-    --body-color	: hsl(var(--baseline-200));
-    --body-bg		: hsl(var(--baseline-900));
+    --font-regular : 400;
+    --font-bold    : 600;
 
-    --color: var(--baseline-300);
-    --background: var(--baseline-900);
-    --outline: var(--baseline-600);
-    --disabled: var(--baseline-400);
-    --inactive: var(--baseline-600);
-    --intent: var(--primary-dull);
-    --active: var(--primary-tint);
+    --line-height  : 1.5rem;
 
-    --font-size: 1rem;
-    --font-size-h1: min(max(1.8rem,6vw),3.05rem);
-    --font-size-h2: min(max(1.6rem,6vw),2rem);
-    --font-size-h3: min(max(1.25rem,6vw),1.8rem);
-    --font-size-h4: min(max(1.1rem,6vw),2rem);
-
-    --font-regular: 400;
-    --font-bold: 600;
-
-    --tiny			: .125rem;
-    --extra-small	: .25rem;
-    --small			: .5rem;
-    --medium		: 1rem;
-    --large			: 1.5rem;
-    --section-gap	: 2rem;
-
-
+    --tiny         : .125rem;
+    --extra-small  : .25rem;
+    --small        : .5rem;
+    --medium       : 1rem;
+    --large        : 1.5rem;
+    --section-gap  : 2rem;
 }
 
-body {
-    --button-size	: 2rem;
-    --input-size	: 2rem;
+body
+{
+    --button-size : 2rem;
+    --input-size  : 2rem;
 }
 
-html {
+html
+{
     /* scroll-behavior				: smooth; */
     /* text-rendering				: optimizeLegibility; */
     /* -webkit-tap-highlight-color	: transparent; */
     /* text-size-adjust			: 100%; */
     /* font-family					: "Inter V", sans-serif; */
-    font-family					: system-ui, sans-serif;
-    color						: var(--body-color);
-    background					: var(--body-bg);
+    font-family    : system-ui, sans-serif;
+    color          : var(--body-color);
+    background     : var(--body-bg);
     /* min-height					: 100vh; */
-    display						: flex;
-    flex-direction				: column;
+    display        : flex;
+    flex-direction : column;
 }
 
-body {
-    display			: flex;
-     flex-direction	: column;
-    flex-grow		: 1;
-     min-height		: 100%;
+body
+{
+    display        : flex;
+    flex-direction : column;
+    flex-grow      : 1;
+    min-height     : 100%;
 }
 
 
-area, button, input, label, select, summary, textarea, [tabindex] {
-    -ms-touch-action	: manipulation;
-    touch-action		: manipulation;
+area, button, input, label, select, summary, textarea, [tabindex]
+{
+    -ms-touch-action : manipulation;
+    touch-action     : manipulation;
 }
 
 /* Alternative to disabling when waiting for response/animation? */
-[aria-busy='true'] {
+[aria-busy='true']
+{
     cursor : progress;
 }
 
-[aria-controls] {
+[aria-controls]
+{
     cursor : pointer;
 }
 
-[aria-disabled='true'], [disabled] {
+[aria-disabled='true'], [disabled]
+{
     cursor : not-allowed;
 }
