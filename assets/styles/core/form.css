@@ -1,0 +1,40 @@
+form {
+    --gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--gap);
+}
+
+
+/* Actions Footer */
+form footer.actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+form footer.actions > * {
+    width: auto;
+    min-width: auto;
+    white-space: nowrap;
+}
+
+
+/* Improve Autofill Color where supported */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--body-color);
+    -webkit-box-shadow: 0 0 0 100vw var(--body-bg) inset;
+}

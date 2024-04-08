@@ -17,10 +17,10 @@ trait FieldStructureTrait
     protected Field        $field;
     protected Input        $input;
     protected Label        $label;
-    public ?string $id;
-    public ?string $name;
-    public ?string $value = null;
-    public bool    $required;
+    public ?string         $id;
+    public ?string         $name;
+    public ?string         $value = null;
+    public bool            $required;
 
     protected function construct() : void {
         $this->name     = $this->properties->joink( 'name' );
@@ -52,7 +52,7 @@ trait FieldStructureTrait
 
         $this->field = new Field(
             id    : "$this->id-field",
-            class : $this->properties->joink( 'class' ),
+            class : [ $this->properties->joink( 'class' ), $this->type ],
             style : $this->properties->joink( 'style' ),
         );
         $this->input = new Input(

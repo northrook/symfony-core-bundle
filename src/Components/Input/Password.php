@@ -23,31 +23,30 @@ class Password extends Component
         HTML,
         );
 
-        $this->content->data[ 'reveal' ] = $this->revealPassword();
+        $timeout = $this->properties->joink( 'timeout' ) ?? 3000;
 
         $this->field->class->add( $this->properties->id, $this->properties->name );
+        $this->input->set( 'type', 'password' );
+        $this->field->set( 'timeout', $timeout );
+        $this->content->data[ 'reveal' ] = $this->revealPassword( $timeout );
 
 
         return ( string ) $this->field();
     }
 
-    private function revealPassword() : string {
+    private function revealPassword( int | string $duration ) : string {
 
-        $icon = Icon::get( 'reveal-password:ui' );
+        $tooltip = '<tooltip>Reveal Password' . Element::keybind( 'alt+R' ) . '</tooltip>';
+        $icon    = Icon::svg( 'reveal-password:ui', 'indicator' );
+        $timeout = Icon::circle( 'timeout' );
 
-        $keybind = Element::keybind( 'alt+R' );
-        $tooltip = "<tooltip>Reveal Password$keybind</tooltip>";
+        $duration = is_int( $duration ) ? " timeout=\"$duration\"" : '';
 
         return <<<HTML
-			<button
-				type="button"
-				class="reveal-password"
-				role="switch"
-				aria-checked="false"
-				tooltip-placement="top"
-			>
-				$icon
+			<button type="button" class="reveal-password" role="switch" $duration aria-checked="false" tooltip-placement="top">
 				$tooltip
+				$icon
+			    $timeout
 			</button>
 		HTML;
     }

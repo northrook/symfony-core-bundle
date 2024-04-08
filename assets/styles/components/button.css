@@ -1,0 +1,5 @@
+
+button svg {
+    pointer-events: none;
+    transition: color 200ms ease;
+}

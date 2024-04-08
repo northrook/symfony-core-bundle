@@ -51,7 +51,21 @@ class StylesheetGenerationService
     }
 
     public function includeStylesheets( string | array $path ) : self {
-        $this->includedStylesheets = array_merge( $this->includedStylesheets, (array) $path );
+
+        foreach ( (array) $path as $add ) {
+
+            if ( $add instanceof Path ) {
+                $this->includedStylesheets[] = (string) $add;
+            }
+            else {
+                $add = File::path( $add );
+
+                if ( $add->exists ) {
+                    $this->includedStylesheets[] = (string) $add;
+                }
+            }
+        }
+
         return $this;
     }
 
@@ -74,16 +88,16 @@ class StylesheetGenerationService
 
         $this->savePath = $path instanceof Path ? $path : $this->pathfinder->get( $path );
 
-        $this->palette ??= new ColorPalette( self::PALETTE );
+        $this->palette ??= new ColorPalette( StylesheetGenerationService::PALETTE );
 
         $this->generator = new Stylesheet(
             $this->palette,
-            $this->force
+            $this->force,
         );
 
         foreach ( $this->includedStylesheets as $stylesheet ) {
             if ( substr_count( $stylesheet, '.' ) > 1 ) {
-                $path = new Path( strchr( $stylesheet, '.', true ) . '.css' );
+                $path = new Path( strstr( $stylesheet, '.', true ) . '.css' );
                 if ( $path->isValid ) {
                     $this->generator->addStylesheets( (string) $path );
                 }
@@ -100,7 +114,7 @@ class StylesheetGenerationService
 
         $this->generator->dynamicRules = new DynamicRules(
             $this->rootDirectory,
-            $this->templateDirectories
+            $this->templateDirectories,
         );
 
         $this->generator->build();
