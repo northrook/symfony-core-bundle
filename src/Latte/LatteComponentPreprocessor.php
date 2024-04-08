@@ -21,6 +21,7 @@ final class LatteComponentPreprocessor extends Preprocessor
         'field:text'     => Input::class,
         'field:email'    => Input\Email::class,
         'field:password' => Input\Password::class,
+        'field:checkbox' => Input\Checkbox::class,
         // 'field:textarea' => TextArea::class,
 
     ];
