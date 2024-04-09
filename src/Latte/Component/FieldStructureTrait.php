@@ -2,18 +2,18 @@
 
 namespace Northrook\Symfony\Core\Latte\Component;
 
-use LogicException;
 use Northrook\Elements\Field;
 use Northrook\Elements\Input;
 use Northrook\Elements\Label;
 use Northrook\Elements\Render\Template;
+use Northrook\Logger\Log;
 use Northrook\Support\Get;
 
 trait FieldStructureTrait
 {
 
     protected RenderMethod $renderMethod;
-    protected Template     $content;
+    protected Template     $template;
     protected Field        $field;
     protected Input        $input;
     protected Label        $label;
@@ -29,19 +29,16 @@ trait FieldStructureTrait
         $this->required = (bool) $this->properties->joink( 'required' );
 
         if ( !$this->name ) {
-            $exception        = new LogicException(
-                'The ' . $this->name . ' of ' . Get::className( $this ) . ' field must have a valid ID and Name.',
+            Log::Error(
+                'The {name} of {class} must have a valid name and ID.',
+                [
+                    'name'      => $this->name,
+                    'class'     => Get::className(),
+                    'component' => $this,
+                ],
             );
-            $exception->field = $this;
-            $this->logger->error(
-                $exception->getMessage(),
-                [ 'exception' => $exception, 'component' => $this ],
-            );
-
-            throw $exception;
         }
-
-
+        
         $render = $this->properties->joink( 'render' );
 
         $this->renderMethod = match ( $render ) {
@@ -71,14 +68,14 @@ trait FieldStructureTrait
     }
 
     final protected function field() : Field {
-        $this->content->data[ 'label' ] = $this->label;
-        $this->content->data[ 'input' ] = $this->input;
+        $this->template->data[ 'label' ] = $this->label;
+        $this->template->data[ 'input' ] = $this->input;
 
         foreach ( $this->properties as $name => $value ) {
             $this->field->set( $name, $value );
         }
 
-        $this->field->set( 'content', $this->content );
+        $this->field->set( 'content', $this->template );
 
 
         return $this->field;

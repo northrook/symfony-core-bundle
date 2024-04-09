@@ -21,7 +21,7 @@ class Radio extends Component
     use FieldStructureTrait;
 
     public function build() : string {
-        $this->content = new Template(
+        $this->template = new Template(
             <<<HTML
             {input}{label} 
         HTML,

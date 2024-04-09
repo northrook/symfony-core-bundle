@@ -2,7 +2,6 @@
 
 namespace Northrook\Symfony\Core\Latte;
 
-use JetBrains\PhpStorm\NoReturn;
 use Northrook\Symfony\Core\Components\Button;
 use Northrook\Symfony\Core\Components\Input;
 use Northrook\Symfony\Latte\Preprocessor\Preprocessor;
@@ -35,12 +34,11 @@ final class LatteComponentPreprocessor extends Preprocessor
 
     public function __construct() {}
 
-
-    #[NoReturn]
     public function process() : self {
 
         $this->prepareContent( false )
-             ->matchElements();
+             ->matchFields()
+             ->matchButtons();
 
         foreach ( $this->components as $name => $components ) {
 
@@ -80,20 +78,21 @@ final class LatteComponentPreprocessor extends Preprocessor
         return $this;
     }
 
-    private function matchElements() : self {
+    private function matchFields() : self {
 
         $count = preg_match_all(
-                    "/<(?<component>(\w*?):.*?)>/ms",
-                    $this->content,
-                    $matches,
-            flags : PREG_SET_ORDER,
+        /** @lang PhpRegExp */
+            pattern : '/<(?<component>(\w*?):.*?)>/ms',
+            subject : $this->content,
+            matches : $fields,
+            flags   : PREG_SET_ORDER,
         );
 
         if ( !$count ) {
             return $this;
         }
 
-        foreach ( $matches as $element ) {
+        foreach ( $fields as $element ) {
             $component = $this->getComponentNamespace( $element[ 'component' ] );
             [ $tag, $type ] = explode( ':', $component, 2 );
             $source = $element[ 0 ];
@@ -115,6 +114,30 @@ final class LatteComponentPreprocessor extends Preprocessor
             ];
         }
 
+
+        return $this;
+    }
+
+    private function matchElements( ?array $match = null ) : self {
+
+        $match ??= array_filter(
+            array_keys( LatteComponentPreprocessor::COMPONENTS ), static fn ( $v ) => str_contains( $v, ':' ),
+        );
+
+
+        dd( $match );
+
+        $count = preg_match_all(
+        /** @lang PhpRegExp */
+            pattern : '/<(?<component>(button):.*?)>/ms',
+            subject : $this->content,
+            matches : $buttons,
+            flags   : PREG_SET_ORDER,
+        );
+
+        if ( !$count ) {
+            return $this;
+        }
 
         return $this;
     }

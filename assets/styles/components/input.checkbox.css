@@ -7,7 +7,7 @@ field input[type="radio"]
     opacity  : 0;
 }
 
-field.checkbox input + label
+field input[type="checkbox"] + label
 {
     display        : flex;
     flex-direction : row;
@@ -18,13 +18,13 @@ field.checkbox input + label
     user-select    : none;
 }
 
-field.checkbox input + label > span,
-field.checkbox input + label > p
+field input[type="checkbox"] > span,
+field input[type="checkbox"] > p
 {
     line-height : var(--line-height);
 }
 
-field.checkbox input + label > *:last-child
+field input[type="checkbox"] > *:last-child
 {
     padding-right : 1rem;
 }
@@ -34,10 +34,10 @@ field.checkbox input[type="checkbox"]:focus-visible + label i.indicator::after
     opacity : 0.5;
 }
 
-field.checkbox i.indicator
+field i.indicator
 {
     position : relative;
-    outline  : 2px solid hsla(var(--outline));
+    outline  : 1px solid hsla(var(--outline));
 }
 
 
@@ -100,6 +100,7 @@ field.toggle i.indicator
     --indicator      : var(--baseline-500);
     --background     : hsla(var(--baseline-700));
 
+    display          : flex;
     height           : var(--height);
     width            : calc(var(--height) * 2);
     background-color : hsla(var(--indicator));

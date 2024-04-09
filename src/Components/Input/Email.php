@@ -20,7 +20,7 @@ class Email extends Component
     use FieldStructureTrait;
 
     public function build() : string {
-        $this->content = new Template(
+        $this->template = new Template(
             <<<HTML
             <div class="label"> {label} </div>
             <div class="input"> {input} </div>

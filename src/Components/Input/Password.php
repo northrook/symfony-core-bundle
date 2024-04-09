@@ -16,7 +16,7 @@ class Password extends Component
     use FieldStructureTrait;
 
     public function build() : string {
-        $this->content = new Template(
+        $this->template = new Template(
             <<<HTML
             <div class="label"> {label} </div>
             <div class="input"> {input} {reveal}</div>
@@ -28,7 +28,7 @@ class Password extends Component
         $this->field->class->add( $this->properties->id, $this->properties->name );
         $this->input->set( 'type', 'password' );
         $this->field->set( 'timeout', $timeout );
-        $this->content->data[ 'reveal' ] = $this->revealPassword( $timeout );
+        $this->template->data[ 'reveal' ] = $this->revealPassword( $timeout );
 
 
         return ( string ) $this->field();

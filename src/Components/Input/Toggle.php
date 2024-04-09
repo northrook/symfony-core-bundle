@@ -2,7 +2,6 @@
 
 namespace Northrook\Symfony\Core\Components\Input;
 
-use Northrook\Elements\Icon;
 use Northrook\Elements\Render\Template;
 use Northrook\Symfony\Core\Latte\Component;
 use Northrook\Symfony\Core\Latte\Component\FieldStructureTrait;
@@ -21,7 +20,7 @@ class Toggle extends Component
     use FieldStructureTrait;
 
     public function build() : string {
-        $this->content = new Template(
+        $this->template = new Template(
             <<<HTML
             {input}{label} 
         HTML,
@@ -32,7 +31,7 @@ class Toggle extends Component
         $this->input->set( 'type', 'checkbox' );
 
         $this->label->content = [
-            'indicator' => '<i class="indicator">' . Icon::checkmark() . '</i>',
+            'indicator' => '<i class="indicator"></i>',
             'label'     => '<span>' . $this->label->content . '</span>',
         ];
 
