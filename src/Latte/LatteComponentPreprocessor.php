@@ -123,11 +123,8 @@ final class LatteComponentPreprocessor extends Preprocessor
     }
 
     private function proccessElements() : void {
-
-        // $components = [];
-
+        
         foreach ( LatteComponentPreprocessor::ELEMENNTS as $tag => $parser ) {
-
 
             $count = preg_match_all(
             /** @lang PhpRegExp */
@@ -141,22 +138,14 @@ final class LatteComponentPreprocessor extends Preprocessor
                 return;
             }
 
-
             foreach ( $elements as $element ) {
-                $source = $element[ 0 ];
-                $parser = new( $parser )( ... $this->getComponentProperties( $source ) );
-
-                $parser->tag->isSelfClosing = false;
+                $source                     = $element[ 0 ];
+                $parser                     = new( $parser )( ... $this->getComponentProperties( $source ) );
+                $parser->tag->isSelfClosing = str_ends_with( $source, '/>' );
 
                 $this->updateContent( $source, $parser->print() );
-                dump( $element[ 0 ], $parser->print() );
             }
-
-
         }
-
-        // dd( $components );
-
     }
 
     private function getComponentProperties( string $source ) : Component\Properties {
