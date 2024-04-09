@@ -2,7 +2,7 @@
 
 namespace Northrook\Symfony\Core\Latte;
 
-use Northrook\Symfony\Core\Components\Button;
+use Northrook\Elements;
 use Northrook\Symfony\Core\Components\Input;
 use Northrook\Symfony\Latte\Preprocessor\Preprocessor;
 
@@ -15,8 +15,12 @@ use Northrook\Symfony\Latte\Preprocessor\Preprocessor;
 final class LatteComponentPreprocessor extends Preprocessor
 {
 
+    private const ELEMENNTS = [
+        'button' => Elements\Button::class,
+        'icon'   => Elements\Icon::class,
+    ];
+
     private const COMPONENTS = [
-        'button'         => Button::class,
         'field:text'     => Input::class,
         'field:email'    => Input\Email::class,
         'field:password' => Input\Password::class,
@@ -38,7 +42,7 @@ final class LatteComponentPreprocessor extends Preprocessor
 
         $this->prepareContent( false )
              ->matchFields()
-             ->matchButtons();
+             ->proccessElements();
 
         foreach ( $this->components as $name => $components ) {
 
@@ -118,28 +122,41 @@ final class LatteComponentPreprocessor extends Preprocessor
         return $this;
     }
 
-    private function matchElements( ?array $match = null ) : self {
+    private function proccessElements() : void {
 
-        $match ??= array_filter(
-            array_keys( LatteComponentPreprocessor::COMPONENTS ), static fn ( $v ) => str_contains( $v, ':' ),
-        );
+        // $components = [];
+
+        foreach ( LatteComponentPreprocessor::ELEMENNTS as $tag => $parser ) {
 
 
-        dd( $match );
+            $count = preg_match_all(
+            /** @lang PhpRegExp */
+                pattern : "/<(?<component>$tag).*?>/ms",
+                subject : $this->content,
+                matches : $elements,
+                flags   : PREG_SET_ORDER,
+            );
 
-        $count = preg_match_all(
-        /** @lang PhpRegExp */
-            pattern : '/<(?<component>(button):.*?)>/ms',
-            subject : $this->content,
-            matches : $buttons,
-            flags   : PREG_SET_ORDER,
-        );
+            if ( !$count ) {
+                return;
+            }
 
-        if ( !$count ) {
-            return $this;
+
+            foreach ( $elements as $element ) {
+                $source = $element[ 0 ];
+                $parser = new( $parser )( ... $this->getComponentProperties( $source ) );
+
+                $parser->tag->isSelfClosing = false;
+
+                $this->updateContent( $source, $parser->print() );
+                dump( $element[ 0 ], $parser->print() );
+            }
+
+
         }
 
-        return $this;
+        // dd( $components );
+
     }
 
     private function getComponentProperties( string $source ) : Component\Properties {
