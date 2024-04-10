@@ -6,6 +6,7 @@ namespace Northrook\Symfony\Core\Services;
 
 use Northrook\Stylesheets\ColorPalette;
 use Northrook\Stylesheets\Stylesheet;
+use Northrook\Support\Arr;
 use Northrook\Symfony\Core\File;
 use Northrook\Types\Path;
 use Psr\Log\LoggerInterface;
@@ -14,7 +15,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
 /**
  * TODO : Create a Palette cache file. Readable from {@see Settings::site()->palette}
  */
-class StylesheetGenerationService
+final class StylesheetGenerationService
 {
     // @todo Move this to config, as primary only.
     // When just provided a primary color, autogenerate a light and dark baseline color
@@ -25,10 +26,8 @@ class StylesheetGenerationService
 
     private readonly string $rootDirectory;
 
-    /** @var Path[] */
     private array $templateDirectories = [];
     private array $includedStylesheets = [];
-
 
     protected readonly Stylesheet $generator;
     public readonly string        $stylesheet;
@@ -68,15 +67,15 @@ class StylesheetGenerationService
 
     public function scanTemplateFiles( string ...$in ) : self {
         foreach ( $in as $path ) {
-            $this->templateDirectories[] = new Path( $path );
+            $this->templateDirectories[] = File::path( $path )->value;
         }
         return $this;
     }
 
 
     /**
-     * @param null|Path|string  $path  Defaults to var/cache/assets/styles.css
-     * @param null|bool         $force
+     * @param null|Path|string  $path   Defaults to `var/cache/styles/styles.css`
+     * @param null|bool         $force  Force updating the stylesheet, even if no monitored .css files have changed
      *
      * @return bool True when saved, false when not
      */
@@ -90,17 +89,16 @@ class StylesheetGenerationService
             $path = $path instanceof Path ? $path : $this->pathfinder->get( $path );
         }
         else {
-            $path = $this->pathfinder->get( 'dir.cache/assets/styles.css' );
+            $path = $this->pathfinder->get( 'dir.cache/styles/styles.css' );
         }
 
-        $this->templateDirectories = [
-                                         $this->pathfinder->get( 'dir.templates' ),
-                                         $this->pathfinder->get( 'dir.core.templates' ),
-                                     ] + $this->templateDirectories;
+        $templates = array_filter(
+            $this->pathfinder::getCache( true ),
+            static fn ( $v, $key ) => str_contains( $key, 'templates' ),
+            ARRAY_FILTER_USE_BOTH,
+        );
 
-        // dd(
-        //     $this->pathfinder::getCache(),
-        // );
+        $this->templateDirectories = Arr::unique( $templates + $this->templateDirectories );
 
         $this->generator = new Stylesheet(
             $this->rootDirectory,
@@ -120,6 +118,7 @@ class StylesheetGenerationService
                 $this->generator->addStylesheets( (string) $stylesheet );
             }
         }
+
 
         $this->generator->force = $force;
         $this->generator->build();
