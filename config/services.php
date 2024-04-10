@@ -28,7 +28,7 @@ return static function ( ContainerConfigurator $container ) : void {
               ->set( 'dir.public.assets', File::parameterDirname( "%kernel.project_dir%/public/assets" ) )
               ->set( 'dir.cache', File::parameterDirname( "%kernel.project_dir%/var/cache" ) )
               ->set( 'dir.templates', File::parameterDirname( "%kernel.project_dir%/templates" ) )
-              ->set( 'dir.latte.templates.core', File::parameterDirname( '../../templates' ) )
+              ->set( 'dir.core.templates', File::parameterDirname( '../../templates' ) )
               ->set( 'path.favicon', File::parameterDirname( '../../assets/icons/favicon.default.svg' ) )
               ->set( 'dir.core.assets', File::parameterDirname( '../../assets/' ) )
               ->set( 'ttl.cache', 86400 );
@@ -173,7 +173,6 @@ return static function ( ContainerConfigurator $container ) : void {
               ->args(
                   [
                       service( 'core.service.pathfinder' ),
-                      service( 'core.service.request' ),
                       service( 'logger' )->nullOnInvalid(),
                       service( 'debug.stopwatch' )->nullOnInvalid(),
                   ],

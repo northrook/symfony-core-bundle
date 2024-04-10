@@ -1,25 +1,22 @@
-<namespace xmlns:field="https://northrook.com/resources/schema/field.xsd">
-    {layout '_document.latte'}
-    {block body}
+{layout '_document.latte'}
+{block body}
 
+    <header class="flex p:s">
+        {* Check if this is the home page. Hide link if so. *}
+        <a n:if="$get->currentPath != '/'" href="/" class="button m-r:auto">Home</a>
 
-    <style>
-        body {
-            font-family: sans-serif;
-            font-size: 1rem;
-            line-height: 1.5;
-        }
+        {* Theme Button - update tooltip to reflect action*}
+        <button id="toggle-dark-mode" class="m-l:auto" tooltip="Toggle Dark Mode" icon="toggle-theme-mode:ui"
+                data-action="toggle-theme-mode"/>
+    </header>
 
-        code {
-            line-height: 1;
-            padding: .25rem;
-            border-radius: 3px;
-            color: deeppink;
-            background-color: #f1f1f1;
-            outline: 1px solid mediumturquoise;
-            outline-offset: -1px;
-        }
-    </style>
+    <main class="p:s">
+    </main>
+
+    <footer class="flex p-x:s p-y:m">
+        <p>&copy; Northrook. All rights reserved.</p>
+    </footer>
+
     <body>
 
     <h1>

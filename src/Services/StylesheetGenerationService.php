@@ -38,10 +38,9 @@ class StylesheetGenerationService
 
 
     public function __construct(
-        private readonly PathfinderService     $pathfinder,
-        private readonly CurrentRequestService $request,
-        private readonly ?LoggerInterface      $logger = null,
-        private readonly ?Stopwatch            $stopwatch = null,
+        private readonly PathfinderService $pathfinder,
+        private readonly ?LoggerInterface  $logger = null,
+        private readonly ?Stopwatch        $stopwatch = null,
     ) {
         $this->rootDirectory = $this->pathfinder->get( 'dir.root' )->value;
 
@@ -76,11 +75,14 @@ class StylesheetGenerationService
 
 
     /**
-     * @param Path|string  $path
+     * @param null|Path|string  $path  Defaults to var/cache/assets/styles.css
+     * @param null|bool         $force
      *
      * @return bool True when saved, false when not
      */
-    public function save( null | Path | string $path = null ) : bool {
+    public function save( null | Path | string $path = null, ?bool $force = null ) : bool {
+
+        $force ??= $this->force;
 
         $this->stopwatch->start( 'save', 'StylesheetGenerationService' );
 
@@ -88,10 +90,13 @@ class StylesheetGenerationService
             $path = $path instanceof Path ? $path : $this->pathfinder->get( $path );
         }
         else {
-            $path = $this->pathfinder->get( 'dir.cache/styles/styles.css' );
+            $path = $this->pathfinder->get( 'dir.cache/assets/styles.css' );
         }
 
-        $this->templateDirectories[] = $this->rootDirectory . 'templates';
+        $this->templateDirectories = [
+                                         $this->pathfinder->get( 'dir.templates' ),
+                                         $this->pathfinder->get( 'dir.core.templates' ),
+                                     ] + $this->templateDirectories;
 
         // dd(
         //     $this->pathfinder::getCache(),
@@ -116,7 +121,7 @@ class StylesheetGenerationService
             }
         }
 
-
+        $this->generator->force = $force;
         $this->generator->build();
 
         $this->stylesheet = $this->generator->styles;
