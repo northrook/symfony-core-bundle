@@ -5,7 +5,6 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core\Services;
 
 use Northrook\Stylesheets\ColorPalette;
-use Northrook\Stylesheets\DynamicRules;
 use Northrook\Stylesheets\Stylesheet;
 use Northrook\Symfony\Core\File;
 use Northrook\Types\Path;
@@ -25,7 +24,6 @@ class StylesheetGenerationService
     ];
 
     private readonly string $rootDirectory;
-    private readonly Path   $savePath;
 
     /** @var Path[] */
     private array $templateDirectories = [];
@@ -47,7 +45,7 @@ class StylesheetGenerationService
     ) {
         $this->rootDirectory = $this->pathfinder->get( 'dir.root' )->value;
 
-        $this->palette = new ColorPalette( self::PALETTE );
+        $this->palette = new ColorPalette( StylesheetGenerationService::PALETTE );
     }
 
     public function includeStylesheets( string | array $path ) : self {
@@ -82,17 +80,27 @@ class StylesheetGenerationService
      *
      * @return bool True when saved, false when not
      */
-    public function save( Path | string $path ) : bool {
+    public function save( null | Path | string $path = null ) : bool {
 
         $this->stopwatch->start( 'save', 'StylesheetGenerationService' );
 
-        $this->savePath = $path instanceof Path ? $path : $this->pathfinder->get( $path );
+        if ( $path ) {
+            $path = $path instanceof Path ? $path : $this->pathfinder->get( $path );
+        }
+        else {
+            $path = $this->pathfinder->get( 'dir.cache/styles/styles.css' );
+        }
 
-        $this->palette ??= new ColorPalette( StylesheetGenerationService::PALETTE );
+        $this->templateDirectories[] = $this->rootDirectory . 'templates';
+
+        // dd(
+        //     $this->pathfinder::getCache(),
+        // );
 
         $this->generator = new Stylesheet(
+            $this->rootDirectory,
             $this->palette,
-            $this->force,
+            $this->templateDirectories,
         );
 
         foreach ( $this->includedStylesheets as $stylesheet ) {
@@ -108,18 +116,10 @@ class StylesheetGenerationService
             }
         }
 
-        if ( empty( $this->templateDirectories ) ) {
-            $this->templateDirectories[] = $this->rootDirectory . 'templates';
-        }
-
-        $this->generator->dynamicRules = new DynamicRules(
-            $this->rootDirectory,
-            $this->templateDirectories,
-        );
 
         $this->generator->build();
 
-        $this->stylesheet = (string) $this->generator;
+        $this->stylesheet = $this->generator->styles;
 
         if ( !$this->stylesheet ) {
             $this->logger?->error(
@@ -129,7 +129,7 @@ class StylesheetGenerationService
             return false;
         }
 
-        $this->updated = File::save( $this->savePath->value, $this->stylesheet );
+        $this->updated = File::save( $path->value, $this->stylesheet );
 
         $this->stopwatch->stop( 'save' );
 
