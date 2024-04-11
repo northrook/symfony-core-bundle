@@ -72,6 +72,14 @@ final class StylesheetGenerationService
         return $this;
     }
 
+    public function generate(
+        array   $includeStylesheets = [ 'dir.core.assets/styles' ],
+        ?string $savePath = null,
+    ) : bool {
+        
+        return $this->save();
+    }
+
 
     /**
      * @param null|Path|string  $path   Defaults to `var/cache/styles/styles.css`

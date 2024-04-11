@@ -16,9 +16,9 @@
         <xsd:attribute name="name" type="xsd:string" use="required"/>
         <xsd:attribute name="value" type="xsd:string" use="required"/>
         <xsd:attribute name="label" type="xsd:string"/>
-        <xsd:attribute name="required" type="xsd:boolean"/>
-        <xsd:attribute name="disabled" type="xsd:boolean"/>
-        <xsd:attribute name="autofocus" type="xsd:boolean"/>
+        <xsd:attribute name="required"/>
+        <xsd:attribute name="disabled"/>
+        <xsd:attribute name="autofocus"/>
         <xsd:attribute name="autocomplete" type="xsd:string"/>
     </xsd:complexType>
 
@@ -32,12 +32,11 @@
     <xsd:complexType name="choice">
         <xsd:attribute name="id" type="xsd:string"/>
         <xsd:attribute name="name" type="xsd:string" use="required"/>
-        <xsd:attribute name="value" type="xsd:string" use="required"/>
         <xsd:attribute name="label" type="xsd:string"/>
-        <xsd:attribute name="required" type="xsd:boolean"/>
-        <xsd:attribute name="disabled" type="xsd:boolean"/>
-        <xsd:attribute name="autofocus" type="xsd:boolean"/>
-        <xsd:attribute name="checked" type="xsd:boolean"/>
+        <xsd:attribute name="required"/>
+        <xsd:attribute name="disabled"/>
+        <xsd:attribute name="autofocus"/>
+        <xsd:attribute name="checked"/>
     </xsd:complexType>
 
 
@@ -49,9 +48,9 @@
         <xsd:attribute name="name" type="xsd:string" use="required"/>
         <xsd:attribute name="value" type="xsd:string" use="required"/>
         <xsd:attribute name="label" type="xsd:string"/>
-        <xsd:attribute name="required" type="xsd:boolean"/>
-        <xsd:attribute name="disabled" type="xsd:boolean"/>
-        <xsd:attribute name="autofocus" type="xsd:boolean"/>
+        <xsd:attribute name="required"/>
+        <xsd:attribute name="disabled"/>
+        <xsd:attribute name="autofocus"/>
         <xsd:attribute name="autocomplete" type="xsd:string"/>
     </xsd:complexType>
 

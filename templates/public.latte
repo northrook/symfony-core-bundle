@@ -1,25 +1,8 @@
 {layout '_document.latte'}
 {block body}
+    <body class="p-y:m p-x:s">
 
-    <header class="flex p:s">
-        {* Check if this is the home page. Hide link if so. *}
-        <a n:if="$get->currentPath != '/'" href="/" class="button m-r:auto">Home</a>
-
-        {* Theme Button - update tooltip to reflect action*}
-        <button id="toggle-dark-mode" class="m-l:auto" tooltip="Toggle Dark Mode" icon="toggle-theme-mode:ui"
-                data-action="toggle-theme-mode"/>
-    </header>
-
-    <main class="p:s">
-    </main>
-
-    <footer class="flex p-x:s p-y:m">
-        <p>&copy; Northrook. All rights reserved.</p>
-    </footer>
-
-    <body>
-
-    <h1>
+    <h1 class="color:--primary">
         Public
     </h1>
     <p>Origin route: <code>{$get->request->attributes->get('_route')}</code></p>

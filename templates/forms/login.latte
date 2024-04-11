@@ -1,0 +1,43 @@
+<form xmlns:field="core"
+>
+    {*    <div n:if="$auth->error">*}
+    {*        <p>{$auth->error}</p>*}
+    {*    </div>*}
+
+
+    <field:email label="Email" required autofocus autocomplete="username"/>
+
+    <field:password label="Password" required autocomplete="current-password"/>
+
+    <field:checkbox
+            label="Keep me signed in for 7 days."
+            name="_remember_me"
+            checked
+    />
+
+    <footer class="actions">
+
+
+        <button id="forgot-password" class="m-r:a color:500"
+                hx-trigger="click"
+                hx-post="{path('core:security:reset-password')}/this-long-token"
+        >
+            Forgot Password?
+        </button>
+
+
+        <button id="submit" class="" type="submit">
+                <span>
+                    Log in
+{*                    {$auth->method == 'password' ? 'Log in' : 'Continue'}*}
+                </span>
+        </button>
+
+    </footer>
+
+    <input type="hidden" name="_csrf_token"
+           value="{$form->csrf_token}"
+    >
+
+    {*    {$form->csrf()}*}
+</form>
