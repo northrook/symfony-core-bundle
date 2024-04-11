@@ -1,13 +1,26 @@
 <form xmlns:field="core"
+      novalidate {* We handle validation client-side, as well as server-side *}
 >
+
     {*    <div n:if="$auth->error">*}
     {*        <p>{$auth->error}</p>*}
     {*    </div>*}
 
 
-    <field:email label="Email" required autofocus autocomplete="username"/>
+    <field:email
+            name="email"
+            label="Email"
+            required
+            autofocus
+            autocomplete="username"
+    />
 
-    <field:password label="Password" required autocomplete="current-password"/>
+    <field:password
+            name="password"
+            label="Password"
+            required
+            autocomplete="current-password"
+    />
 
     <field:checkbox
             label="Keep me signed in for 7 days."

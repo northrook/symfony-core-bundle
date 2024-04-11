@@ -5,6 +5,7 @@ namespace Northrook\Symfony\Core\Controller;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\SecurityService;
 use Northrook\Symfony\Core\Services\SettingsManagementService;
+use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Northrook\Symfony\Latte\Core as Latte;
 use Northrook\Symfony\Latte\Parameters;
 use Psr\Log\LoggerInterface;
@@ -30,18 +31,34 @@ final readonly class SecurityController extends AbstractCoreControllerMethods
 
 
     public function login(
-        CsrfTokenManagerInterface $csrfTokenManager,
+        CsrfTokenManagerInterface   $csrfTokenManager,
+        StylesheetGenerationService $stylesheet,
     ) : Response {
 
-        dd( $this->security->getUser() );
+
+        $stylesheet->generate();
+
+        $this->document->addStylesheet( 'dir.cache/styles/styles.css' );
+        $this->document->addScript( 'dir.root/vendor/northrook/symfony-components-bundle/src/Image/image.js' );
+        $this->document->addScript(
+            'dir.assets/scripts/core.js',
+            'dir.assets/scripts/components.js',
+        );
+
+        $this->document->title = 'Northrook';
+        $blurb                 = 'Log in to access the admin interface.';
+
 
         return $this->response(
             template   : 'security/login.latte',
             parameters : [
+                             'seenBefore'   => $this->lastKnownUsername() !== null,
+                             'blurb'        => $blurb,
                              'currentUser'  => $this->security->getUser(),
                              'lastUsername' => $this->lastKnownUsername(),
                              'error'        => $this->lastAuthenticationError(),
                              'form'         => [
+                                 'template'   => null,
                                  'csrf_token' => $csrfTokenManager->getToken( 'authenticate' )->getValue(),
                              ],
                          ],
@@ -73,7 +90,7 @@ final readonly class SecurityController extends AbstractCoreControllerMethods
         if ( $request->attributes->has( SecurityRequestAttributes::AUTHENTICATION_ERROR ) ) {
             $authenticationException = $request->attributes->get( SecurityRequestAttributes::AUTHENTICATION_ERROR );
         }
-        elseif ( $request->hasSession() && ( $session = $request->getSession() )->has(
+        else if ( $request->hasSession() && ( $session = $request->getSession() )->has(
                 SecurityRequestAttributes::AUTHENTICATION_ERROR,
             ) ) {
             $authenticationException = $session->get( SecurityRequestAttributes::AUTHENTICATION_ERROR );

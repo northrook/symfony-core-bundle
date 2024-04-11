@@ -76,7 +76,10 @@ final class StylesheetGenerationService
         array   $includeStylesheets = [ 'dir.core.assets/styles' ],
         ?string $savePath = null,
     ) : bool {
-        
+
+        $this->includeStylesheets( $includeStylesheets );
+        $this->force = true;
+
         return $this->save();
     }
 
@@ -131,7 +134,7 @@ final class StylesheetGenerationService
         $this->generator->force = $force;
         $this->generator->build();
 
-        $this->stylesheet = $this->generator->styles;
+        $this->stylesheet = $this->generator->styles ?? '';
 
         if ( !$this->stylesheet ) {
             $this->logger?->error(

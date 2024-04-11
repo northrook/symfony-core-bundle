@@ -170,6 +170,7 @@ return static function ( ContainerConfigurator $container ) : void {
         //
         // 🧭 - Pathfinder Service
               ->set( 'core.service.stylesheets', StylesheetGenerationService::class )
+              ->tag( 'controller.service_arguments' )
               ->args(
                   [
                       service( 'core.service.pathfinder' ),
