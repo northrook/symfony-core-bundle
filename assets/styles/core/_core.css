@@ -1,5 +1,4 @@
-html
-{
+html {
     --body-color   : hsl(var(--baseline-200));
     --body-bg      : hsl(var(--baseline-900));
 
@@ -8,8 +7,8 @@ html
     --outline      : var(--baseline-600);
     --disabled     : var(--baseline-400);
     --inactive     : var(--baseline-600);
-    --intent       : var(--primary-dull);
-    --active       : var(--primary-tint);
+    --intent       : var(--primary-intent);
+    --active       : var(--primary-active);
 
     --font-size    : 1rem;
     --font-size-h1 : min(max(1.8rem, 6vw), 3.05rem);
@@ -30,14 +29,12 @@ html
     --section-gap  : 2rem;
 }
 
-body
-{
+body {
     --button-size : 2rem;
     --input-size  : 2rem;
 }
 
-html
-{
+html {
     /* scroll-behavior				: smooth; */
     /* text-rendering				: optimizeLegibility; */
     /* -webkit-tap-highlight-color	: transparent; */
@@ -51,33 +48,27 @@ html
     flex-direction : column;
 }
 
-body
-{
+body {
     display        : flex;
     flex-direction : column;
     flex-grow      : 1;
     min-height     : 100%;
 }
 
-
-area, button, input, label, select, summary, textarea, [tabindex]
-{
+area, button, input, label, select, summary, textarea, [tabindex] {
     -ms-touch-action : manipulation;
     touch-action     : manipulation;
 }
 
 /* Alternative to disabling when waiting for response/animation? */
-[aria-busy='true']
-{
+[aria-busy='true'] {
     cursor : progress;
 }
 
-[aria-controls]
-{
+[aria-controls] {
     cursor : pointer;
 }
 
-[aria-disabled='true'], [disabled]
-{
+[aria-disabled='true'], [disabled] {
     cursor : not-allowed;
 }

@@ -1,14 +1,12 @@
 field input[type="checkbox"],
-field input[type="radio"]
-{
+field input[type="radio"] {
     position : absolute;
     height   : 0;
     width    : 0;
     opacity  : 0;
 }
 
-field input[type="checkbox"] + label
-{
+field input[type="checkbox"] + label {
     display        : flex;
     flex-direction : row;
     align-items    : center;
@@ -19,23 +17,19 @@ field input[type="checkbox"] + label
 }
 
 field input[type="checkbox"] > span,
-field input[type="checkbox"] > p
-{
+field input[type="checkbox"] > p {
     line-height : var(--line-height);
 }
 
-field input[type="checkbox"] > *:last-child
-{
+field input[type="checkbox"] > *:last-child {
     padding-right : 1rem;
 }
 
-field.checkbox input[type="checkbox"]:focus-visible + label i.indicator::after
-{
+field.checkbox input[type="checkbox"]:focus-visible + label i.indicator::after {
     opacity : 0.5;
 }
 
-field i.indicator
-{
+field i.indicator {
     position : relative;
     outline  : 1px solid hsla(var(--outline));
 }
@@ -43,8 +37,7 @@ field i.indicator
 
 /*#region Checkbox */
 
-field.checkbox i.indicator
-{
+field.checkbox i.indicator {
     position         : relative;
     display          : flex;
     align-items      : center;
@@ -59,8 +52,7 @@ field.checkbox i.indicator
     transition       : all 0.2s ease;
 }
 
-field.checkbox i.indicator::before
-{
+field.checkbox i.indicator::before {
     content          : "";
     position         : absolute;
     width            : 100%;
@@ -73,15 +65,13 @@ field.checkbox i.indicator::before
     pointer-events   : none;
 }
 
-field.checkbox input:checked + label i.indicator::before
-{
+field.checkbox input:checked + label i.indicator::before {
     transform  : scale(2.2);
     opacity    : 0;
     transition : all 600ms ease;
 }
 
-field.checkbox input:checked + label i.indicator
-{
+field.checkbox input:checked + label i.indicator {
     --outline  : var(--active);
     background : hsla(var(--active));
     animation  : check 200ms ease;
@@ -91,8 +81,7 @@ field.checkbox input:checked + label i.indicator
 
 
 /*#region Toggle */
-field.toggle i.indicator
-{
+field.toggle i.indicator {
     --height         : 1rem;
     --offset         : calc(var(--height) * -1);
     --ratio          : 2;
@@ -109,13 +98,11 @@ field.toggle i.indicator
     box-shadow       : var(--offset) 0 0 0.1rem var(--background) inset, 0 0 0 0.1rem var(--background) inset;
 }
 
-field.toggle:hover i.indicator
-{
+field.toggle:hover i.indicator {
     --indicator : var(--intent);
 }
 
-field.toggle input[type="checkbox"]:checked + label i.indicator
-{
+field.toggle input[type="checkbox"]:checked + label i.indicator {
     --offset    : var(--height);
     --indicator : var(--active);
 }
@@ -126,8 +113,7 @@ field.toggle input[type="checkbox"]:checked + label i.indicator
 
 /*#endregion Switch */
 
-field.checkbox svg
-{
+field.checkbox svg {
     fill              : none;
     stroke            : white;
     width             : var(--line-height);
@@ -142,16 +128,14 @@ field.checkbox svg
     transform         : translate3d(0, 0, 0);
 }
 
-field.checkbox input:checked + label i.indicator svg
-{
+field.checkbox input:checked + label i.indicator svg {
     stroke-dashoffset : 0;
 }
 
 
-@keyframes check
-{
-    50%
-    {
+@keyframes check {
+    50% {
         transform : scale(1.2);
+        opacity   : 1;
     }
 }

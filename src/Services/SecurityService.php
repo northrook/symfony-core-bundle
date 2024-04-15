@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Csrf\CsrfTokenManager;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 final readonly class SecurityService
 {
@@ -16,7 +16,7 @@ final readonly class SecurityService
     public function __construct(
         public AuthorizationChecker      $authorization,
         public UsageTrackingTokenStorage $tokenStorage,
-        public CsrfTokenManager          $csrf,
+        public CsrfTokenManagerInterface $csrf,
     ) {}
 
     /**

@@ -2,7 +2,8 @@
 
 namespace Northrook\Symfony\Core\Components;
 
-use Northrook\Symfony\Core\Latte\Component;
+use Northrook\Elements\Element;
+use Northrook\Elements\Icon;
 
 /**
  * # Button
@@ -30,10 +31,28 @@ use Northrook\Symfony\Core\Latte\Component;
  * ```
  *
  */
-class Button extends Component
+class Button extends Element
 {
 
-    public function build() : string {
-        return '<button type="submit" class="btn btn-primary">Submit</button>';
+    protected array $attributes = [
+        'type' => 'button',
+    ];
+
+    public function __construct( ...$set ) {
+
+        if ( array_key_exists( 'icon', $set ) ) {
+            $icon                    = $set[ 'icon' ];
+            $this->content[ 'icon' ] = $icon instanceof Icon ? $icon : Icon::svg( $icon );
+            unset( $set[ 'icon' ] );
+        }
+
+        if ( !array_key_exists( 'class', $set ) ) {
+            $set[ 'class' ] = 'button';
+        }
+        else {
+            $set[ 'class' ] = 'button ' . $set[ 'class' ];
+        }
+
+        parent::__construct( ...$set );
     }
 }

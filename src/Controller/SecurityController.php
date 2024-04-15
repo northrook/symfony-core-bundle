@@ -3,6 +3,7 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Symfony\Core\Services\CurrentRequestService;
+use Northrook\Symfony\Core\Services\FormService;
 use Northrook\Symfony\Core\Services\SecurityService;
 use Northrook\Symfony\Core\Services\SettingsManagementService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
@@ -33,6 +34,7 @@ final readonly class SecurityController extends AbstractCoreControllerMethods
     public function login(
         CsrfTokenManagerInterface   $csrfTokenManager,
         StylesheetGenerationService $stylesheet,
+        FormService                 $form,
     ) : Response {
 
 
@@ -90,13 +92,15 @@ final readonly class SecurityController extends AbstractCoreControllerMethods
         if ( $request->attributes->has( SecurityRequestAttributes::AUTHENTICATION_ERROR ) ) {
             $authenticationException = $request->attributes->get( SecurityRequestAttributes::AUTHENTICATION_ERROR );
         }
-        else if ( $request->hasSession() && ( $session = $request->getSession() )->has(
-                SecurityRequestAttributes::AUTHENTICATION_ERROR,
-            ) ) {
-            $authenticationException = $session->get( SecurityRequestAttributes::AUTHENTICATION_ERROR );
+        else {
+            if ( $request->hasSession() && ( $session = $request->getSession() )->has(
+                    SecurityRequestAttributes::AUTHENTICATION_ERROR,
+                ) ) {
+                $authenticationException = $session->get( SecurityRequestAttributes::AUTHENTICATION_ERROR );
 
-            if ( $clearSession ) {
-                $session->remove( SecurityRequestAttributes::AUTHENTICATION_ERROR );
+                if ( $clearSession ) {
+                    $session->remove( SecurityRequestAttributes::AUTHENTICATION_ERROR );
+                }
             }
         }
 

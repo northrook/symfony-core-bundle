@@ -11,6 +11,7 @@ use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Latte\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Services\ContentManagementService;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
+use Northrook\Symfony\Core\Services\FormService;
 use Northrook\Symfony\Core\Services\HttpService;
 use Northrook\Symfony\Core\Services\MailerService;
 use Northrook\Symfony\Core\Services\PathfinderService;
@@ -181,6 +182,20 @@ return static function ( ContainerConfigurator $container ) : void {
               ->autowire()
               ->public()
               ->alias( StylesheetGenerationService::class, 'core.service.stylesheets' )
+        //
+        //
+        // 📩 - Form Service
+              ->set( 'core.service.form', FormService::class )
+              ->tag( 'controller.service_arguments' )
+              ->args(
+                  [
+                      service( 'parameter_bag' ),
+                      service( 'security.csrf.token_manager' ),
+                  ],
+              )
+              ->autowire()
+              ->public()
+              ->alias( FormService::class, 'core.service.form' )
         //
         //
         // 🗂 - Log Aggregating Event Subscriber

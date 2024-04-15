@@ -15,7 +15,7 @@ class PathfinderService
      *
      * @var Path[]
      */
-    private static array $pathfinderCache = [];
+    private static array $cache = [];
 
     /**
      * @var string[]
@@ -35,8 +35,8 @@ class PathfinderService
     public function get( string $path ) : Path {
 
 
-        if ( isset( self::$pathfinderCache[ $path ] ) ) {
-            return self::$pathfinderCache[ $path ];
+        if ( isset( PathfinderService::$cache[ $path ] ) ) {
+            return PathfinderService::$cache[ $path ];
         }
 
         $key = $path;
@@ -67,7 +67,7 @@ class PathfinderService
         $path = new Path( $path );
 
         if ( $path->isValid ) {
-            return self::$pathfinderCache[ $key ] = $path;
+            return PathfinderService::$cache[ $key ] = $path;
         }
 
         $this->logger->Error(
@@ -77,7 +77,7 @@ class PathfinderService
                 'path'        => $path->value,
                 'type'        => $path,
                 'type::class' => $path::class,
-                'cache'       => self::$pathfinderCache,
+                'cache'       => PathfinderService::$cache,
             ],
         );
 
@@ -86,8 +86,8 @@ class PathfinderService
 
     private function getParameters() : array {
 
-        if ( isset( self::$parametersCache ) ) {
-            return self::$parametersCache;
+        if ( isset( PathfinderService::$parametersCache ) ) {
+            return PathfinderService::$parametersCache;
         }
 
         $parameters = array_filter(
@@ -108,7 +108,7 @@ class PathfinderService
             $parameters[ $key ] = Path::normalize( $value );
         }
 
-        return self::$parametersCache = $parameters;
+        return PathfinderService::$parametersCache = $parameters;
     }
 
     public function getParameter( string $name ) : ?string {
@@ -118,13 +118,13 @@ class PathfinderService
     public static function getCache( bool $parameterCache = false ) : array {
 
         if ( $parameterCache ) {
-            return self::$parametersCache ?? [];
+            return PathfinderService::$parametersCache ?? [];
         }
 
-        return self::$pathfinderCache;
+        return PathfinderService::$cache;
     }
 
     public static function clearCache() : void {
-        self::$pathfinderCache = [];
+        PathfinderService::$cache = [];
     }
 }

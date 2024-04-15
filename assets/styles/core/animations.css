@@ -1,34 +1,48 @@
+/*#region Intent - Ripple */
 
-body#login
-{
-    background : hsla(var(--primary-soft), 0.15);
+/*Debug*/
+/*.ripple:active {*/
+/*    outline        : 4px solid #ff149350;*/
+/*    outline-offset : -2px;*/
+/*}*/
+/*.ripple.clicked {*/
+/*    outline        : 4px solid rgba(20, 255, 235, 0.31);*/
+/*    outline-offset : -2px;*/
+/*}*/
+
+.ripple {
+    --interaction : hsla(var(--color, var(--baseline-100)), .125);
 }
 
-body#login svg#background
-{
-    position : fixed;
-    inset    : 0;
-    z-index  : -1;
+.ripple > i.boundary {
+    position       : absolute;
+    z-index        : -1;
+    inset          : 0;
+    border-radius  : var(--radius, 0);
+    overflow       : hidden;
+    pointer-events : none;
 }
 
-.out-top
-{
-    /*color: hsla(var(--primary));*/
-    color : hsla(var(--primary-soft), 0.05);
+.ripple > i.boundary > i {
+    position       : absolute;
+    width          : 100%;
+    padding-bottom : 100%;
+    border-radius  : 50%;
+    background     : var(--interaction);
+    opacity        : 0;
+    transition     : opacity 300ms ease, background 200ms ease;
+    animation      : interaction-intent 900ms ease-in-out forwards;
 }
 
-.in-top
-{
-    /*color: hsla(var(--primary-tint));*/
-    color : hsla(var(--primary-dull), 0.05);
+.ripple.clicked > i.boundary > i,
+.ripple:hover > i.boundary > i { opacity : 1; }
+
+/*.ripple > i.interaction.out > i { opacity : 0;}*/
+
+@keyframes interaction-intent {
+    0% { transform : translate(-50%, -50%) scale(0); }
+    100% { transform : translate(-50%, -50%) scale(4); }
 }
 
-.out-bottom
-{
-    color : hsla(var(--primary-soft), 0.05);
-}
 
-.in-bottom
-{
-    color : hsla(var(--primary-soft), 0.045);
-}
+/*#endregion */
