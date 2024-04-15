@@ -2,7 +2,6 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
-use Northrook\Elements\Render\Template;
 use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\MailerService;
@@ -12,7 +11,6 @@ use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Northrook\Symfony\Latte\Core;
 use Northrook\Symfony\Latte\Parameters;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +20,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-final readonly class CoreAdminController extends AbstractCoreControllerMethods
+final readonly class AdminController extends AbstractCoreControllerMethods
 {
 
     public function __construct(
@@ -43,58 +41,31 @@ final readonly class CoreAdminController extends AbstractCoreControllerMethods
 
         $this->stylesheet->save( File::path( 'dir.assets/build/styles.css' ) );
 
-
     }
 
     public function index(
+        ?string       $route,
         MailerService $mailer,
     ) : Response {
 
-        if ( $this->route( 'admin/mailer' ) ) {
-
-            $message = ( new TemplatedEmail() )
-                ->to( 'mn@northrook.com' )
-                ->subject( 'Hello! Testing from Placeholder' )
-                ->htmlTemplate(
-                    new Template(
-                        <<<HTML
-                        <h1>
-                            Hello there!
-                        </h1>
-                        
-                        <p>
-                            Please confirm your email address by clicking the following link: <br><br>
-                            <a href="{signedUrl}">Confirm my Email</a>.
-                            This link will expire in {expiresAtMessageKey}.
-                        </p>
-                        
-                        <p>
-                            Did the link expire? <a href="#">Request a new link here</a>.<br>
-                            Note that requesting a new link invalidates any previous links.
-                        </p>
-                        <p>
-                            If you did not request this change, please ignore this email.
-                        </p>
-                        HTML,
-                        [
-                            'signedUrl'           => 'https://example.com',
-                            'expiresAtMessageKey' => '10 minutes',
-                        ],
-
-
-                    ),
-                )
-            ;
-
-            $mail = $mailer->send( $message );
-
-            return new JsonResponse(
-                $mail,
-            );
-        }
+        var_dump( $route );
 
         return $this->response(
-            template : 'admin/_admin.latte',
+            template : 'admin.latte',
+        );
+    }
+
+    public function api( string $action ) : Response {
+
+        return new JsonResponse(
+            [ 'action' => $action, ],
+        );
+    }
+
+    public function search( string $action ) : Response {
+
+        return new JsonResponse(
+            [ 'action' => $action, ],
         );
     }
 

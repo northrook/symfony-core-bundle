@@ -3,8 +3,9 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Favicon\FaviconBundle;
-use Northrook\Symfony\Core\Controller\CoreAdminController;
-use Northrook\Symfony\Core\Controller\CoreApiController;
+use Northrook\Symfony\Core\Controller\AdminController;
+use Northrook\Symfony\Core\Controller\ApiController;
+use Northrook\Symfony\Core\Controller\PublicController;
 use Northrook\Symfony\Core\Controller\SecurityController;
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
 use Northrook\Symfony\Core\File;
@@ -39,7 +40,7 @@ return static function ( ContainerConfigurator $container ) : void {
         //
         //
         // ☕ - Core API Controller
-              ->set( 'core.controller.api', CoreApiController::class )
+              ->set( 'core.controller.api', ApiController::class )
               ->tag( 'controller.service_arguments' )
               ->args(
                   [
@@ -50,8 +51,8 @@ return static function ( ContainerConfigurator $container ) : void {
               )
         //
         //
-        // ☕ - Core Admin Controller
-              ->set( 'core.controller.admin', CoreAdminController::class )
+        // ☕ - Core Public Controller
+              ->set( 'core.controller.public', PublicController::class )
               ->tag( 'controller.service_arguments' )
               ->args(
                   [
@@ -69,7 +70,29 @@ return static function ( ContainerConfigurator $container ) : void {
                       service( 'debug.stopwatch' )->nullOnInvalid(),
                   ],
               )
-              ->alias( CoreAdminController::class, 'core.controller.admin' )
+              ->alias( PublicController::class, 'core.controller.public' )
+        //
+        //
+        // ☕ - Core Admin Controller
+              ->set( 'core.controller.admin', AdminController::class )
+              ->tag( 'controller.service_arguments' )
+              ->args(
+                  [
+                      service( 'router' ),
+                      service( 'http_kernel' ),
+                      service( 'serializer' )->nullOnInvalid(),
+                      service( 'core.service.security' ),
+                      service( 'core.service.request' ),
+                      service( 'core.service.pathfinder' ),
+                      service( 'parameter_bag' ),
+                      service( 'core.service.stylesheets' ),
+                      service( 'latte.environment' ),
+                      service( 'latte.parameters.document' ),
+                      service( 'logger' )->nullOnInvalid(),
+                      service( 'debug.stopwatch' )->nullOnInvalid(),
+                  ],
+              )
+              ->alias( AdminController::class, 'core.controller.admin' )
         //
         //
         // 🛡️ - Security Controller

@@ -10,6 +10,5 @@ return static function ( RoutingConfigurator $routes ) : void {
            ->controller( [ 'core.controller.api', 'favicon' ] )
            ->requirements( [ 'action' => 'generate|purge' ] )
            ->defaults( [ 'action' => 'generate' ] )
-           ->methods( [ 'GET' ] )
-    ;
+           ->methods( [ 'GET' ] );;
 };

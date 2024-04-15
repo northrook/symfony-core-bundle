@@ -3,6 +3,7 @@
 namespace Northrook\Symfony\Core\Latte;
 
 use Northrook\Elements;
+use Northrook\Symfony\Core\Components;
 use Northrook\Symfony\Core\Components\Input;
 use Northrook\Symfony\Latte\Preprocessor\Preprocessor;
 
@@ -16,7 +17,7 @@ final class LatteComponentPreprocessor extends Preprocessor
 {
 
     private const ELEMENNTS = [
-        'button' => Elements\Button::class,
+        'button' => Components\Button::class,
         'icon'   => Elements\Icon::class,
     ];
 
@@ -123,7 +124,7 @@ final class LatteComponentPreprocessor extends Preprocessor
     }
 
     private function proccessElements() : void {
-        
+
         foreach ( LatteComponentPreprocessor::ELEMENNTS as $tag => $parser ) {
 
             $count = preg_match_all(

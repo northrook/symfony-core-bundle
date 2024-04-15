@@ -34,6 +34,10 @@ final class SymfonyCoreBundle extends AbstractBundle
             'resource' => '@SymfonyCoreBundle/config/routes/security.php',
             'prefix'   => '/',
         ],
+        'core.controller.public'   => [
+            'resource' => '@SymfonyCoreBundle/config/routes/public.php',
+            'prefix'   => '/',
+        ],
     ];
 
     private readonly string $projectDir;

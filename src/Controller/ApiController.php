@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 
-final readonly class CoreApiController
+final readonly class ApiController
 {
 
     public function __construct(
