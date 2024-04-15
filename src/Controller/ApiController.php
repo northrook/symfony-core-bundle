@@ -4,7 +4,9 @@ namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Favicon\FaviconBundle;
 use Northrook\Logger\Status\HTTP;
+use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Services\PathfinderService;
+use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,6 +26,25 @@ final readonly class ApiController
     // public function stylesheet( string $action, StylesheetGenerationService $generator ) : Response {
     //
     // }
+
+    public function stylesheet( string $bundle, StylesheetGenerationService $generator ) : Response {
+
+        $generator->includeStylesheets(
+            [
+                'dir.core.assets/styles',
+            ],
+        );
+        $path  = File::path( 'dir.cache/styles/styles.css' );
+        $saved = $generator->save( $path, true );
+
+        return new JsonResponse(
+            [
+                'bundle' => $bundle,
+                'saved'  => $bundle,
+                'path'   => $path,
+            ],
+        );
+    }
 
     public function favicon( string $action, FaviconBundle $generator ) : Response {
 

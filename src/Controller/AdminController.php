@@ -37,10 +37,22 @@ final readonly class AdminController extends AbstractCoreControllerMethods
         protected ?LoggerInterface          $logger,
         private ?Stopwatch                  $stopwatch,
     ) {
+
+
+        $this->stylesheet->includeStylesheets(
+            [
+                'dir.core.assets/styles',
+            ],
+        );
+        $path  = File::path( 'dir.cache/styles/styles.css' );
+        $saved = $this->stylesheet->save( $path, true );
+
         $this->security->denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
-
-        $this->stylesheet->save( File::path( 'dir.assets/build/styles.css' ) );
-
+        $this->document->addStylesheet( 'dir.cache/styles/styles.css' );
+        $this->document->addScript(
+            'dir.assets/scripts/core.js',
+            'dir.assets/scripts/components.js',
+        );
     }
 
     public function index(

@@ -80,14 +80,13 @@ final readonly class SecurityController extends AbstractCoreControllerMethods
         );
     }
 
-    public function verifyEmail( string $action ) : JsonResponse {
+    public function verifyEmail( ?string $action ) : JsonResponse {
         return new JsonResponse(
             [ 'action' => $action, ],
         );
     }
 
-    public function resetPassword( string $action ) : Response {
-
+    public function resetPassword( ?string $action ) : Response {
         return new JsonResponse(
             [ 'action' => $action, ],
         );
