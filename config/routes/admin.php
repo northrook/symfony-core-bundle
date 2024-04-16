@@ -2,6 +2,11 @@
 
 declare( strict_types = 1 );
 
+/*
+ * Northrook Core Routes
+ * Admin routes
+ */
+
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 return static function ( RoutingConfigurator $routes ) : void {
@@ -25,5 +30,5 @@ return static function ( RoutingConfigurator $routes ) : void {
            ->defaults( [ 'action' => null ] )
            ->schemes( [ 'https' ] )
            ->methods( [ 'GET', 'POST', 'HEAD' ] );
-    
+
 };

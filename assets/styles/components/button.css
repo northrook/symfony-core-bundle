@@ -8,6 +8,7 @@
     --radius        : 0.25rem;
 
     position        : relative;
+    z-index         : 5;
 
     display         : inline-flex;
     align-items     : center;

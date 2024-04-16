@@ -48,32 +48,32 @@ readonly abstract class AbstractCoreControllerMethods
         return $this->currentRoute;
     }
 
-    protected function response(
-        string         $template,
-        object | array $parameters = [],
-        int | HTTP     $status = HTTP::OK,
-    ) : Response {
-
-        if ( is_array( $parameters ) && isset( $this->document ) ) {
-            $parameters[ 'document' ] = $this->document;
-        }
-
-        return new Response(
-            content : $this->render( $template, $parameters ),
-            status  : $status,
-        );
-    }
-
-    protected function render(
-        string         $template,
-        object | array $parameters = [],
-    ) : string {
-
-        return $this->latte->render(
-            template   : $template,
-            parameters : $parameters,
-        );
-    }
+    // protected function response(
+    //     string         $template,
+    //     object | array $parameters = [],
+    //     int | HTTP     $status = HTTP::OK,
+    // ) : Response {
+    //
+    //     if ( is_array( $parameters ) && isset( $this->document ) ) {
+    //         $parameters[ 'document' ] = $this->document;
+    //     }
+    //
+    //     return new Response(
+    //         content : $this->render( $template, $parameters ),
+    //         status  : $status,
+    //     );
+    // }
+    //
+    // protected function render(
+    //     string         $template,
+    //     object | array $parameters = [],
+    // ) : string {
+    //
+    //     return $this->latte->render(
+    //         template   : $template,
+    //         parameters : $parameters,
+    //     );
+    // }
 
     /**
      * Generates a URL from the given parameters.

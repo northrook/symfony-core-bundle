@@ -19,6 +19,8 @@ use Symfony\Component\Security\Http\SecurityRequestAttributes;
 
 final readonly class SecurityController extends AbstractCoreControllerMethods
 {
+    use CoreControllerTrait;
+
     public function __construct(
         protected SecurityService                  $security,
         protected CurrentRequestService            $request,

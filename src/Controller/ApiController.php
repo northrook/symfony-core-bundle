@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 final readonly class ApiController
 {
+    use CoreControllerTrait;
 
     public function __construct(
         private PathfinderService     $pathfinder,

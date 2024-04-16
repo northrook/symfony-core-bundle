@@ -2,102 +2,47 @@
 
 {block 'body'}
 
-<body n:id="{$document->title}" class="test" style="--sidebar-width: {$admin->sidebar->size}" >
-    <header id="admin-header" class="admin-header">
+    <!-- Header
 
-        <div class="sidebar-header">
-            <button id="sidebar-toggle"
-                    label="Expand Sidebar"
-                    aria-controls="admin-sidebar"
-                    aria-expanded="{$admin->sidebar->expanded ? 'true' : 'false'}"
-                    icon="toggle-sidebar:ui"
-                />
-            {* <button id="sidebar-size" label="Toggle Sidebar Size" aria-controls="admin-sidebar" data-action="size" icon="arrow-right"/> *}
-        </div>
+    Toggle Sidebar
+    --
+    Global Search
+    --
+    Help
+    Notifications
+    User
+      [Username, Email, Profile Link] Persistent on Admin/Public if ROLE_EDITOR?
+      --
+      Public <=> Admin
+      --
+      Settings
+      Theme Toggle
+      Logout
 
-        <field class="search m-r:auto">
-            Search
-        </field>
+    -->
 
-        <div class="header-group">
-
-            <button id="toggle-dark-mode" label="Toggle Dark Mode" icon="toggle-theme-mode:admin" data-action="toggle-theme-mode" />
-
-            <button id="admin-help" label="Help" icon="help-circle" />
-
-            <button id="admin-notifications-toggle" label="Toggle Notifications" icon="notifications:admin" />
-            
-            <dropdown>
-                <button id="admin-user" aria-haspopup="menu" aria-controls="admin-user-menu" aria-expanded="false">
-                    {avatar($get->user?->avatar)}
-                </button>
-                <ul id="admin-user-menu" role="menu"
-                hx-boost="true"
-                hx-swap="innerHTML"
-                hx-target="main">
-                    <li n:if="$get->user" role="presentation">
-                        <span>
-                            {$get->user->fullName}
-                        </span>
-                        <small>
-                            {$get->user->email}
-                        </small>
-                    </li> 
-                    <li role="menuitem">
-                        <a href="/admin/profile">
-                            <icon get="user-cog-2" class="user" />
-                            User Profile
-                        </a>
-                    </li>
-                    <li role="menuitem">
-                        <a href="/" hx-boost="false">
-                            <icon get="home" />
-                            Public
-                        </a>
-                    </li>
-                    <li role="menuitem">
-                        <a href="/login" hx-boost="false">
-                            <icon get="log-in" />
-                            Log in
-                        </a>
-                    </li>
-                    <li role="menuitem">
-                        <a href="/logout" hx-boost="false">
-                            <icon get="log-out" />
-                            Log {$get->user->firstName ?? ''} out
-                        </a>
-                    </li>
-                </ul>
-            </dropdown>
-        </div>
-
-    </header>
-
-    <sidebar id="admin-sidebar">
+    <!-- Sidebar
 
 
-        <nav id="admin-sidebar-nav"
-        hx-boost="true"
-        hx-swap="innerHTML"
-        hx-target="main"
-        >
-            { $document->menu->echo('sidebar') }
-        </nav>
-        
-        {* <div class="resize vertical" data-action="size" role="separator" aria-orientation="vertical" aria-controls="admin-sidebar"></div> *}
 
-    </sidebar>
+    Navigation
 
-	<main id="content"
-            hx-get="{$getRoute??'/admin'}"
-            hx-trigger="load"
-            hx-swap="innerHTML"
+    -->
+
+    <pre>
+        {$route ?? 'no route parameter passed'}
+    </pre>
+
+    {include 'admin/dashboard.latte'}
+
+    <main id="content"
+          hx-get="{$getRoute??'/admin'}"
+          hx-trigger="load"
+          hx-swap="innerHTML"
     />
 
-</body>
+    <!-- Notifications -->
 
-<!-- Notifications -->
-
-<!-- Editor Actions -->
+    <!-- Editor Actions -->
 
 {/block}

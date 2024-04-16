@@ -19,6 +19,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
 
 final readonly class PublicController extends AbstractCoreControllerMethods
 {
+    use CoreControllerTrait;
 
     public function __construct(
         protected RouterInterface           $router,
@@ -49,10 +50,11 @@ final readonly class PublicController extends AbstractCoreControllerMethods
         MailerService $mailer,
     ) : Response {
 
-        var_dump( $route );
-
         return $this->response(
-            template : 'public.latte',
+            template   : 'public.latte',
+            parameters : [
+                             'route' => $route,
+                         ],
         );
     }
 
