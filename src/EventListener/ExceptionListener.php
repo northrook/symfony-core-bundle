@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\EventListener;
 
+use Northrook\Symfony\Core\Security\ErrorEventException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -9,6 +10,11 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 class ExceptionListener
 {
     public function __invoke( ExceptionEvent $event ) : void {
+
+        if ( $event instanceof ErrorEventException::class ) {
+            dd( $event );
+        }
+
         // You get the exception object from the received event
         $exception = $event->getThrowable();
         $message   = sprintf(
