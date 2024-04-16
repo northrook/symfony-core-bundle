@@ -62,7 +62,7 @@ final readonly class AdminController extends AbstractCoreControllerMethods
     ) : Response {
 
         return $this->response(
-            template   : 'public.latte',
+            template   : 'admin.latte',
             parameters : [
                              'route' => $route,
                          ],

@@ -7,6 +7,7 @@ use Northrook\Symfony\Core\Controller\AdminController;
 use Northrook\Symfony\Core\Controller\ApiController;
 use Northrook\Symfony\Core\Controller\PublicController;
 use Northrook\Symfony\Core\Controller\SecurityController;
+use Northrook\Symfony\Core\EventListener\ExceptionListener;
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
 use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Latte\LatteComponentPreprocessor;
@@ -228,5 +229,11 @@ return static function ( ContainerConfigurator $container ) : void {
                       service( 'logger' )->nullOnInvalid(),
                   ],
               )
-              ->tag( 'kernel.event_subscriber', [ 'priority' => 100 ] );
+              ->tag( 'kernel.event_subscriber', [ 'priority' => 100 ] )
+              ->set( ExceptionListener::class )
+              ->tag( 'kernel.event_listener', [ 'priority' => 100 ] );
+    //
+    // end
+    ;
+
 };
