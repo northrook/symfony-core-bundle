@@ -230,7 +230,21 @@ return static function ( ContainerConfigurator $container ) : void {
                   ],
               )
               ->tag( 'kernel.event_subscriber', [ 'priority' => 100 ] )
+
+        //
+        //
+
               ->set( ExceptionListener::class )
+              ->args(
+                  [
+                      service( 'core.service.security' ),
+                      service( 'core.service.request' ),
+                      service( 'core.service.settings' ),
+                      service( 'latte.environment' ),
+                      service( 'latte.parameters.document' ),
+                      service( 'logger' )->nullOnInvalid(),
+                  ],
+              )
               ->tag( 'kernel.event_listener', [ 'priority' => 100 ] );
     //
     // end
