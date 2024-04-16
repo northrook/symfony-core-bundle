@@ -1,0 +1,8 @@
+{layout '_document.latte'}
+
+{block 'body'}
+    <span n:if="$status">{$status}</span>
+    <h1>
+        {$message ?? 'Error Page'}
+    </h1>
+{/block}
