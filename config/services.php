@@ -9,6 +9,7 @@ use Northrook\Symfony\Core\Controller\PublicController;
 use Northrook\Symfony\Core\Controller\SecurityController;
 use Northrook\Symfony\Core\EventListener\ExceptionListener;
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
+use Northrook\Symfony\Core\EventSubscriber\ResponseEventSubscriber;
 use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Latte\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\Services\ContentManagementService;
@@ -220,6 +221,16 @@ return static function ( ContainerConfigurator $container ) : void {
               ->autowire()
               ->public()
               ->alias( FormService::class, 'core.service.form' )
+        //
+        //
+        // 🗂 - Response Event Subscriber
+              ->set( ResponseEventSubscriber::class )
+        // ->args(
+        //     [
+        //         service( 'logger' )->nullOnInvalid(),
+        //     ],
+        // )
+              ->tag( 'kernel.event_subscriber', [ 'priority' => 125 ] )
         //
         //
         // 🗂 - Log Aggregating Event Subscriber
