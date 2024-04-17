@@ -21,6 +21,7 @@ use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Symfony\Core\Services\SecurityService;
 use Northrook\Symfony\Core\Services\SettingsManagementService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
 
 return static function ( ContainerConfigurator $container ) : void {
     //
@@ -36,6 +37,11 @@ return static function ( ContainerConfigurator $container ) : void {
               ->set( 'path.favicon', File::parameterDirname( '../../assets/icons/favicon.default.svg' ) )
               ->set( 'dir.core.assets', File::parameterDirname( '../../assets/' ) )
               ->set( 'ttl.cache', 86400 );
+
+    //
+    // Profiler Alias
+    $container->services()->alias( Profiler::class, 'profiler' );
+
     //
     // Services
     $container->services()

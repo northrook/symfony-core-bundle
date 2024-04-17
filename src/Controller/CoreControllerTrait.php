@@ -6,17 +6,22 @@ use LogicException;
 use Northrook\Elements\Render\Template;
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\App;
+use Northrook\Symfony\Core\Components\Notification;
 use Northrook\Symfony\Core\Security\ErrorEventException;
-use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
+use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Throwable;
 
+/**
+ * @property RouterInterface       $router ;
+ * @property CurrentRequestService $request;
+ */
 trait CoreControllerTrait
 {
 
@@ -74,8 +79,7 @@ trait CoreControllerTrait
             parameters : $parameters,
         );
     }
-
-
+    
     final protected function route( ?string $is = null ) : string | bool {
 
         $this->currentPath  ??= $this->request->pathInfo;
@@ -89,32 +93,16 @@ trait CoreControllerTrait
     }
 
     /**
-     * Adds a flash message to the current session for type.
+     * @param string               $type
+     * @param string|Notification  $message
      *
-     * @throws LogicException
+     * @return void
      */
-    final protected function addFlash( string $type, mixed $message ) : void {
-        try {
-            $session = $this->request->session();
-        }
-        catch ( SessionNotFoundException $e ) {
-            throw new LogicException(
-                'You cannot use the addFlash method if sessions are disabled. Enable them in "config/packages/framework.yaml".',
-                0,
-                $e,
-            );
-        }
-
-        if ( !$session instanceof FlashBagAwareSessionInterface ) {
-            throw new LogicException(
-                sprintf(
-                    'You cannot use the addFlash method because class "%s" doesn\'t implement "%s".',
-                    get_debug_type( $session ), FlashBagAwareSessionInterface::class,
-                ),
-            );
-        }
-
-        $session->getFlashBag()->add( $type, $message );
+    public function addFlash(
+        string                $type,
+        string | Notification $message,
+    ) : void {
+        $this->request->addFlash( $type, $message );
     }
 
 

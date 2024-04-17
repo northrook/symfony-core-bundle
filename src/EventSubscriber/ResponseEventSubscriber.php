@@ -3,39 +3,55 @@
 namespace Northrook\Symfony\Core\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\ControllerArgumentsEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\HttpKernel\Event\TerminateEvent;
+use Symfony\Component\HttpKernel\Event\ViewEvent;
 
 final class ResponseEventSubscriber implements EventSubscriberInterface
 {
-    public function request() : void {
-        echo '<pre>' . __METHOD__ . '</pre>';
+
+    private bool    $isMainRequest = false;
+    private Request $request;
+
+    public function request( RequestEvent $request ) : void {
+        // echo '<pre>' . __METHOD__ . '</pre>' . PHP_EOL;
+
+        $this->isMainRequest = $request->isMainRequest();
+        $this->request       = $request->getRequest();
     }
 
-    public function controller() : void {
-        echo '<pre>' . __METHOD__ . '</pre>';
+    public function controller( ControllerEvent $controller ) : void {
+        // echo '<pre>' . __METHOD__ . '</pre>' . PHP_EOL;
     }
 
-    public function controllerArguments() : void {
-        echo '<pre>' . __METHOD__ . '</pre>';
+    public function controllerArguments( ControllerArgumentsEvent $event ) : void {
+        // echo '<pre>' . __METHOD__ . '</pre>' . PHP_EOL;
     }
 
-    public function view() : void {
-        echo '<pre>' . __METHOD__ . '</pre>';
+    public function view( ViewEvent $view ) : void {
+        // echo '<pre>' . __METHOD__ . '</pre>' . PHP_EOL;
     }
 
-    public function response() : void {
-        echo '<pre>' . __METHOD__ . '</pre>';
+    public function response( ResponseEvent $response ) : void {
+        // echo '<pre>' . __METHOD__ . '</pre>' . PHP_EOL;
     }
 
-    public function flashMessages() : void {
-        echo '<pre>' . __METHOD__ . '</pre>';
+    public function flashMessages( FinishRequestEvent $response ) : void {
+        // echo '<pre>' . __METHOD__ . '</pre>' . PHP_EOL;
     }
 
-    public function terminate() : void {
-        echo '<pre>' . __METHOD__ . '</pre>';
+    public function terminate( TerminateEvent $terminate ) : void {
+        // echo '<pre>' . __METHOD__ . '</pre>' . PHP_EOL;
     }
 
-    public function exception() : void {
-        echo '<pre>' . __METHOD__ . '</pre>';
+    public function exception( ExceptionEvent $exception ) : void {
+        // echo '<pre>' . __METHOD__ . '</pre>' . PHP_EOL;
     }
 
     public static function getSubscribedEvents() : array {

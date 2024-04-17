@@ -2,10 +2,15 @@
 
 namespace Northrook\Symfony\Core\Services;
 
+use LogicException;
 use Northrook\Logger\Debug;
 use Northrook\Symfony\Core as Core;
+use Northrook\Symfony\Core\Components\Notification;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation as Http;
+use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
@@ -88,15 +93,37 @@ class CurrentRequestService
     }
 
     /**
+     * @param string               $type
+     * @param string|Notification  $message
+     *
+     * @return void
+     */
+    public function addFlash(
+        string                $type,
+        string | Notification $message,
+    ) : void {
+        $this->flashBag()->add( $type, $message );
+    }
+
+    public function flashBag() : FlashBagInterface {
+        return $this->session()->getFlashBag();
+    }
+
+    /**
      * @param string|null  $get  {@see  SessionInterface::get}
      *
-     * @return SessionInterface|mixed
+     * @return FlashBagAwareSessionInterface|mixed
      */
     public function session( ?string $get = null ) : mixed {
-        if ( false === $this->currentRequest()->hasSession() ) {
-            return null;
+        try {
+            return $get ? $this->currentRequest()->getSession()->get( $get ) : $this->currentRequest()->getSession();
         }
-        return $get ? $this->currentRequest()->getSession()->get( $get ) : $this->currentRequest()->getSession();
+        catch ( SessionNotFoundException $exception ) {
+            throw new LogicException(
+                message  : 'Sessions are disabled. Enable them in "config/packages/framework".',
+                previous : $exception,
+            );
+        }
     }
 
     /**
