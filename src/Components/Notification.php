@@ -5,6 +5,7 @@ namespace Northrook\Symfony\Core\Components;
 use JetBrains\PhpStorm\ExpectedValues;
 use Northrook\Elements\Button as Button;
 use Northrook\Elements\Element;
+use Northrook\Elements\Icon;
 use Northrook\Elements\Render\Template;
 use Northrook\Logger\Log\Timestamp;
 
@@ -33,31 +34,37 @@ class Notification extends Element
                   SUCCESS  = 'success',
                   RANDOM   = 'random';
 
-    private readonly string     $fingerprint;
+    private readonly string $fingerprint;
+
+    /** @var Timestamp[] */
+    private array               $timestamps = [];
     protected readonly Template $template;
     public string               $closeButton;
-    public readonly Timestamp   $timestamp;
 
 
     public function __construct(
-        #[ExpectedValues( flags : self::class )]
+        #[ExpectedValues( flagsFromClass : self::class )]
         public string     $status,
         public string     $title,
-        public ?string    $message,
-        protected ?string $icon, // this can only render from Assets when rendered by PHP. JS generated ones will use a preset for each status
+        public ?string    $message = null,
+        protected ?string $icon = null, // this can only render from Assets when rendered by PHP. JS generated ones will use a preset for each status
     ) {
 
-        $this->template    = new Template( Notification::TEMPLATE );
-        $this->timestamp   = new Timestamp();
-        $this->closeButton = Button::close();
+        $this->template     = new Template( Notification::TEMPLATE );
+        $this->timestamps[] = new Timestamp();
+        $this->closeButton  = Button::close();
+
+        $this->icon ??= Icon::svg( $this->status );
 
         parent::__construct(
-            [
-                'status'  => $status,
-                'class'   => "toast $status",
-                'content' => $this->template,
-            ],
+            status  : $status,
+            class   : "toast $status",
+            content : $this->template,
         );
+    }
+
+    public function addOccurrence( ?Timestamp $timestamp = null ) : void {
+        $this->timestamps[] = $timestamp ?? new Timestamp();
     }
 
     public function fingerprint() : string {

@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
+use Northrook\Symfony\Core\Components\Notification;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\MailerService;
 use Northrook\Symfony\Core\Services\PathfinderService;
@@ -49,6 +50,16 @@ final readonly class PublicController extends AbstractCoreControllerMethods
         ?string       $route,
         MailerService $mailer,
     ) : Response {
+        $this->addFlash(
+
+            'notice',
+            new Notification(
+                Notification::ERROR,
+                'Welcome to Northrook Symfony',
+                'Long Message',
+            ),
+        );
+
 
         return $this->response(
             template   : 'public.latte',

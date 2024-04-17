@@ -102,6 +102,11 @@ class CurrentRequestService
         string                $type,
         string | Notification $message,
     ) : void {
+
+        if ( $message instanceof Notification ) {
+            dump( $message );
+        }
+
         $this->flashBag()->add( $type, $message );
     }
 
