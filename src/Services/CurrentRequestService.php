@@ -5,6 +5,7 @@ namespace Northrook\Symfony\Core\Services;
 use LogicException;
 use Northrook\Logger\Debug;
 use Northrook\Logger\Log\Level;
+use Northrook\Logger\Log\Timestamp;
 use Northrook\Symfony\Core as Core;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation as Http;
@@ -114,7 +115,7 @@ class CurrentRequestService
         if ( $log ) {
             $this?->logger->log( $level, $message );
         }
-        
+
         $this->flashBag()->add(
             $type,
             [
@@ -122,6 +123,7 @@ class CurrentRequestService
                 'message'     => $message,
                 'description' => $description,
                 'timeout'     => $timeoutMs,
+                'timestamp'   => new Timestamp(),
             ],
         );
     }

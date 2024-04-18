@@ -73,10 +73,26 @@ trait CoreControllerTrait
             );
         }
 
-        return $this->latte->render(
+        $content = $this->latte->render(
             template   : $template,
             parameters : $parameters,
         );
+
+        $content = $this->injectFlashBagNotifications( $content );
+
+
+        return $content;
+    }
+
+    private function injectFlashBagNotifications( string $string ) : string {
+
+        $flashes = $this->request->flashBag()->peekAll();
+
+        if ( $flashes ) {
+            dd( $flashes );
+        }
+
+        return $string;
     }
 
     final protected function route( ?string $is = null ) : string | bool {
