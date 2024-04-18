@@ -6,7 +6,6 @@ use LogicException;
 use Northrook\Elements\Render\Template;
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\App;
-use Northrook\Symfony\Core\Components\Notification;
 use Northrook\Symfony\Core\Security\ErrorEventException;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -79,7 +78,7 @@ trait CoreControllerTrait
             parameters : $parameters,
         );
     }
-    
+
     final protected function route( ?string $is = null ) : string | bool {
 
         $this->currentPath  ??= $this->request->pathInfo;
@@ -93,16 +92,22 @@ trait CoreControllerTrait
     }
 
     /**
-     * @param string               $type
-     * @param string|Notification  $message
+     * @param string       $type  = ['error', 'warning', 'info', 'success'][$any]
+     * @param string       $message
+     * @param null|string  $description
+     * @param null|int     $timeoutMs
+     * @param bool         $log
      *
      * @return void
      */
     public function addFlash(
-        string                $type,
-        string | Notification $message,
+        string  $type,
+        string  $message,
+        ?string $description = null,
+        ?int    $timeoutMs = 1200,
+        bool    $log = false,
     ) : void {
-        $this->request->addFlash( $type, $message );
+        $this->request->addFlash( $type, $message, $description, $timeoutMs, $log, );
     }
 
 

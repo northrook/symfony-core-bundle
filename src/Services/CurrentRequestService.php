@@ -4,8 +4,8 @@ namespace Northrook\Symfony\Core\Services;
 
 use LogicException;
 use Northrook\Logger\Debug;
+use Northrook\Logger\Log\Level;
 use Northrook\Symfony\Core as Core;
-use Northrook\Symfony\Core\Components\Notification;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation as Http;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
@@ -93,21 +93,37 @@ class CurrentRequestService
     }
 
     /**
-     * @param string               $type
-     * @param string|Notification  $message
+     * @param string       $type  = ['error', 'warning', 'info', 'success'][$any]
+     * @param string       $message
+     * @param null|string  $description
+     * @param null|int     $timeoutMs
+     * @param bool         $log
      *
      * @return void
      */
     public function addFlash(
-        string                $type,
-        string | Notification $message,
+        string  $type,
+        string  $message,
+        ?string $description = null,
+        ?int    $timeoutMs = 1200,
+        bool    $log = false,
     ) : void {
 
-        if ( $message instanceof Notification ) {
-            dump( $message );
-        }
+        $level = in_array( ucfirst( $type ), Level::NAMES ) ? ucfirst( $type ) : 'Info';
 
-        $this->flashBag()->add( $type, $message );
+        if ( $log ) {
+            $this?->logger->log( $level, $message );
+        }
+        
+        $this->flashBag()->add(
+            $type,
+            [
+                'level'       => $level,
+                'message'     => $message,
+                'description' => $description,
+                'timeout'     => $timeoutMs,
+            ],
+        );
     }
 
     public function flashBag() : FlashBagInterface {
