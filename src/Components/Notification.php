@@ -86,12 +86,8 @@ class Notification extends Element
     public static function getIcon( string $type ) : ?string {
         $get = array_merge( Notification::$typeIcons, Notification::ICONS );
 
-        $type = $get[ $type ] ?? '';
+        $icon = $get[ strtolower( $type ) ] ?? false;
 
-        if ( $type ) {
-            return Icon::svg( $type );
-        }
-
-        return null;
+        return $icon ? Icon::svg( $icon ) : null;
     }
 }
