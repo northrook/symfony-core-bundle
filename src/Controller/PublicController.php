@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
+use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\MailerService;
 use Northrook\Symfony\Core\Services\PathfinderService;
@@ -36,6 +37,13 @@ final readonly class PublicController extends AbstractCoreControllerMethods
         private ?Stopwatch                  $stopwatch,
     ) {
 
+        $this->stylesheet->includeStylesheets(
+            [
+                'dir.core.assets/styles',
+            ],
+        );
+        $path  = File::path( 'dir.cache/styles/styles.css' );
+        $saved = $this->stylesheet->save( $path, true );
         $this->document->addStylesheet( 'dir.cache/styles/styles.css' );
         $this->document->addScript(
             'dir.assets/scripts/core.js',
@@ -49,11 +57,23 @@ final readonly class PublicController extends AbstractCoreControllerMethods
         ?string       $route,
         MailerService $mailer,
     ) : Response {
-        
-        $this->addFlash(
-            'error',
-            'This is a message title',
-        );
+
+        if ( time() % 2 === 0 ) {
+            $this->addFlash( 'info', 'The `time()` is even.', 'Recorded timestamp: `' . time() . '`,' );
+        }
+        $this->addFlash( 'info', 'Info Message', __METHOD__ );
+        $this->addFlash( 'info', 'Info Message' );
+        $this->addFlash( 'error', 'An error occurred!', __METHOD__, );
+        $this->addFlash( 'info', 'Info Message', __METHOD__ );
+        $this->addFlash( 'warning', 'Warning!', 'Nuclear launch detected.' );
+
+        $this->addFlash( 'error', 'This is an error title', );
+        $this->addFlash( 'info', 'Info Message', __METHOD__ );
+        $this->addFlash( 'notice', 'Notice me', 'Non-hinted type.' );
+
+
+        // sleep(1);
+        $this->addFlash( 'info', 'Info Message', __METHOD__ );
 
 
         return $this->response(

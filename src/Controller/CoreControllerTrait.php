@@ -6,10 +6,12 @@ use LogicException;
 use Northrook\Elements\Render\Template;
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\App;
+use Northrook\Symfony\Core\Components\Notification;
 use Northrook\Symfony\Core\Security\ErrorEventException;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -84,14 +86,65 @@ trait CoreControllerTrait
         return $content;
     }
 
-    private function injectFlashBagNotifications( string $string ) : string {
 
-        $flashes = $this->request->flashBag()->peekAll();
+    private function parseFlashBag( FlashBagInterface $flashBag ) : array {
 
-        if ( $flashes ) {
-            dd( $flashes );
+        $flashes       = array_merge( ... array_values( $flashBag->all() ) );
+        $notifications = [];
+        foreach ( $flashes as $value ) {
+            $level       = $value[ 'level' ];
+            $message     = $value[ 'message' ];
+            $description = $value[ 'description' ];
+            $timeout     = $value[ 'timeout' ];
+
+            /** @var   Log\Timestamp $timestamp */
+            $timestamp = $value[ 'timestamp' ];
+
+            if ( isset( $notifications[ $message ] ) ) {
+                $notifications[ $message ][ 'timestamp' ][ $timestamp->timestamp ] = $timestamp;
+            }
+            else {
+                $notifications[ $message ] = [
+                    'level'       => $level,
+                    'message'     => $message,
+                    'description' => $description,
+                    'timeout'     => $timeout,
+                    'timestamp'   => [ $timestamp->timestamp => $timestamp, ],
+                ];
+            }
         }
 
+        usort(
+            $notifications, static fn ( $a, $b ) => ( end( $a[ 'timestamp' ] ) ) <=> ( end( $b[ 'timestamp' ], ) ),
+        );
+
+        return $notifications;
+    }
+
+    private function injectFlashBagNotifications( string $string ) : string {
+
+        $flashBag = $this->request->flashBag();
+        if ( $flashBag->peekAll() ) {
+            $notifications = [];
+
+            foreach ( $this->parseFlashBag( $flashBag ) as $notification ) {
+                $notifications[] = (string) new Notification(
+                    $notification[ 'level' ],
+                    $notification[ 'message' ],
+                    $notification[ 'description' ],
+                    $notification[ 'timeout' ],
+                    $notification[ 'timestamp' ],
+                );
+            }
+
+            // if ( Str::contains( $string, ['<body', '</body>'])) {
+            //
+            // }
+
+            $string .= implode( '', $notifications );
+
+
+        }
         return $string;
     }
 

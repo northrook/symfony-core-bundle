@@ -1,0 +1,26 @@
+button.close {
+    --thickness: 1px;
+    --color: currentColor;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 1.5rem;
+    width: 1.5rem;
+    background: orangered;
+    cursor: pointer;
+}
+button.close::before, button.close::after{
+    content: '';
+    height: 1rem;
+    outline: var(--thickness) solid var(--color);
+    transform-origin: center center;
+}
+
+button.close::before{
+    transform: rotate(45deg);
+}
+button.close::after{
+    transform: rotate(-45deg);
+}
