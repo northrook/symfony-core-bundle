@@ -173,7 +173,7 @@ trait CoreControllerTrait
         string  $type,
         string  $message,
         ?string $description = null,
-        ?int    $timeoutMs = 1200,
+        ?int    $timeoutMs = 4500,
         bool    $log = false,
     ) : void {
         $this->request->addFlash( $type, $message, $description, $timeoutMs, $log, );

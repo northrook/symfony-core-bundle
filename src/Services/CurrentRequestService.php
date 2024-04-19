@@ -106,7 +106,7 @@ class CurrentRequestService
         string  $type,
         string  $message,
         ?string $description = null,
-        ?int    $timeoutMs = 1200,
+        ?int    $timeoutMs = null,
         bool    $log = false,
     ) : void {
 

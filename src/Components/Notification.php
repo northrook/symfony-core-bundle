@@ -41,7 +41,7 @@ class Notification extends Element
         string  $type,
         string  $message,
         ?string $description = null,
-        int     $timeout = 1200,
+        int     $timeout = 4500,
         array   $occurrences = [],
     ) {
         parent::__construct(
@@ -65,14 +65,23 @@ class Notification extends Element
             $timestamps[] = '<time datetime="' . $datetime . '" role="listitem">' . $timestamp . '</time>';
         }
 
+        $description = $description ? Format::markdown( $description ) : null;
+
+        // if ( $description ) {
+        //     $description = '<div class="description">' . $this->backtickCodeTags( $description ) . '</div>';
+        // }
 
         $this->content = [
             Notification::$closeButton ??= Button::close(),
             Notification::getIcon( $type ),
-            '<output class="message">' . $message . '</output>',
-            $description ? Format::nl2Auto( $description ) : null,
-            '<ol>' . implode( '', array_reverse( $timestamps ) ) . '</ol>',
+            '<output class="message">' . $this->backtickCodeTags( $message ) . '</output>',
+            $description,
+            '<ol class="events">' . implode( '', array_reverse( $timestamps ) ) . '</ol>',
         ];
+    }
+
+    private function backtickCodeTags( string $string ) : string {
+        return preg_replace( '/`(.+?)`/m', '<code>$1</code>', $string );
     }
 
     public static function setTypeIcons( array $typeIcons ) : void {
@@ -88,6 +97,6 @@ class Notification extends Element
 
         $icon = $get[ strtolower( $type ) ] ?? false;
 
-        return $icon ? Icon::svg( $icon ) : null;
+        return $icon ? Icon::svg( $icon, 'icon' ) : null;
     }
 }

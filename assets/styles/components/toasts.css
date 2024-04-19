@@ -30,6 +30,10 @@ toast.success {
     --accent : var(--success)
 }
 
+toast.notice {
+    --accent : var(--notice)
+}
+
 section > toast {
     --accent         : var(--outline);
     position         : relative;
@@ -42,11 +46,17 @@ section > toast {
     border-radius    : 0.25rem;
     opacity          : 1;
     transform        : translateX(0);
-    transition       : opacity 200ms ease, transform 200ms ease, max-height 200ms ease, margin 200ms ease;
+    transition       : opacity 200ms ease, transform 200ms ease, max-height 200ms ease, margin 200ms ease, background-color 200ms ease;
     max-height       : 120px;
     margin-bottom    : var(--gap);
-    /*overflow			: hidden;*/
+    overflow         : hidden;
     box-shadow       : 1px 1px 6px -2px var(--shadow-color);
+}
+
+toast:hover,
+toast:focus-within,
+toast:focus {
+    background-color : hsla(var(--baseline-900), 1);
 }
 
 section > toast > button.close {
@@ -91,19 +101,19 @@ toast.hidden {
 toast > ol.events { display : none;}
 
 /*noinspection CssUnresolvedCustomProperty*/
-toast.success:not(.hidden)::after {
+toast:not(.hidden)::after {
     content          : '';
     position         : absolute;
     right            : 0;
     bottom           : 0;
     /*height				: 100%;*/
-    height           : 2px;
+    height           : 4px;
     width            : 100%;
 
-    background-color : hsl(var(--success), .15);
+    background-color : hsl(var(--accent), .5);
     /*background		: linear-gradient(transparent, hsl(var(--success), .15));*/
     pointer-events   : none;
-    z-index          : -1;
+    z-index          : 1;
     animation        : toastTimeOut var(--timeout) ease-out;
 }
 
@@ -114,33 +124,4 @@ toast.success:not(.hidden)::after {
     100% {
         width : 0;
     }
-}
-
-
-toast button {
-    position        : absolute;
-    top             : 0;
-    right           : 0;
-    bottom          : 0;
-    width           : 1.5rem;
-    display         : flex;
-    justify-content : flex-end;
-}
-
-section > \ toast button svg {
-    margin     : .5rem .5rem 0 0;
-    height     : 1rem;
-    width      : 1rem;
-    opacity    : 0;
-    color      : hsla(var(--baseline-500));
-    transition : opacity 200ms ease, color 200ms ease;
-}
-
-toast:hover button svg {
-    opacity : 1;
-}
-
-
-toast button:hover svg {
-    color : hsla(var(--baseline-50));
 }
