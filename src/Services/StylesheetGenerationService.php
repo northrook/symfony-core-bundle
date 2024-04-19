@@ -4,12 +4,15 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\Services;
 
+use Northrook\Logger\Log\Level;
 use Northrook\Stylesheets\ColorPalette;
 use Northrook\Stylesheets\Stylesheet;
 use Northrook\Support\Arr;
+use Northrook\Support\Return\Status;
 use Northrook\Symfony\Core\File;
 use Northrook\Types\Path;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
@@ -37,6 +40,7 @@ final class StylesheetGenerationService
 
 
     public function __construct(
+        private readonly SessionInterface  $session,
         private readonly PathfinderService $pathfinder,
         private readonly ?LoggerInterface  $logger = null,
         private readonly ?Stopwatch        $stopwatch = null,
@@ -73,14 +77,13 @@ final class StylesheetGenerationService
     }
 
     public function generate(
-        array   $includeStylesheets = [ 'dir.core.assets/styles' ],
-        ?string $savePath = null,
+        array $includeStylesheets = [ 'dir.core.assets/styles' ],
     ) : bool {
 
         $this->includeStylesheets( $includeStylesheets );
         $this->force = true;
 
-        return $this->save();
+        return $this->save()->status;
     }
 
 
@@ -88,9 +91,9 @@ final class StylesheetGenerationService
      * @param null|Path|string  $path   Defaults to `var/cache/styles/styles.css`
      * @param null|bool         $force  Force updating the stylesheet, even if no monitored .css files have changed
      *
-     * @return bool True when saved, false when not
+     * @return Status
      */
-    public function save( null | Path | string $path = null, ?bool $force = null ) : bool {
+    public function save( null | Path | string $path = null, ?bool $force = null ) : Status {
 
         $force ??= $this->force;
 
@@ -130,6 +133,7 @@ final class StylesheetGenerationService
             }
         }
 
+        $status = new Status();
 
         $this->generator->force = $force;
         $this->generator->build();
@@ -137,17 +141,26 @@ final class StylesheetGenerationService
         $this->stylesheet = $this->generator->styles ?? '';
 
         if ( !$this->stylesheet ) {
+            $status->set     = false;
+            $status->message = 'Stylesheet not generated. Result was `empty`.';
+            $status->level   = Level::WARNING;
             $this->logger?->error(
                 'Stylesheet was empty',
                 [ 'service' => $this ],
             );
-            return false;
+            return $status;
         }
+
+        $status->set = true;
 
         $this->updated = File::save( $path->value, $this->stylesheet );
 
+        $status->addTask( 'updated', $this->updated );
+
+        $status->message = $this->updated ? 'Stylesheet generated. Result was `updated`.' : 'Stylesheet generated.';
+
         $this->stopwatch->stop( 'save' );
 
-        return $this->updated;
+        return $status;
     }
 }
