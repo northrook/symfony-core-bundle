@@ -103,14 +103,20 @@ class CurrentRequestService
      * @return void
      */
     public function addFlash(
-        string  $type,
-        string  $message,
-        ?string $description = null,
-        ?int    $timeoutMs = null,
-        bool    $log = false,
+        string | Level $type,
+        string         $message,
+        ?string        $description = null,
+        ?int           $timeoutMs = null,
+        bool           $log = false,
     ) : void {
 
-        $level = in_array( ucfirst( $type ), Level::NAMES ) ? ucfirst( $type ) : 'Info';
+        if ( $type instanceof Level ) {
+            $level = $type->name;
+        }
+        else {
+            $level = in_array( ucfirst( $type ), Level::NAMES ) ? ucfirst( $type ) : 'Info';
+        }
+
 
         if ( $log ) {
             $this?->logger->log( $level, $message );

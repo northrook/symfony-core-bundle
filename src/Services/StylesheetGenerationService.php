@@ -12,7 +12,6 @@ use Northrook\Support\Return\Status;
 use Northrook\Symfony\Core\File;
 use Northrook\Types\Path;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
@@ -40,10 +39,10 @@ final class StylesheetGenerationService
 
 
     public function __construct(
-        private readonly SessionInterface  $session,
-        private readonly PathfinderService $pathfinder,
-        private readonly ?LoggerInterface  $logger = null,
-        private readonly ?Stopwatch        $stopwatch = null,
+        private readonly CurrentRequestService $session,
+        private readonly PathfinderService     $pathfinder,
+        private readonly ?LoggerInterface      $logger = null,
+        private readonly ?Stopwatch            $stopwatch = null,
     ) {
         $this->rootDirectory = $this->pathfinder->get( 'dir.root' )->value;
 
@@ -160,6 +159,12 @@ final class StylesheetGenerationService
         $status->message = $this->updated ? 'Stylesheet generated. Result was `updated`.' : 'Stylesheet generated.';
 
         $this->stopwatch->stop( 'save' );
+
+
+        $this->session->addFlash(
+            $status->level->name,
+            $status->message,
+        );
 
         return $status;
     }

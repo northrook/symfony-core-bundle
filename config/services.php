@@ -205,7 +205,7 @@ return static function ( ContainerConfigurator $container ) : void {
               ->tag( 'controller.service_arguments' )
               ->args(
                   [
-                      service( 'session' ),
+                      service( 'core.service.request' ),
                       service( 'core.service.pathfinder' ),
                       service( 'logger' )->nullOnInvalid(),
                       service( 'debug.stopwatch' )->nullOnInvalid(),
