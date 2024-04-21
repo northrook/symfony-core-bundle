@@ -41,7 +41,7 @@ class Notification extends Element
         string  $type,
         string  $message,
         ?string $description = null,
-        int     $timeout = 4500,
+        ?int    $timeout = 4500,
         array   $occurrences = [],
     ) {
         parent::__construct(
