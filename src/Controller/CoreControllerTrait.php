@@ -115,7 +115,7 @@ trait CoreControllerTrait
         }
 
         usort(
-            $notifications, static fn ( $a, $b ) => ( end( $a[ 'timestamp' ] ) ) <=> ( end( $b[ 'timestamp' ], ) ),
+            $notifications, static fn ( $a, $b ) => ( end( $a[ 'timestamp' ] ) ) <=> ( end( $b[ 'timestamp' ] ) ),
         );
 
         return $notifications;
@@ -176,7 +176,7 @@ trait CoreControllerTrait
         ?int    $timeoutMs = 4500,
         bool    $log = false,
     ) : void {
-        $this->request->addFlash( $type, $message, $description, $timeoutMs, $log, );
+        $this->request->addFlash( $type, $message, $description, $timeoutMs, $log );
     }
 
 

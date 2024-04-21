@@ -7,6 +7,7 @@ use Northrook\Symfony\Core\EventListener\ExceptionListener;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Throwable;
 
 /**
  * Trigger a HTTP Error.
@@ -32,7 +33,7 @@ class ErrorEventException extends RuntimeException implements HttpExceptionInter
         array                    $parameters = [],
         array                    $headers = [],
         int                      $code = 0,
-        ?\Throwable              $previous = null,
+        ?Throwable               $previous = null,
     ) {
         $this->statusCode = $status;
         $this->headers    = $headers;

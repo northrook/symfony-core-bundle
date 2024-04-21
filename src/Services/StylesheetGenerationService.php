@@ -4,11 +4,10 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\Services;
 
-use Northrook\Logger\Log\Level;
+use Northrook\Core\Service\Status;
 use Northrook\Stylesheets\ColorPalette;
 use Northrook\Stylesheets\Stylesheet;
 use Northrook\Support\Arr;
-use Northrook\Support\Return\Status;
 use Northrook\Symfony\Core\File;
 use Northrook\Types\Path;
 use Psr\Log\LoggerInterface;
@@ -82,7 +81,7 @@ final class StylesheetGenerationService
         $this->includeStylesheets( $includeStylesheets );
         $this->force = true;
 
-        return $this->save()->status;
+        return $this->save()->success;
     }
 
 
@@ -140,9 +139,7 @@ final class StylesheetGenerationService
         $this->stylesheet = $this->generator->styles ?? '';
 
         if ( !$this->stylesheet ) {
-            $status->set     = false;
-            $status->message = 'Stylesheet not generated. Result was `empty`.';
-            $status->level   = Level::WARNING;
+            $status->set( 'notice' );
             $this->logger?->error(
                 'Stylesheet was empty',
                 [ 'service' => $this ],
@@ -150,20 +147,16 @@ final class StylesheetGenerationService
             return $status;
         }
 
-        $status->set = true;
+        $status->set( 'success' );
 
         $this->updated = File::save( $path->value, $this->stylesheet );
-
-        $status->addTask( 'updated', $this->updated );
-
-        $status->message = $this->updated ? 'Stylesheet generated. Result was `updated`.' : 'Stylesheet generated.';
 
         $this->stopwatch->stop( 'save' );
 
 
         $this->session->addFlash(
-            $status->level->name,
-            $status->message,
+            $status->status,
+            'Stylesheet regenerated.',
         );
 
         return $status;

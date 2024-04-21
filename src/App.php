@@ -19,9 +19,9 @@ final class App extends SymfonyCoreFacade
         string $is,
     ) : bool {
         return match ( $is ) {
-            'dev'   => self::getKernel()->getEnvironment() == 'dev',
-            'prod'  => self::getKernel()->getEnvironment() == 'prod',
-            'debug' => self::getKernel()->isDebug(),
+            'dev'   => App::getKernel()->getEnvironment() === 'dev',
+            'prod'  => App::getKernel()->getEnvironment() === 'prod',
+            'debug' => App::getKernel()->isDebug(),
 //            'public' => Settings::site()->isPublic, // Check if global is public, then check if current route is public
             default => false,
         };

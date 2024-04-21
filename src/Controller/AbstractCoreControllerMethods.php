@@ -3,10 +3,10 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use Exception;
-use Northrook\Logger\Status\HTTP;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\SecurityService;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 use SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -43,7 +43,7 @@ readonly abstract class AbstractCoreControllerMethods
         catch ( Exception $e ) {
             $this->logger?->error( $e->getMessage() );
             return new Response(
-                status : HTTP::INTERNAL_SERVER_ERROR,
+                status : Response::HTTP_INTERNAL_SERVER_ERROR,
             );
         }
     }
@@ -100,7 +100,7 @@ readonly abstract class AbstractCoreControllerMethods
      * @param string|null  $token  The actual token sent with the request that should be validated
      */
     protected function isCsrfTokenValid(
-        string $id, #[\SensitiveParameter]
+        string $id, #[SensitiveParameter]
     ?string    $token,
     ) : bool {
 

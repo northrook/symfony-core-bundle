@@ -12,7 +12,7 @@ final class Console
     private static function print(
         string $output,
         array  $messages,
-    ) {
+    ) : string {
         array_walk(
             $messages,
             static function ( $message ) use ( &$print ) {

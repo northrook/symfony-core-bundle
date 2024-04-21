@@ -22,12 +22,12 @@ final readonly class SecurityController extends AbstractCoreControllerMethods
     use CoreControllerTrait;
 
     public function __construct(
-        protected SecurityService                  $security,
-        protected CurrentRequestService            $request,
-        private readonly SettingsManagementService $settings,
-        protected Latte\Environment                $latte,
-        protected Parameters\Document              $document,
-        protected readonly ?LoggerInterface        $logger,
+        protected SecurityService         $security,
+        protected CurrentRequestService   $request,
+        private SettingsManagementService $settings,
+        protected Latte\Environment       $latte,
+        protected Parameters\Document     $document,
+        protected ?LoggerInterface        $logger,
     ) {
         $this->document->robots = 'noindex, nofollow';
     }
@@ -103,15 +103,13 @@ final readonly class SecurityController extends AbstractCoreControllerMethods
         if ( $request->attributes->has( SecurityRequestAttributes::AUTHENTICATION_ERROR ) ) {
             $authenticationException = $request->attributes->get( SecurityRequestAttributes::AUTHENTICATION_ERROR );
         }
-        else {
-            if ( $request->hasSession() && ( $session = $request->getSession() )->has(
-                    SecurityRequestAttributes::AUTHENTICATION_ERROR,
-                ) ) {
-                $authenticationException = $session->get( SecurityRequestAttributes::AUTHENTICATION_ERROR );
+        elseif ( $request->hasSession() && ( $session = $request->getSession() )->has(
+                SecurityRequestAttributes::AUTHENTICATION_ERROR,
+            ) ) {
+            $authenticationException = $session->get( SecurityRequestAttributes::AUTHENTICATION_ERROR );
 
-                if ( $clearSession ) {
-                    $session->remove( SecurityRequestAttributes::AUTHENTICATION_ERROR );
-                }
+            if ( $clearSession ) {
+                $session->remove( SecurityRequestAttributes::AUTHENTICATION_ERROR );
             }
         }
 

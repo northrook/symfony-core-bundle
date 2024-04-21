@@ -168,7 +168,7 @@ class MailerService
             if ( $template ) {
                 try {
                     if ( str_ends_with( $template, '.latte' ) ) {
-                        $html = $this->latte->render( $template, $context, );
+                        $html = $this->latte->render( $template, $context );
                     }
                     elseif ( str_ends_with( $template, '.twig' ) ) {
                         $html = $this->twig->render( $template, $context );

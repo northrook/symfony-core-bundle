@@ -102,8 +102,8 @@ final class LatteComponentPreprocessor extends Preprocessor
             [ $tag, $type ] = explode( ':', $component, 2 );
             $source = $element[ 0 ];
 
-            if ( str_contains( $this->content, "</$component>", )
-                 && false === str_ends_with( trim( $source ), '/>', ) ) {
+            if ( str_contains( $this->content, "</$component>" )
+                 && false === str_ends_with( trim( $source ), '/>' ) ) {
 
                 preg_match( "/<$component.*?>.*?<\/$component>/ms", $this->content, $closingTag );
 

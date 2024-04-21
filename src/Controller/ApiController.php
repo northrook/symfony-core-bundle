@@ -3,7 +3,6 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Favicon\FaviconBundle;
-use Northrook\Logger\Status\HTTP;
 use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
@@ -58,13 +57,13 @@ final readonly class ApiController
             $generator->save( $this->pathfinder->get( 'dir.public' ) );
             $data = $generator->notices();
             $this->logger->info( 'Favicon generated', [ 'data' => $data ] );
-            return new JsonResponse( $data, HTTP::CREATED );
+            return new JsonResponse( $data, Response::HTTP_CREATED );
         }
 
         if ( 'purge' === $action ) {
             $data = $generator->purge( $this->pathfinder->get( 'dir.public' ) );
             $this->logger->info( 'Favicon purged', [ 'data' => $data ] );
-            return new JsonResponse( $data, HTTP::OK );
+            return new JsonResponse( $data, Response::HTTP_OK );
         }
 
         // TODO: expand with more info from Support::UserAgent
@@ -75,6 +74,6 @@ final readonly class ApiController
             'ip'     => $_SERVER[ 'REMOTE_ADDR' ],
         ],
         );
-        return new Response( status : HTTP::ACCEPTED );
+        return new Response( status : Response::HTTP_ACCEPTED );
     }
 }

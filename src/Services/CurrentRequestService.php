@@ -3,7 +3,7 @@
 namespace Northrook\Symfony\Core\Services;
 
 use LogicException;
-use Northrook\Logger\Debug;
+use Northrook\Core\Debug\Backtrace;
 use Northrook\Logger\Log\Level;
 use Northrook\Logger\Log\Timestamp;
 use Northrook\Symfony\Core as Core;
@@ -56,7 +56,7 @@ class CurrentRequestService
             return $get;
         }
 
-        $backtrace = Debug::backtrace( 1 );
+        $backtrace = Backtrace::get( 1 );
 
         $this->logger?->warning(
             'Could not find the current request. Returned new {return}.',
@@ -70,6 +70,30 @@ class CurrentRequestService
 
         return null;
     }
+
+    /**
+     * `Not supported.`
+     *
+     * @param string  $name
+     * @param mixed   $value
+     *
+     * @return void
+     */
+    public function __set( string $name, mixed $value ) : void {
+        trigger_error( CurrentRequestService::class . '::__set() is not supported.', E_USER_NOTICE );
+    }
+
+    /**
+     * Check if a given property is set.
+     *
+     * @param string  $name
+     *
+     * @return bool
+     */
+    public function __isset( string $name ) : bool {
+        return isset( $this->$name );
+    }
+
 
     /**
      * @param  ?string  $get  {@see Http\Request::get}
@@ -94,11 +118,11 @@ class CurrentRequestService
     }
 
     /**
-     * @param string       $type  = ['error', 'warning', 'info', 'success'][$any]
-     * @param string       $message
-     * @param null|string  $description
-     * @param null|int     $timeoutMs
-     * @param bool         $log
+     * @param string | Level  $type  = ['error', 'warning', 'info', 'success'][$any]
+     * @param string          $message
+     * @param null|string     $description
+     * @param null|int        $timeoutMs
+     * @param bool            $log
      *
      * @return void
      */

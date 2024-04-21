@@ -93,7 +93,7 @@ final class SettingsManagementService
             $app[ 'MAILER_NAME' ] = $_ENV[ 'MAILER_NAME' ] ?? 'Placeholder';
 
             if ( $app[ 'MAILER_FROM' ] === null ) {
-                $app[ 'MAILER_FROM' ] = 'no-reply@' . trim( strstr( $app[ 'HOME_URL' ], '//' ), " \n\r\t\v\0/", );
+                $app[ 'MAILER_FROM' ] = 'no-reply@' . trim( strstr( $app[ 'HOME_URL' ], '//' ), " \n\r\t\v\0/" );
                 $this->warnings[]     =
                     'MAILER_FROM not set, generating from APP.HOME_URL. This is not recommended. Set MAILER_FROM in .env or override in Settings.';
             }

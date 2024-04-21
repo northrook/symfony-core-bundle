@@ -2,26 +2,28 @@
 
 namespace Northrook\Symfony\Core;
 
-final class Settings
+use Northrook\Core\Config;
+
+final class Settings extends Config
 {
 
     // Global Settings
     public static function app() : self {
-        return new self();
+        return Settings::config();
     }
 
     // Public Settings
     public static function site() : self {
-        return new self();
+        return Settings::config();
     }
 
     // User specific Settings
     public static function user() : self {
-        return new self();
+        return Settings::config();
     }
 
     // Admin specific Settings
     public static function admin() : self {
-        return new self();
+        return Settings::config();
     }
 }

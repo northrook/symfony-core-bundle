@@ -26,9 +26,7 @@ final readonly class HttpService
         };
     }
 
-    public function __set( string $name, mixed $value ) : void {
-        return;
-    }
+    public function __set( string $name, mixed $value ) : void {}
 
     public function __isset( string $name ) : bool {
         return property_exists( $this, $name );
