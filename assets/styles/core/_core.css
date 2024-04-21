@@ -10,7 +10,16 @@ html {
     --inactive     : var(--baseline-600);
     --intent       : var(--primary-intent);
     --active       : var(--primary-active);
-    --shadow-color : hsla(var(--baseline-100), 0.25);
+    --shadow-color : hsla(var(--baseline-100), 0.25););
+
+    /*Light / Dark variants*/
+    --warning      : 52, 85%, 60%;
+    --error        : 3, 85%, 60%;
+    --success      : 133, 85%, 60%;
+    --info         : 222, 85%, 60%;
+    --notice       : 252, 85%, 60%;
+    --destroy      : 3, 85%, 60%;
+    --accept       : 133, 85%, 60%;
 
     --font-size    : 1rem;
     --font-size-h1 : min(max(1.8rem, 6vw), 3.05rem);
