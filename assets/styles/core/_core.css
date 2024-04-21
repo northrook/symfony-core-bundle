@@ -10,7 +10,7 @@ html {
     --inactive     : var(--baseline-600);
     --intent       : var(--primary-intent);
     --active       : var(--primary-active);
-    --shadow-color : hsla(var(--baseline-100), 0.25););
+    --shadow-color : hsla(var(--baseline-100), 0.25);
 
     /*Light / Dark variants*/
     --warning      : 52, 85%, 60%;
