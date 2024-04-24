@@ -1,0 +1,11 @@
+header > div.group {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-right: var(--gap);
+}
+
+header > div.group button {
+    height: 100%;
+}

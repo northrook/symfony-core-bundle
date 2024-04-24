@@ -24,7 +24,8 @@ use Northrook\Support\Format;
  */
 class Notification extends Element
 {
-    public const  TAG = 'toast';
+    public const  TAG     = 'toast';
+    public const  TIMEOUT = 4500;
 
     private const ICONS = [
         'error'   => 'error:ui',
@@ -41,12 +42,12 @@ class Notification extends Element
         string  $type,
         string  $message,
         ?string $description = null,
-        ?int    $timeout = 4500,
+        ?int    $timeout = null,
         array   $occurrences = [],
     ) {
         parent::__construct(
             class   : "notification $type",
-            timeout : $timeout,
+            timeout : $timeout ?? Notification::TIMEOUT,
             role    : 'listitem',
         );
 

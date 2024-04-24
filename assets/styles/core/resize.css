@@ -1,0 +1,55 @@
+.resize {
+    position: absolute;
+    cursor: ew-resize;
+    transition:
+            background-color 160ms ease,
+            opacity 160ms ease 100ms;
+    z-index: 50;
+    pointer-events: auto;
+    user-select: none;
+    background-color: hsla(var(--outline));
+    opacity: 0;
+}
+.resize:hover,
+.resize:active {
+    opacity: 1;
+}
+
+.resize::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    user-select: none;
+    background-color: hsla(var(--outline), 0.25);
+    transition:
+            background-color 160ms ease,
+            scale 160ms;
+}
+.resize:hover:not(:active)::before {
+    scale: 5;
+}
+
+.resize:hover::before {
+    --outline: var(--intent);
+}
+
+.resize:active::before {
+    --outline: var(--active);
+}
+
+.constrained .resize::before {
+    --outline: var(--primary);
+    /* --outline: var(--inactive); */
+}
+
+.resize.vertical {
+    top: 0;
+    height: 100%;
+    width: 2px;
+}
+.resize.vertical.start {
+    left: 0;
+}
+.resize.vertical.end {
+    right:0;
+}

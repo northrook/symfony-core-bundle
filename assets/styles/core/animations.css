@@ -10,6 +10,14 @@
 /*    outline-offset : -2px;*/
 /*}*/
 
+.animation-paused,
+.animation-paused *,
+.animation-paused::before,
+.animation-paused::after
+{
+    animation-play-state: paused !important;
+}
+
 .ripple {
     --interaction : hsla(var(--color, var(--baseline-100)), .125);
 }

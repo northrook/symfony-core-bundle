@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 
-final readonly class SecurityController extends AbstractCoreControllerMethods
+final readonly class SecurityController
 {
     use CoreControllerTrait;
 

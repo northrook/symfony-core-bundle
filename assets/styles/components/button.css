@@ -72,6 +72,8 @@
 .button svg {
     pointer-events : none;
     transition     : color 200ms ease;
+    height: 1.5rem;
+    width: 1.5rem;
 }
 
 /*#endregion */

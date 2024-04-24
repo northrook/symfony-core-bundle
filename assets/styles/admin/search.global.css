@@ -1,0 +1,6 @@
+div#admin-global-search {
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+    margin-right: auto;
+}

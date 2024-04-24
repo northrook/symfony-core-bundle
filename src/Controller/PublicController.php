@@ -18,7 +18,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-final readonly class PublicController extends AbstractCoreControllerMethods
+final readonly class PublicController
 {
     use CoreControllerTrait;
 

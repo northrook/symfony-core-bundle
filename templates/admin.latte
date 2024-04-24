@@ -2,46 +2,53 @@
 
 {block 'body'}
 
-    <!-- Header
+    <header id="admin-header">
 
-    Toggle Sidebar
-    --
-    Global Search
-    --
-    Help
-    Notifications
-    User
-      [Username, Email, Profile Link] Persistent on Admin/Public if ROLE_EDITOR?
-      --
-      Public <=> Admin
-      --
-      Settings
-      Theme Toggle
-      Logout
+        <!-- Toggle Sidebar -->
+        <button id="toggle-sidebar" icon="toggle-sidebar"/>
 
-    -->
-
-    <!-- Sidebar
+        <!-- Global Search -->
+        <div id="admin-global-search">
+            {include 'admin/ui/search.latte'}
+        </div>
 
 
+        <!-- Right Button Group -->
+        <div class="group">
 
-    Navigation
+            <!-- Modal : Help and Info - documentation, guides, keyboard shortcuts etc -->
+            <button icon="help"/>
 
-    -->
+            <!-- Aside : Notifications -->
+            <button icon="asterisk"/>
 
-    <pre>
-        {$route ?? 'no route parameter passed'}
-    </pre>
+            <!-- User Avatar & Dropdown -->
+            <button icon="arrow-down-circle"/>
+            <!-- Dropdown
 
-    {include 'admin/dashboard.latte'}
+            User
+              [Username, Email, Profile Link] Persistent on Admin/Public if ROLE_EDITOR?
+              --
+              Public <=> Admin
+              --
+              Settings
+              Theme Toggle
+              Logout
 
-    <main id="content"
-          hx-get="{$getRoute??'/admin'}"
-          hx-trigger="load"
-          hx-swap="innerHTML"
-    />
+            -->
 
-    <!-- Notifications -->
+        </div>
+    </header>
+
+    <sidebar id="admin-sidebar" resize="vertical">
+        {$navigation|noescape}
+        <div class="resize vertical end"></div>
+    </sidebar>
+
+
+    <main id="content">
+        {include 'admin/dashboard.latte'}
+    </main>
 
     <!-- Editor Actions -->
 

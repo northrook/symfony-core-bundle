@@ -1,0 +1,140 @@
+/*#region Body */
+
+body.core-admin[sidebar-expanded="false"] > sidebar {
+    left       : calc(var(--sidebar-width) * -1);
+    visibility : hidden;
+}
+
+body.core-admin[sidebar-expanded="true"] > main {
+    left       : var(--sidebar-width);
+}
+
+/*#endregion */
+
+body.core-admin {
+    --header-height      : 50px;
+    --sidebar-transition : 200ms ease;
+    outline              : 3px solid #ff147285;
+    outline-offset       : -3px;
+}
+
+/*#region Header */
+body > header > button {
+    outline        : 3px solid rgba(224, 20, 255, 0.52) !important;
+    outline-offset : -3px;
+}
+
+body > header > div {
+    outline        : 3px solid rgba(98, 255, 20, 0.52) !important;
+    outline-offset : -3px;
+}
+
+
+body.core-admin > header {
+    --gap           : 1rem;
+    z-index         : 25;
+    position        : fixed;
+    top             : 0;
+    left            : 0;
+    right           : 0;
+
+    display         : flex;
+    flex-direction  : row;
+    align-items     : stretch;
+    gap             : 1rem;
+    height          : var(--header-height);
+
+    background      : hsl(var(--baseline-900), .95);
+    box-shadow      : 0 1px 0 hsla(var(--outline), .5);
+    backdrop-filter : blur(8px);
+
+
+    outline         : 3px solid rgba(20, 138, 255, 0.52);
+    outline-offset  : -3px;
+}
+
+/*#endregion */
+
+
+/*#region Sidebar */
+body.core-admin > sidebar {
+    --background   : var(--baseline-800);
+
+    z-index        : 20;
+    position       : fixed;
+    top            : 0;
+    bottom         : 0;
+    left           : 0;
+
+    width          : var(--sidebar-width);
+    min-width      : 52px;
+
+    transition     : left var(--sidebar-transition), visibility var(--sidebar-transition);
+
+    outline        : 3px solid rgba(20, 255, 228, 0.52);
+    outline-offset : -3px;
+}
+
+
+/* Background */
+body.core-admin > sidebar::after {
+    content    : '';
+    z-index    : -1;
+    position   : absolute;
+    top        : 0;
+    left       : 0;
+    bottom     : 0;
+    width      : var(--sidebar-width);
+    background : hsla(var(--background));
+    transition : background-color 150ms ease-in-out;
+}
+
+body.core-admin > sidebar.constrained {
+    --background : var(--primary-soft);
+}
+
+/*#endregion */
+
+
+/*#region Main Content */
+body.core-admin > main {
+    position       : fixed;
+    inset          : 0;
+    transition     : left var(--sidebar-transition);
+    padding-top    : var(--header-height);
+
+    overflow       : auto;
+    display        : flex;
+    flex-direction : column;
+}
+
+body.core-admin > main > header {
+    padding : 1rem;
+}
+
+body.core-admin > main .sticky {
+    z-index         : 25;
+    position        : sticky;
+    left            : 0;
+    width           : 100%;
+
+    background      : hsl(var(--background), .90);
+    box-shadow      : 0 1px 0 hsla(var(--outline), .5);
+    backdrop-filter : blur(3px);
+}
+
+body.core-admin > main .sticky.top {
+    top : 0;
+}
+
+body.core-admin > main .sticky.bottom {
+    bottom : 0;
+}
+
+main > :not(table, .scroll) {
+    position : sticky;
+    left     : 0;
+    z-index  : 15;
+}
+
+/*#endregion */

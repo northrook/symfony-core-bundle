@@ -2,6 +2,8 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
+use Northrook\Symfony\Core\Components\Menu\Menu;
+use Northrook\Symfony\Core\Components\Menu\Navigation;
 use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\MailerService;
@@ -20,7 +22,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-final readonly class AdminController extends AbstractCoreControllerMethods
+final readonly class AdminController
 {
     use CoreControllerTrait;
 
@@ -39,6 +41,43 @@ final readonly class AdminController extends AbstractCoreControllerMethods
         private ?Stopwatch                  $stopwatch,
     ) {
 
+        $navigation = new Navigation(
+            $this->route(),
+        );
+
+        $navigation->add(
+            [
+                'dashboard' => Menu::item( 'Dashboard', 'info', 'dashboard' )->add(
+                    [
+                        'content'   => Menu::item( 'Content', 'info', 'content' ),
+                        'analytics' => Menu::item( 'Analytics', 'info', 'analytics' ),
+                    ],
+                ),
+                'website'   => Menu::item( 'Website', 'app-window', 'website' )->add(
+                    [
+                        Menu::item( 'Pages', 'panel-top', 'pages' ),
+                        Menu::item( 'Articles', 'newspaper', 'posts' ),
+                        Menu::item( 'Taxonomies', 'tags', 'taxonomies' ),
+                        Menu::item( 'Users', 'user-2', 'users' ),
+                    ],
+                ),
+                'settings'  => Menu::item( 'Settings', 'settings', )->add(
+                    [
+                        Menu::item( 'Appearance', 'pencil-ruler', 'appearance' ),
+                        Menu::item( 'Accounts', 'users', 'accounts' ),
+                    ],
+                ),
+            ],
+        )->add(
+            Menu::item( 'Ad-hoc' ),
+        );
+
+        // dd($navigation);
+
+        $this->properties = [
+            'navigation' => $navigation,
+        ];
+
 
         $this->stylesheet->includeStylesheets(
             [
@@ -53,13 +92,24 @@ final readonly class AdminController extends AbstractCoreControllerMethods
         $this->document->addScript(
             'dir.assets/scripts/core.js',
             'dir.assets/scripts/components.js',
+            'dir.assets/scripts/interactions.js',
+            'dir.assets/scripts/admin.js',
+
         );
+
+        $this->document->body->style->add( [ '--sidebar-width' => '150px' ] );
+        $this->document->body->set( 'sidebar-expanded', true );
+
     }
 
     public function index(
         ?string       $route,
         MailerService $mailer,
+        // ?Profiler $profiler
     ) : Response {
+
+
+        // $profiler?->disable();
 
         return $this->response(
             template   : 'admin.latte',
