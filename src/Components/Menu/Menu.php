@@ -2,6 +2,8 @@
 
 namespace Northrook\Symfony\Core\Components\Menu;
 
+use Northrook\Elements\Asset\SVG;
+
 class Menu
 {
 
@@ -14,8 +16,8 @@ class Menu
      * @return Item
      */
     public static function item(
-        $label,
-        $icon = null,
+        string $label,
+        ?string $icon = null,
         string | false $link = false,
         bool $render = null,
         ...$properties

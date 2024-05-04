@@ -3,13 +3,13 @@
 namespace Northrook\Symfony\Core\Services;
 
 use LogicException;
-use Northrook\Core\Debug\Backtrace;
 use Northrook\Logger\Log\Level;
 use Northrook\Logger\Log\Timestamp;
 use Northrook\Symfony\Core as Core;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation as Http;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
+use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -17,83 +17,52 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 /**
  * Current Request Service
  *
- * @property Http\Request $current   Get the current request from the container request stack.
- * @property string       $routeName Get the current `root:route` name.
- * @property string       $routeRoot Get the current `root` name.
- * @property string       $pathInfo  Get the current path info. Always starts with a /. Not urlecoded.
- *
  * @author Martin Nielsen <mn@northrook.com>
  */
-class CurrentRequestService
+readonly class CurrentRequestService
 {
+
+    public string       $route;
+    public string       $routeName;
+    public string       $routeRoot;
+    public string       $pathInfo;
+    public Http\Request $current;
+
+
     /**
-     * Injected into {@see Core\Controller\AbstractCoreController} as $current, and available via {@see Core\Request} om-demand.
+     * Injected into {@see Core\Controller\CoreController} as `$request`, and available via {@see Core\Request} om-demand.
      *
      * @param Http\RequestStack     $requestStack
      * @param null|LoggerInterface  $logger
      */
     public function __construct(
-        private readonly Http\RequestStack $requestStack,
-        private readonly ?LoggerInterface  $logger = null,
-    ) {}
-
-    /**
-     * @param string  $name
-     *
-     * @return Http\Request|string|null
-     */
-    public function __get( string $name ) : Http\Request | string | null {
-
-        $get = match ( $name ) {
-            'current'   => $this->currentRequest(),
-            'routeName' => $this->currentRoute(),
-            'routeRoot' => $this->currentRoute( true ),
-            'pathInfo'  => $this->currentPathInfo(),
-            default     => null,
-        };
-
-        if ( null !== $get ) {
-            return $get;
-        }
-
-        $backtrace = Backtrace::get( 1 );
-
-        $this->logger?->warning(
-            'Could not find the current request. Returned new {return}.',
-            [
-                'property' => $name,
-                'service'  => 'CurrentRequestService',
-                'caller'   => $backtrace->getCaller(),
-                'line'     => $backtrace->getLine(),
-            ],
-        );
-
-        return null;
+        private Http\RequestStack $requestStack,
+        private ?LoggerInterface  $logger = null,
+    ) {
+        $this->current   = $this->currentRequest();
+        $this->routeName = $this->currentRoute();
+        $this->routeRoot = $this->currentRoute( true );
+        $this->pathInfo  = $this->currentPathInfo();
+        $this->route     = $this->current->attributes->get( 'route' );
     }
 
-    /**
-     * `Not supported.`
-     *
-     * @param string  $name
-     * @param mixed   $value
-     *
-     * @return void
-     */
-    public function __set( string $name, mixed $value ) : void {
-        trigger_error( CurrentRequestService::class . '::__set() is not supported.', E_USER_NOTICE );
-    }
 
     /**
-     * Check if a given property is set.
-     *
-     * @param string  $name
+     * @param string  $type  = ['hypermedia', 'json'][$any]
      *
      * @return bool
      */
-    public function __isset( string $name ) : bool {
-        return isset( $this->$name );
+    final public function is( string $type ) : bool {
+        return match ( $type ) {
+            'hypermedia' => $this->headerBag( has : 'hx-request' ),
+            'json'       => $this->headerBag( get : 'content-type' ) === 'application/json',
+            default      => false,
+        };
     }
 
+    final public function route( ?string $is = null ) : string | bool {
+        return $is === null ? $this->route : $this->route === $is;
+    }
 
     /**
      * @param  ?string  $get  {@see Http\Request::get}
@@ -180,12 +149,19 @@ class CurrentRequestService
     }
 
     /**
-     * @param string|null  $get  {@see Http\HeaderBag::get}
+     * @param ?string  $get  {@see Http\HeaderBag::get} Returns null if the header is not set
+     * @param ?string  $has  {@see Http\HeaderBag::has} Checks if the headerBag contains the header
      *
-     * @return Http\HeaderBag|string|null
+     * @return null|HeaderBag|string|bool
      */
-    public function headers( ?string $get = null ) : Http\HeaderBag | string | null {
-        return $get ? $this->currentRequest()->headers->get( $get ) : $this->currentRequest()->headers;
+    final public function headerBag( ?string $get = null, ?string $has = null,
+    ) : Http\HeaderBag | string | bool | null {
+
+        if ( !$get && !$has ) {
+            return $this->current->headers;
+        }
+
+        return $get ? $this->current->headers->get( $get ) : $this->current->headers->has( $has );
     }
 
     /**

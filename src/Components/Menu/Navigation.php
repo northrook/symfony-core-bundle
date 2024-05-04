@@ -8,19 +8,26 @@ use Northrook\Support\Str;
 class Navigation implements \Stringable
 {
 
-    private array $items = [];
+    private array          $items = [];
+    public readonly string $id;
 
     public function __construct(
-        private readonly string $root,
-    ) {}
+        public readonly string  $root,
+        public readonly ?string $current = null,
+        ?string                 $id = null,
+    ) {
+        $this->id = Str::key( $id ?? "$root-navigation", '-' );
+    }
 
     final public function render(
-        string | Element\Tag $tag = 'ul',
-        ?string              $id = null,
-        ?string              $class = "navigation",
+        string | Element\Tag $tag = 'ol',
                              ...$set
     ) : Element {
-        $menu = new Element( ... [ 'tag' => $tag, 'id' => $id, 'class' => $class, ... $set ] );
+
+        $set[ 'tag' ]   = $tag;
+        $set[ 'class' ] = 'navigation ' . ( $set[ 'class' ] ?? '' );
+
+        $menu = new Element( ... $set );
 
         foreach ( $this->items as $item ) {
             $menu->content[] = (string) $item;
@@ -60,6 +67,7 @@ class Navigation implements \Stringable
                 if ( !$menu->render ) {
                     continue;
                 }
+                $menu->setNavigation( $this );
                 $this->items[ $id ] = $menu->href( root : $this->root );
             }
 

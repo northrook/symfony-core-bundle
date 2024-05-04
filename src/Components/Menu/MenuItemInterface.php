@@ -9,4 +9,6 @@ interface MenuItemInterface
     public function add( array | Element $child ) : self;
 
     public function hasChildren() : bool;
+
+    public function setNavigation( Navigation $navigation ) : self;
 }

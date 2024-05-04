@@ -2,9 +2,7 @@
 
 namespace Northrook\Symfony\Core;
 
-use Northrook\Core\Config;
-
-final class Settings extends Config
+final class Settings
 {
 
     // Global Settings

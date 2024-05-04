@@ -2,19 +2,11 @@
 
 namespace Northrook\Symfony\Core\Services;
 
-use Northrook\Elements\Element\Attribute;
-use Northrook\Support\Arr;
 use Northrook\Support\Filter;
-use Northrook\Support\Format;
-use Northrook\Support\Make;
 use Northrook\Support\Str;
 use Northrook\Symfony\Assets\Script;
 use Northrook\Symfony\Assets\Stylesheet;
-use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Latte\Parameters\Document;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Form\Extension\Core\Type\TelType;
-use Symfony\Component\HttpFoundation\Request;
 
 final class DocumentService
 {
@@ -24,32 +16,22 @@ final class DocumentService
 
     private readonly string $publicDir;
     private readonly string $routeId;
-
-    public bool $public = false;
-
     /**
      * @var array {name: string, value: string|array}
      */
-    private array $meta = [];
+    private array $meta           = [];
     private array $bodyAttributes = [];
-
     /** @var array {name: string, value: array} */
     private array $script = [];
-
-    /** @var array {name: string, value: array}  */
+    /** @var array {name: string, value: array} */
     private array $stylesheet = [];
-
-    /** @var array {name: string, value: array}  */
+    /** @var array {name: string, value: array} */
     private array $schema = [];
-
-
+    public bool   $public = false;
 
     public function __construct(
         private readonly CurrentRequestService $request,
-        private readonly ?LoggerInterface      $logger = null,
-    ) {
-        $this->publicDir = File::path( 'dir.public' );
-    }
+    ) {}
 
     public function getParameterObject() : Document {
 
@@ -57,18 +39,20 @@ final class DocumentService
             $this->meta[ 'robots' ][ 'robots' ] = $this::PRIVATE;
         }
 
-        if ( !isset($this->bodyAttributes['id'])) {
-            $this->bodyAttributes = [ 'id' => $this->getIdFromRoute(), ... $this->bodyAttributes];
+        if ( !isset( $this->bodyAttributes[ 'id' ] ) ) {
+            $this->bodyAttributes = [ 'id' => $this->getIdFromRoute(), ... $this->bodyAttributes ];
         }
 
-        $document = new Document(
+        if ( !isset( $this->meta[ 'title' ] ) ) {
+            $this->meta[ 'title' ] = ucwords( trim( str_replace( '/', ' ', $this->request->pathInfo ) ) );
+        }
+
+        return new Document(
             $this->meta,
             $this->stylesheet,
             $this->script,
             $this->bodyAttributes,
         );
-
-        return $document;
     }
 
     public function getMetaTags() : array {
@@ -92,18 +76,20 @@ final class DocumentService
 
     public function body( ...$set ) : self {
 
-        foreach ($set as $attribute => $value ){
-            $name = strtolower(trim(str_replace( '_', '-', $attribute ), " \n\r\t\v\0-"));
-            if ( is_bool($value )) {
+        foreach ( $set as $attribute => $value ) {
+            $name = strtolower( trim( str_replace( '_', '-', $attribute ), " \n\r\t\v\0-" ) );
+            if ( is_bool( $value ) ) {
                 $value = $value ? 'true' : 'false';
-            } elseif ( $name === 'style' && is_array($value) ) {
+            }
+            elseif ( $name === 'style' && is_array( $value ) ) {
                 $style = '';
                 foreach ( $value as $key => $val ) {
-                    $style  .= "$key: $val;";
+                    $style .= "$key: $val;";
                 }
                 $value = $style;
-            }elseif ( $name === 'class' && is_array($value) ) {
-                $value = array_flip(array_flip(array_filter( $value)));
+            }
+            elseif ( $name === 'class' && is_array( $value ) ) {
+                $value = array_flip( array_flip( array_filter( $value ) ) );
             }
             $this->bodyAttributes[ $name ] = $value;
         }
@@ -157,9 +143,9 @@ final class DocumentService
         $asset = new Stylesheet( source : $path, name : $id );
 
         $this->stylesheet[] = [
-            'id'    => $asset->name,
-            'href'  => $asset,
-            'rel'   => 'stylesheet',
+            'id'   => $asset->name,
+            'href' => $asset,
+            'rel'  => 'stylesheet',
         ];
         return $this;
     }
@@ -169,7 +155,7 @@ final class DocumentService
 
         $this->script[] = [
             'id'    => $asset->name,
-            'src'  => $asset,
+            'src'   => $asset,
             'defer' => $defer,
         ];
         return $this;

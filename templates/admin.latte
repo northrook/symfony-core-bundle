@@ -41,13 +41,15 @@
     </header>
 
     <sidebar id="admin-sidebar" resize="vertical">
-        {$navigation|noescape}
+        <nav id="admin-sidebar-nav" hx-boost="true" hx-swap="innerHTML" hx-target="main">
+            {$navigation|noescape}
+        </nav>
         <div class="resize vertical end"></div>
     </sidebar>
 
 
     <main id="content">
-        {include 'admin/dashboard.latte'}
+        {include $template}
     </main>
 
     <!-- Editor Actions -->

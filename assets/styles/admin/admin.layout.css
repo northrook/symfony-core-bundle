@@ -6,28 +6,29 @@ body.core-admin[sidebar-expanded="false"] > sidebar {
 }
 
 body.core-admin[sidebar-expanded="true"] > main {
-    left       : var(--sidebar-width);
+    left : var(--sidebar-width);
 }
 
 /*#endregion */
 
 body.core-admin {
     --header-height      : 50px;
+    --sidebar-compact    : 2.5rem;
     --sidebar-transition : 200ms ease;
-    outline              : 3px solid #ff147285;
-    outline-offset       : -3px;
+    /*outline              : 3px solid #ff147285;*/
+    /*outline-offset       : -3px;*/
 }
 
 /*#region Header */
-body > header > button {
-    outline        : 3px solid rgba(224, 20, 255, 0.52) !important;
-    outline-offset : -3px;
-}
+/*body > header > button {*/
+/*    outline        : 3px solid rgba(224, 20, 255, 0.52) !important;*/
+/*    outline-offset : -3px;*/
+/*}*/
 
-body > header > div {
-    outline        : 3px solid rgba(98, 255, 20, 0.52) !important;
-    outline-offset : -3px;
-}
+/*body > header > div {*/
+/*    outline        : 3px solid rgba(98, 255, 20, 0.52) !important;*/
+/*    outline-offset : -3px;*/
+/*}*/
 
 
 body.core-admin > header {
@@ -45,12 +46,12 @@ body.core-admin > header {
     height          : var(--header-height);
 
     background      : hsl(var(--baseline-900), .95);
-    box-shadow      : 0 1px 0 hsla(var(--outline), .5);
+    box-shadow      : 0 1px 0 hsla(var(--outline), .5), 1px 0 5px var(--shadow);
     backdrop-filter : blur(8px);
 
 
-    outline         : 3px solid rgba(20, 138, 255, 0.52);
-    outline-offset  : -3px;
+    /*outline         : 3px solid rgba(20, 138, 255, 0.52);*/
+    /*outline-offset  : -3px;*/
 }
 
 /*#endregion */
@@ -66,13 +67,14 @@ body.core-admin > sidebar {
     bottom         : 0;
     left           : 0;
 
+    display: flex;
+    flex-direction: column;
     width          : var(--sidebar-width);
-    min-width      : 52px;
-
+    min-width      : var(--sidebar-compact);
     transition     : left var(--sidebar-transition), visibility var(--sidebar-transition);
 
-    outline        : 3px solid rgba(20, 255, 228, 0.52);
-    outline-offset : -3px;
+    /*outline        : 3px solid rgba(20, 255, 228, 0.52);*/
+    /*outline-offset : -3px;*/
 }
 
 
@@ -87,6 +89,7 @@ body.core-admin > sidebar::after {
     width      : var(--sidebar-width);
     background : hsla(var(--background));
     transition : background-color 150ms ease-in-out;
+    box-shadow      : 1px 0 0 hsla(var(--outline), .5), 1px 0 5px var(--shadow);
 }
 
 body.core-admin > sidebar.constrained {
@@ -138,3 +141,24 @@ main > :not(table, .scroll) {
 }
 
 /*#endregion */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    /*--background: hsla(var(--background));*/
+    /*box-shadow: inset 0 0 10px 10px var(--background);*/
+    background-clip: content-box;
+    /*background-color: #1b9448;*/
+    border-top: solid var(--header-height) transparent;
+    transition: background-color 200ms ease;
+    opacity: .5;
+}
+
+::-webkit-scrollbar-thumb {
+    /*box-shadow: inset 0 0 10px 10px red;*/
+
+    background: hsla(var(--outline));
+    background-clip: content-box;
+    border-top: solid var(--header-height) transparent;
+}

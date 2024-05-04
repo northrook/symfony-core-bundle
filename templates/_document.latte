@@ -1,31 +1,30 @@
 <!DOCTYPE html>
 <html lang="{$get->language}" id="top" theme="{$get->theme}" status="init">
 <head>
-
     <!-- Document Meta -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta n:foreach="$document->meta('robots') as $robots" n:attr="{$robots}">
+    <meta n:foreach="$document->robots as $robots" n:attr="{$robots}">
     <!-- Content Tags -->
     <title>{$document->title}</title>
-    <meta n:foreach="$document->meta('info') as $info" n:attr="{$info}"/>
-
+    <meta n:foreach="$document->content as $info" n:attr="{$info}">
 
     <!-- Preload Assets -->
 
     <!-- Styles -->
-    <link n:foreach="$document->stylesheets as $stylesheet" href="{$stylesheet}" rel="stylesheet">
+    <link n:foreach="$document->stylesheets as $stylesheet" n:attr="{$stylesheet}">
 
     <!-- Scripts -->
-    <script n:foreach="$document->scripts as $script" src="{$script}" defer></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12/dist/htmx.min.js"></script>
+    <script n:foreach="$document->scripts as $script" n:attr="{$script}"></script>
 
     <!-- Favicon -->
-    <meta n:foreach="$document->favicon() as $favicon" n:attr="{$favicon}">
+    <link n:foreach="$document->favicon() as $favicon" n:attr="{$favicon}">
 
     <!-- Theme -->
     <meta name="theme-color" content="{$get->theme->color}">
     <meta name="color-scheme" content="{$get->theme->scheme}">
-    <meta n:foreach="$document->meta('msapplication') as $msapplication" n:attr="{$msapplication}">
+    {*    <meta n:foreach="$document->meta('msapplication') as $msapplication" n:attr="{$msapplication}">*}
 
     <!-- Facebook -->
 
@@ -35,7 +34,9 @@
 
 </head>
 
-<body n:attr="$document->body->attributes">
+<body n:attr="$document->bodyAttributes">
+<div id="skip-to-content"></div>
 {block 'body'}{/block}
+<div id="return-to-top"></div>
 </body>
 </html>

@@ -7,23 +7,26 @@ use Northrook\Symfony\Core\Controller\AdminController;
 use Northrook\Symfony\Core\Controller\ApiController;
 use Northrook\Symfony\Core\Controller\PublicController;
 use Northrook\Symfony\Core\Controller\SecurityController;
+use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
 use Northrook\Symfony\Core\EventListener\ExceptionListener;
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
 use Northrook\Symfony\Core\EventSubscriber\ResponseEventSubscriber;
 use Northrook\Symfony\Core\File;
 use Northrook\Symfony\Core\Latte\LatteComponentPreprocessor;
-use Northrook\Symfony\Core\Services\ContentManagementService;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
+use Northrook\Symfony\Core\Services\DocumentService;
 use Northrook\Symfony\Core\Services\FormService;
-use Northrook\Symfony\Core\Services\HttpService;
 use Northrook\Symfony\Core\Services\MailerService;
 use Northrook\Symfony\Core\Services\PathfinderService;
-use Northrook\Symfony\Core\Services\SecurityService;
 use Northrook\Symfony\Core\Services\SettingsManagementService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 
 return static function ( ContainerConfigurator $container ) : void {
+
+    $services   = $container->services();
+    $parameters = $container->parameters();
+
     //
     // Parameters
     $container->parameters()
@@ -42,230 +45,195 @@ return static function ( ContainerConfigurator $container ) : void {
     // Profiler Alias
     $container->services()->alias( Profiler::class, 'profiler' );
 
-    //
+    /**
+     * Core `Public` Controller
+     */
+    $services->set( 'core.controller.public', PublicController::class )
+             ->tag( 'controller.service_arguments' )
+             ->args( [ service( 'core.dependencies' ) ] );
+
+    /**
+     * Core `Admin` Controller
+     */
+    $services->set( 'core.controller.admin', AdminController::class )
+             ->tag( 'controller.service_arguments' )
+             ->args( [ service( 'core.dependencies' ) ] );
+
+    /**
+     * Core `Security` Controller
+     */
+    $services->set( 'core.controller.security', SecurityController::class )
+             ->tag( 'controller.service_arguments' )
+             ->args( [ service( 'core.dependencies' ) ] );
+    /**
+     * Core `API` Controller
+     */
+    $services->set( 'core.controller.api', ApiController::class )
+             ->tag( 'controller.service_arguments' )
+             ->args( [ service( 'core.dependencies' ) ] );
+
+    /** # ☕
+     * Latte Preprocessor
+     */
+    $services->set( 'core.latte.preprocessor', LatteComponentPreprocessor::class );
+
+    /** # ⭐
+     * Favicon Generator
+     */
+    $services->set( FaviconBundle::class );
+
+
+    //--------------------------------------------------------------------
+    // Dependencies
+    //--------------------------------------------------------------------
+
+    /**
+     * Core Controller Dependencies.
+     *
+     * Inject into `__construct()` as `protected readonly CoreDependencies $get`.
+     *
+     * - {@see RouterInterface}
+     * - {@see HttpKernelInterface}
+     * - {@see SerializerInterface}
+     * - {@see AuthorizationCheckerInterface}
+     * - {@see LoggerInterface} - optional
+     * - {@see Stopwatch} - optional
+     *
+     */
+    $services->set( 'core.dependencies', CoreDependencies::class )
+             ->args(
+                 [
+                     service_closure( 'router' ),
+                     service_closure( 'http_kernel' ),
+                     service_closure( 'parameter_bag' ),
+                     service_closure( 'core.service.request' ),
+                     service_closure( 'serializer' ),
+                     service_closure( 'security.authorization_checker' ),
+                     service_closure( 'security.token_storage' ),
+                     service_closure( 'security.csrf.token_manager' ),
+                     service_closure( 'latte.environment' ),
+                     service_closure( 'core.service.document' ),
+                     service_closure( 'logger' )->nullOnInvalid(),
+                     service_closure( 'debug.stopwatch' )->nullOnInvalid(),
+                 ],
+             );
+
+    /**
+     * Settings
+     */
+    $services->set( 'core.service.settings', SettingsManagementService::class );
+
+    //--------------------------------------------------------------------
+    // Event Listeners and Subscribers
+    //--------------------------------------------------------------------
+
+    /** # ? Response Event Subscriber
+     *
+     * -
+     * @todo do we use this?
+     *
+     */
+    $services->set( ResponseEventSubscriber::class )
+             ->tag( 'kernel.event_subscriber', [ 'priority' => 125 ] );
+
+
+    /** # 🗂
+     * Log Aggregating Event Subscriber
+     */
+    $services->set( LogAggregationSubscriber::class )
+             ->args( [ service( 'logger' )->nullOnInvalid() ], )
+             ->tag( 'kernel.event_subscriber', [ 'priority' => 100 ] );
+
+    /** # Error Pages
+     * Exception Listener
+     */
+    $services->set( ExceptionListener::class )
+             ->args( [ service( 'core.dependencies' ) ] )
+             ->tag( 'kernel.event_listener', [ 'priority' => 100 ] );
+
+
+    //--------------------------------------------------------------------
     // Services
-    $container->services()
-        //
-        //
-        // ☕ - Core API Controller
-              ->set( 'core.controller.api', ApiController::class )
-              ->tag( 'controller.service_arguments' )
-              ->args(
-                  [
-                      service( 'core.service.pathfinder' ),
-                      service( 'parameter_bag' ),
-                      service( 'logger' )->nullOnInvalid(),
-                  ],
-              )
-        //
-        //
-        // ☕ - Core Public Controller
-              ->set( 'core.controller.public', PublicController::class )
-              ->tag( 'controller.service_arguments' )
-              ->args(
-                  [
-                      service( 'router' ),
-                      service( 'http_kernel' ),
-                      service( 'serializer' )->nullOnInvalid(),
-                      service( 'core.service.security' ),
-                      service( 'core.service.request' ),
-                      service( 'core.service.pathfinder' ),
-                      service( 'parameter_bag' ),
-                      service( 'core.service.stylesheets' ),
-                      service( 'latte.environment' ),
-                      service( 'latte.parameters.document' ),
-                      service( 'logger' )->nullOnInvalid(),
-                      service( 'debug.stopwatch' )->nullOnInvalid(),
-                  ],
-              )
-              ->alias( PublicController::class, 'core.controller.public' )
-        //
-        //
-        // ☕ - Core Admin Controller
-              ->set( 'core.controller.admin', AdminController::class )
-              ->tag( 'controller.service_arguments' )
-              ->args(
-                  [
-                      service( 'router' ),
-                      service( 'http_kernel' ),
-                      service( 'serializer' )->nullOnInvalid(),
-                      service( 'core.service.security' ),
-                      service( 'core.service.request' ),
-                      service( 'core.service.pathfinder' ),
-                      service( 'parameter_bag' ),
-                      service( 'core.service.stylesheets' ),
-                      service( 'latte.environment' ),
-                      service( 'latte.parameters.document' ),
-                      service( 'logger' )->nullOnInvalid(),
-                      service( 'debug.stopwatch' )->nullOnInvalid(),
-                  ],
-              )
-              ->alias( AdminController::class, 'core.controller.admin' )
-        //
-        //
-        // 🛡️ - Security Controller
-              ->set( 'core.controller.security', SecurityController::class )
-              ->tag( 'controller.service_arguments' )
-              ->args(
-                  [
-                      service( 'core.service.security' ),
-                      service( 'core.service.request' ),
-                      service( 'core.service.settings' ),
-                      service( 'latte.environment' ),
-                      service( 'latte.parameters.document' ),
-                      service( 'logger' )->nullOnInvalid(),
-                  ],
-              )
-              ->alias( SecurityController::class, 'core.controller.security' )
-        //
-        // ☕ - Latte Preprocessor
-              ->set( 'core.latte.preprocessor', LatteComponentPreprocessor::class )
-        //
-        //  ✨- Favicon Generator
-              ->set( FaviconBundle::class )
-        //
-        //
-        // 📧 - Mailer Service
-              ->set( 'core.service.mailer', MailerService::class )
-              ->tag( 'controller.service_arguments' )
-              ->args(
-                  [
-                      service( 'core.service.settings' ),
-                      service( 'twig' ),
-                      service( 'latte.environment' ),
-                  ],
-              )
-              ->alias( MailerService::class, 'core.service.mailer' )
-        //
-        //
-        // 🗃️️ - Content Management Service
-              ->set( 'core.service.settings', SettingsManagementService::class )
-        //
-        //
-        // 🗃️️ - Content Management Service
-              ->set( 'core.service.router', HttpService::class )
-              ->args(
-                  [
-                      service( 'router' ),
-                      service( 'http_kernel' ),
-                  ],
-              )
-        //
-        //
-        // 🛡️️ - Security Service
-              ->set( 'core.service.security', SecurityService::class )
-              ->args(
-                  [
-                      service( 'security.authorization_checker' ),
-                      service( 'security.token_storage' ),
-                      service( 'security.csrf.token_manager' ),
-                  ],
-              )
-        //
-        //
-        // 🗃️️ - Content Management Service
-              ->set( 'core.service.content', ContentManagementService::class )
-              ->args(
-                  [
-                      service( 'logger' )->nullOnInvalid(),
-                  ],
-              )
-              ->autowire()
-              ->alias( ContentManagementService::class, 'core.service.content' )
-        //
-        //
-        // 📥 - Current Request Service
-              ->set( 'core.service.request', CurrentRequestService::class )
-              ->args(
-                  [
-                      service( 'request_stack' ),
-                      service( 'logger' )->nullOnInvalid(),
-                  ],
-              )
-              ->autowire()
-              ->public()
-              ->alias( CurrentRequestService::class, 'core.service.request' )
-        //
-        //
-        // 🧭 - Pathfinder Service
-              ->set( 'core.service.pathfinder', PathfinderService::class )
-              ->args(
-                  [
-                      service( 'parameter_bag' ),
-                      service( 'logger' )->nullOnInvalid(),
-                  ],
-              )
-              ->autowire()
-              ->public()
-              ->alias( PathfinderService::class, 'core.service.pathfinder' )
-        //
-        //
-        // 🧭 - Pathfinder Service
-              ->set( 'core.service.stylesheets', StylesheetGenerationService::class )
-              ->tag( 'controller.service_arguments' )
-              ->args(
-                  [
-                      service( 'core.service.request' ),
-                      service( 'core.service.pathfinder' ),
-                      service( 'logger' )->nullOnInvalid(),
-                      service( 'debug.stopwatch' )->nullOnInvalid(),
-                  ],
-              )
-              ->autowire()
-              ->public()
-              ->alias( StylesheetGenerationService::class, 'core.service.stylesheets' )
-        //
-        //
-        // 📩 - Form Service
-              ->set( 'core.service.form', FormService::class )
-              ->tag( 'controller.service_arguments' )
-              ->args(
-                  [
-                      service( 'parameter_bag' ),
-                      service( 'security.csrf.token_manager' ),
-                  ],
-              )
-              ->autowire()
-              ->public()
-              ->alias( FormService::class, 'core.service.form' )
-        //
-        //
-        // 🗂 - Response Event Subscriber
-              ->set( ResponseEventSubscriber::class )
-        // ->args(
-        //     [
-        //         service( 'logger' )->nullOnInvalid(),
-        //     ],
-        // )
-              ->tag( 'kernel.event_subscriber', [ 'priority' => 125 ] )
-        //
-        //
-        // 🗂 - Log Aggregating Event Subscriber
-              ->set( LogAggregationSubscriber::class )
-              ->args(
-                  [
-                      service( 'logger' )->nullOnInvalid(),
-                  ],
-              )
-              ->tag( 'kernel.event_subscriber', [ 'priority' => 100 ] )
+    //--------------------------------------------------------------------
 
-        //
-        //
+    /** # 📧
+     * Mailer Service
+     */
+    $services->set( 'core.service.mailer', MailerService::class )
+             ->tag( 'controller.service_arguments' )
+             ->args(
+                 [
+                     service( 'core.service.settings' ),
+                     service( 'twig' ),
+                     service( 'latte.environment' ),
+                 ],
+             )
+             ->alias( MailerService::class, 'core.service.mailer' );
 
-              ->set( ExceptionListener::class )
-              ->args(
-                  [
-                      service( 'core.service.security' ),
-                      service( 'core.service.request' ),
-                      service( 'core.service.settings' ),
-                      service( 'latte.environment' ),
-                      service( 'latte.parameters.document' ),
-                      service( 'logger' )->nullOnInvalid(),
-                  ],
-              )
-              ->tag( 'kernel.event_listener', [ 'priority' => 100 ] );
-    //
-    // end
-    ;
+    /** # 📄
+     * Document Service
+     */
+    $services->set( 'core.service.document', DocumentService::class )
+             ->args( [ service( 'core.service.request' ) ] )
+             ->autowire()
+             ->alias( DocumentService::class, 'core.service.document' );
+
+    /** # 📥
+     * Current Request Service
+     */
+    $services->set( 'core.service.request', CurrentRequestService::class )
+             ->args(
+                 [
+                     service( 'request_stack' ),
+                     service( 'logger' )->nullOnInvalid(),
+                 ],
+             )
+             ->autowire()
+             ->public()
+             ->alias( CurrentRequestService::class, 'core.service.request' );
+
+    /** # ../
+     * Pathfinder Service
+     */
+    $services->set( 'core.service.pathfinder', PathfinderService::class )
+             ->args(
+                 [
+                     service( 'parameter_bag' ),
+                     service( 'logger' )->nullOnInvalid(),
+                 ],
+             )
+             ->autowire()
+             ->public()
+             ->alias( PathfinderService::class, 'core.service.pathfinder' );
+    /** # {}
+     * Pathfinder Service
+     */
+    $services->set( 'core.service.stylesheets', StylesheetGenerationService::class )
+             ->tag( 'controller.service_arguments' )
+             ->args(
+                 [
+                     service( 'core.service.request' ),
+                     service( 'core.service.pathfinder' ),
+                     service( 'logger' )->nullOnInvalid(),
+                     service( 'debug.stopwatch' )->nullOnInvalid(),
+                 ],
+             )
+             ->autowire()
+             ->public()
+             ->alias( StylesheetGenerationService::class, 'core.service.stylesheets' );
+    /** # 📩
+     * Form Service
+     */
+    $services->set( 'core.service.form', FormService::class )
+             ->tag( 'controller.service_arguments' )
+             ->args(
+                 [
+                     service( 'parameter_bag' ),
+                     service( 'security.csrf.token_manager' ),
+                 ],
+             )
+             ->autowire()
+             ->public()
+             ->alias( FormService::class, 'core.service.form' );
 
 };

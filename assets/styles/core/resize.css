@@ -4,7 +4,7 @@
     transition:
             background-color 160ms ease,
             opacity 160ms ease 100ms;
-    z-index: 50;
+    z-index: 15;
     pointer-events: auto;
     user-select: none;
     background-color: hsla(var(--outline));
@@ -25,7 +25,7 @@
             background-color 160ms ease,
             scale 160ms;
 }
-.resize:hover:not(:active)::before {
+.resize:hover::before {
     scale: 5;
 }
 
@@ -48,7 +48,7 @@
     width: 2px;
 }
 .resize.vertical.start {
-    left: 0;
+    left: 2px;
 }
 .resize.vertical.end {
     right:0;

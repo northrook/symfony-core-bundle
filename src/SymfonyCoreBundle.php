@@ -41,7 +41,6 @@ final class SymfonyCoreBundle extends AbstractBundle
     ];
 
     private readonly string $projectDir;
-    private bool            $booted = false;
 
     public function loadExtension(
         array                 $config,
@@ -56,7 +55,6 @@ final class SymfonyCoreBundle extends AbstractBundle
         // Look for .yaml files in config folder, remove them if adding .php version and vice versa
         // TODO : Autoconfigure Security
         $this->autoconfigureRoutes();
-        $this->booted = true;
     }
 
     // TODO : Can we set the Static Container here ?
@@ -68,6 +66,7 @@ final class SymfonyCoreBundle extends AbstractBundle
         parent::boot();
 
         if ( $this->container ) {
+            // Settings::config( $this->container->get( 'core.service.settings' ) );
             SymfonyCoreFacade::set( $this->container );
         }
     }

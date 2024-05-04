@@ -3,26 +3,22 @@
 namespace Northrook\Symfony\Core\EventListener;
 
 use Northrook\Elements\Render\Template;
-use Northrook\Symfony\Core\Services\CurrentRequestService;
-use Northrook\Symfony\Core\Services\SecurityService;
-use Northrook\Symfony\Core\Services\SettingsManagementService;
-use Northrook\Symfony\Latte\Core\Environment;
-use Northrook\Symfony\Latte\Parameters\Document;
-use Psr\Log\LoggerInterface;
+use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
+use Northrook\Symfony\Core\DependencyInjection\Trait\PropertiesPromoter;
+use Northrook\Symfony\Core\Services\DocumentService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
+/**
+ * @property DocumentService $document
+ */
 final readonly class ExceptionListener
 {
+    use PropertiesPromoter;
 
     public function __construct(
-        public SecurityService           $security,
-        public CurrentRequestService     $request,
-        public SettingsManagementService $settings,
-        public Environment               $latte,
-        public Document                  $document,
-        public ?LoggerInterface          $logger,
+        protected CoreDependencies $get,
     ) {}
 
     /**
@@ -38,7 +34,7 @@ final readonly class ExceptionListener
         object | array $parameters = [],
     ) : string {
 
-        return $this->latte->render(
+        return $this->get->render(
             template   : $template,
             parameters : array_merge( [ 'document' => $this->document ], $parameters ),
         );
@@ -49,9 +45,9 @@ final readonly class ExceptionListener
         $exception = $event->getThrowable();
 
         if ( $exception instanceof HttpExceptionInterface ) {
-            
-            $this->document->addStylesheet( 'dir.cache/styles/styles.css' );
-            $this->document->addScript(
+
+            $this->document->stylesheet( 'dir.cache/styles/styles.css' );
+            $this->document->script(
                 'dir.assets/scripts/core.js',
                 'dir.assets/scripts/components.js',
             );

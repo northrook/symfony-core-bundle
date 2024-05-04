@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="LattePluginSettings">
-    <option name="variableSettings">
-      <list>
-        <LatteVariableSettings VarName="document" VarType="Northrook\Symfony\Latte\Parameters\Document" />
-        <LatteVariableSettings VarName="get" VarType="Northrook\Symfony\Latte\Parameters\Application" />
-      </list>
-    </option>
-  </component>
-</project>
+<!DOCTYPE latte PUBLIC "-//LATTE//Latte plugin XML V0.0.1//EN" ".idea/intellij-latte/xmlSources/Latte.dtd">
+<latte version="1" vendor="northrook/symfony-core-bundle">
+    <variables>
+        <variable name="document" type="Northrook\Symfony\Latte\Parameters\Document"/>
+        <variable name="get" type="Northrook\Symfony\Latte\Parameters\Application"/>
+    </variables>
+</latte>

@@ -5,9 +5,10 @@ namespace Northrook\Symfony\Core\Latte;
 use Northrook\Elements\Element;
 use Northrook\Symfony\Latte\Core;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * * Integrates {@see Core\Environment} from `northrook/symfony-latte-bundle`
+ * Integrates {@see Core\Environment} from `northrook/symfony-latte-bundle`
  *
  * @property ?Core\Environment $latte
  *
@@ -23,6 +24,64 @@ trait LatteRenderTrait
      * @return void
      */
     protected function onLatteRender() : void {}
+
+    private function getLatteParameters( object | array | null $parameters = null ) : object | array | null {
+
+        if ( is_object( $parameters ) || !$parameters ) {
+            return $parameters;
+        }
+
+        if ( is_array( $parameters ) && isset( $this->document ) ) {
+            $parameters[ 'document' ] = $this->document->getParameterObject();
+        }
+
+        return $parameters;
+    }
+
+
+    /**
+     * Render a `.latte` template to string.
+     *
+     * @param string        $template
+     * @param object|array  $parameters
+     *
+     * @return string
+     */
+    protected function render(
+        string         $template,
+        object | array $parameters = [],
+    ) : string {
+
+        if ( !property_exists( $this, 'latte' ) ) {
+            return new NotFoundHttpException(
+                'Template "latte" does not exist.',
+            );
+        }
+
+        $parameters = $this->getLatteParameters( $parameters );
+
+
+        // dd(
+        //     $parameters[ 'document' ]->title,
+        //     $parameters[ 'document' ]->title,
+        //     // $parameters[ 'document' ]->description,
+        //     // $parameters[ 'document' ]->author,
+        //     // $parameters[ 'document' ]->keywords,
+        //     $parameters['document']->robots,
+        //     $parameters['document']->robots,
+        //     $parameters['document'],
+        // );
+
+        $content = $this->latte->render(
+            template   : $template,
+            parameters : $parameters,
+        );
+
+        // $content = $this->injectFlashBagNotifications( $content );
+
+
+        return $content;
+    }
 
     /**
      * @param string             $view  Template file or template string

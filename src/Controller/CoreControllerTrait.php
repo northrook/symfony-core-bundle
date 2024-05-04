@@ -52,6 +52,7 @@ trait CoreControllerTrait
      *
      * @return Response
      */
+    #[Deprecated]
     protected function response(
         string         $template,
         object | array $parameters = [],
@@ -180,6 +181,7 @@ trait CoreControllerTrait
             if ( isset( $notifications[ $message ] ) ) {
                 $notifications[ $message ][ 'timestamp' ][ $timestamp->timestamp ] = $timestamp;
             }
+
             else {
                 $notifications[ $message ] = [
                     'level'       => $level,
@@ -205,20 +207,16 @@ trait CoreControllerTrait
             $notifications = [];
 
             foreach ( $this->parseFlashBag( $flashBag ) as $notification ) {
-                $notifications[] = (string) new Notification(
-                    $notification[ 'level' ],
-                    $notification[ 'message' ],
-                    $notification[ 'description' ],
-                    $notification[ 'timeout' ],
-                    $notification[ 'timestamp' ],
-                );
+                $notifications[] = PHP_EOL . ( new Notification(
+                        $notification[ 'level' ],
+                        $notification[ 'message' ],
+                        $notification[ 'description' ],
+                        $notification[ 'timeout' ],
+                        $notification[ 'timestamp' ],
+                    ) )->print( true );
             }
 
-            // if ( Str::contains( $string, ['<body', '</body>'])) {
-            //
-            // }
-
-            $string .= implode( '', $notifications );
+            $string .= PHP_EOL . implode( PHP_EOL, $notifications );
 
 
         }

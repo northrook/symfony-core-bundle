@@ -14,9 +14,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Throwable;
 
-trait ControllerServices
+trait ResponseMethods
 {
     protected readonly CoreDependencies $get;
+
+    protected array $parameters = [];
+
+    protected function addParameter( string $key, $value ) : void {}
 
 
     /**
@@ -33,9 +37,9 @@ trait ControllerServices
         object | array $parameters = [],
         int            $status = Response::HTTP_OK,
     ) : Response {
-
+        
         if ( is_array( $parameters ) ) {
-            $parameters[ 'document' ] = $this->get->document;
+            $parameters[ 'document' ] = $this->get->document->getParameterObject();
         }
 
 

@@ -4,67 +4,83 @@ namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Symfony\Core\Components\Menu\Menu;
 use Northrook\Symfony\Core\Components\Menu\Navigation;
-use Northrook\Symfony\Core\File;
+use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
+use Northrook\Symfony\Core\DependencyInjection\Trait\LatteRenderer;
+use Northrook\Symfony\Core\DependencyInjection\Trait\NotificationServices;
+use Northrook\Symfony\Core\DependencyInjection\Trait\PropertiesPromoter;
+use Northrook\Symfony\Core\DependencyInjection\Trait\ResponseMethods;
+use Northrook\Symfony\Core\DependencyInjection\Trait\SecurityServices;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
+use Northrook\Symfony\Core\Services\DocumentService;
 use Northrook\Symfony\Core\Services\MailerService;
-use Northrook\Symfony\Core\Services\PathfinderService;
-use Northrook\Symfony\Core\Services\SecurityService;
-use Northrook\Symfony\Core\Services\StylesheetGenerationService;
-use Northrook\Symfony\Latte\Core;
-use Northrook\Symfony\Latte\Parameters;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Stopwatch\Stopwatch;
 
-final readonly class AdminController
+/**
+ * @property CurrentRequestService $request
+ * @property DocumentService       $document
+ */
+final class AdminController
 {
-    use CoreControllerTrait;
+    use ResponseMethods, LatteRenderer, NotificationServices, SecurityServices, PropertiesPromoter;
+
+    public const STYLESHEETS          = [ 'dir.core.assets/styles' ];
+    public const DYNAMIC_TEMPLATE_DIR = 'admin';
 
     public function __construct(
-        protected RouterInterface           $router,
-        protected HttpKernelInterface       $httpKernel,
-        protected ?SerializerInterface      $serializer,
-        protected SecurityService           $security,
-        protected CurrentRequestService     $request,
-        private PathfinderService           $pathfinder,
-        private ParameterBagInterface       $parameters,
-        private StylesheetGenerationService $stylesheet,
-        protected Core\Environment          $latte,
-        protected Parameters\Document       $document,
-        protected ?LoggerInterface          $logger,
-        private ?Stopwatch                  $stopwatch,
+        protected readonly CoreDependencies $get,
     ) {
 
-        $navigation = new Navigation(
-            $this->route(),
+        // $this->stylesheet->includeStylesheets( AdminController::STYLESHEETS )->save( force : true );
+
+        $this->denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
+
+        $this->document->stylesheet( 'dir.cache/styles/styles.css' );
+
+        $this->document->script( 'dir.assets/scripts/core.js' )
+                       ->script( 'dir.assets/scripts/components.js' )
+                       ->script( 'dir.assets/scripts/navigation.js' )
+                       ->script( 'dir.assets/scripts/interactions.js' )
+                       ->script( 'dir.assets/scripts/admin.js' );
+
+
+        $this->document->body(
+            class            : 'core-admin',
+            style            : [ '--sidebar-width' => '120px' ],
+            sidebar_expanded : true,
         );
+
+    }
+
+    private function getNavigation() : Navigation {
+
+        $navigation = new Navigation( 'admin', $this->request->route );
 
         $navigation->add(
             [
-                'dashboard' => Menu::item( 'Dashboard', 'info', 'dashboard' )->add(
+                'dashboard' => Menu::item( 'Dashboard', 'layout-panel-top:lucide', 'dashboard' )->add(
                     [
-                        'content'   => Menu::item( 'Content', 'info', 'content' ),
-                        'analytics' => Menu::item( 'Analytics', 'info', 'analytics' ),
+                        'content'   => Menu::item( 'Content', 'app-window:lucide', 'content' ),
+                        'analytics' => Menu::item( 'Analytics', 'bar-chart-2:lucide', 'analytics' ),
                     ],
                 ),
-                'website'   => Menu::item( 'Website', 'app-window', 'website' )->add(
+                'website'   => Menu::item( 'Website', 'app-window:lucide', 'website' )->add(
                     [
-                        Menu::item( 'Pages', 'panel-top', 'pages' ),
-                        Menu::item( 'Articles', 'newspaper', 'posts' ),
-                        Menu::item( 'Taxonomies', 'tags', 'taxonomies' ),
-                        Menu::item( 'Users', 'user-2', 'users' ),
+                        Menu::item( 'Pages', 'panel-top:lucide', 'pages' ),
+                        Menu::item( 'Articles', 'newspaper:lucide', 'posts' ),
+                        Menu::item( 'Taxonomies', 'tags:lucide', 'taxonomies' ),
+                        Menu::item( 'Users', 'user:lucide', 'users' ),
+                        Menu::item( 'Users', 'user:lucide', 'users' ),
+                        Menu::item( 'Users', 'user:lucide', 'users' ),
+                        Menu::item( 'Users', 'user:lucide', 'users' ),
                     ],
                 ),
-                'settings'  => Menu::item( 'Settings', 'settings', )->add(
+                'settings'  => Menu::item( 'Settings', 'settings:lucide', )->add(
                     [
-                        Menu::item( 'Appearance', 'pencil-ruler', 'appearance' ),
-                        Menu::item( 'Accounts', 'users', 'accounts' ),
+                        Menu::item( 'Appearance', 'pencil-ruler:lucide', 'appearance' ),
+                        Menu::item( 'Accounts', 'users:lucide', 'accounts' ),
+                        Menu::item( 'Cache', 'server:lucide', 'accounts' ),
                     ],
                 ),
             ],
@@ -72,51 +88,74 @@ final readonly class AdminController
             Menu::item( 'Ad-hoc' ),
         );
 
-        // dd($navigation);
-
-        $this->properties = [
-            'navigation' => $navigation,
-        ];
-
-
-        $this->stylesheet->includeStylesheets(
-            [
-                'dir.core.assets/styles',
-            ],
-        );
-        $path  = File::path( 'dir.cache/styles/styles.css' );
-        $saved = $this->stylesheet->save( $path, true );
-
-        $this->security->denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
-        $this->document->addStylesheet( 'dir.cache/styles/styles.css' );
-        $this->document->addScript(
-            'dir.assets/scripts/core.js',
-            'dir.assets/scripts/components.js',
-            'dir.assets/scripts/interactions.js',
-            'dir.assets/scripts/admin.js',
-
-        );
-
-        $this->document->body->style->add( [ '--sidebar-width' => '150px' ] );
-        $this->document->body->set( 'sidebar-expanded', true );
-
+        return $navigation;
     }
+
+//     protected function view( string $route, array $parameters = [] ) : Response {
+//
+//         $template = $this->dynamicTemplatePath();
+//         if ( $this->request->headers( 'hx-request' ) ) {
+//             // dd( $this->request);
+//             $content = $this->render( $template, $parameters );
+//
+//             $head = <<<HEAD
+// <head core="merge">
+//     <title>Bananas</title>
+//     <meta name="description" content="This describes $route">
+//     <link id="demo-stylesheet" remove>
+//     <link rel="stylesheet" href="/css/site1.css">
+//     <script src="/js/script1.js"></script>
+//     <script src="/js/script2.js"></script>
+// </head>
+// HEAD;
+//
+//             return new Response(
+//                 $head . $content,
+//             );
+//         }
+//
+//         // dump( $template );
+//         return $this->response(
+//             'admin.latte',
+//             [
+//                 'template'   => $template,
+//                 'navigation' => $this->getNavigation(),
+//             ],
+//         );
+//
+//     }
 
     public function index(
         ?string       $route,
         MailerService $mailer,
         // ?Profiler $profiler
     ) : Response {
+        // $this->document->title( 'testme' )->description( 'we describe things' );
 
+        // $this->document->robots( 'test', 'gooblebot')->robots( 'another', 'all');
 
-        // $profiler?->disable();
+        // dump( $this->document->getMetaTags() );
+        // return $this->view( $route );
 
+        $template = $this->dynamicTemplatePath();
+
+        // $this->onLatteRender();
+
+        // dump( Settings::public() );
+        // dd( $this->request->headerBag( has : 'hx-request'), $template );
         return $this->response(
-            template   : 'admin.latte',
+            template   : $this->request->is( 'hypermedia' ) ? $template : 'admin.latte',
             parameters : [
-                             'route' => $route,
+                             'template'   => $template,
+                             'route'      => $route,
+                             'navigation' => $this->getNavigation(),
                          ],
         );
+    }
+
+    public function dashboard() : Response {
+
+        // return $this->response(       );
     }
 
     public function api( string $action ) : Response {

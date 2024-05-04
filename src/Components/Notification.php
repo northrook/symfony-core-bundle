@@ -25,6 +25,7 @@ use Northrook\Support\Format;
 class Notification extends Element
 {
     public const  TAG     = 'toast';
+    public const  CLASSES = 'notification';
     public const  TIMEOUT = 4500;
 
     private const ICONS = [
@@ -46,7 +47,7 @@ class Notification extends Element
         array   $occurrences = [],
     ) {
         parent::__construct(
-            class   : "notification $type",
+            class   : $type,
             timeout : $timeout ?? Notification::TIMEOUT,
             role    : 'listitem',
         );

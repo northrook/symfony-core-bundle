@@ -40,17 +40,13 @@ class Button extends Element
 
     public function __construct( ...$set ) {
 
+        $this->class->add( 'button' );
+
         if ( array_key_exists( 'icon', $set ) ) {
             $icon                    = $set[ 'icon' ];
             $this->content[ 'icon' ] = $icon instanceof Icon ? $icon : Icon::svg( $icon );
+            $this->class->add( 'icon' );
             unset( $set[ 'icon' ] );
-        }
-
-        if ( !array_key_exists( 'class', $set ) ) {
-            $set[ 'class' ] = 'button';
-        }
-        else {
-            $set[ 'class' ] = 'button ' . $set[ 'class' ];
         }
 
         parent::__construct( ...$set );
