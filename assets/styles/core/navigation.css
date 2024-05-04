@@ -1,0 +1,38 @@
+nav ul,
+nav ol,
+nav menu {
+    list-style : none;
+    margin     : 0;
+    padding    : 0;
+}
+
+nav .menu-item {
+    position         : relative;
+    display          : flex;
+    align-items      : stretch;
+    flex-direction   : column;
+    flex-wrap        : nowrap;
+    font-size        : 1em;
+}
+
+nav .menu-item > .item {
+    display     : flex;
+    align-items : center;
+}
+
+
+nav .menu-item > .item .icon {
+    flex-shrink : 0;
+}
+
+button.submenu-toggle path {
+    stroke-width: 2px;
+    transition       : 100ms ease-in-out;
+    /*transition       : transform 200ms ease;*/
+    transform-origin : center;
+}
+
+.menu-item > .item button.submenu-toggle[aria-expanded="true"] path.chevron {
+    d : path("M4,8 L12,16 L20,8");
+    /* transform: scaleY(-1); */
+}

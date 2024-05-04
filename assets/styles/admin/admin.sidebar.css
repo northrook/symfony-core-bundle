@@ -1,0 +1,201 @@
+
+button#toggle-sidebar {
+    padding : 0;
+    width   : var(--sidebar-compact);
+}
+
+sidebar > *:first-child { padding-top : var(--header-height);}
+
+
+sidebar nav {
+    --background        : var(--baseline-900);
+    --background-open   : var(--baseline-800);
+    --background-active : var(--baseline-700);
+
+    /*width               : var(--sidebar-width);*/
+    transition          : all var(--sidebar-transition);
+    overflow            : scroll;
+    min-width           : min-content;
+    /*width               : min-contenåt;*/
+    pointer-events      : none;
+
+
+    /*outline             : 1px solid rgba(247, 255, 20, 1);*/
+    /*outline-offset      : 1px;*/
+}
+
+sidebar nav::-webkit-scrollbar { display : none;}
+
+sidebar nav .navigation {
+    display        : flex;
+    flex-direction : column;
+    gap            : var(--small);
+    pointer-events : auto;
+}
+
+
+sidebar .menu-item {
+    overflow   : hidden;
+    width      : var(--sidebar-width);
+    transition : min-width 200ms ease, padding-right 200ms ease;
+}
+
+sidebar .menu-item.has-children {
+    padding : 5px 0;
+    /*padding : 5px 5px 5px  0;*/
+    /*outline             : 1px solid rgb(255, 0, 231);*/
+    /*outline-offset      : -1px;*/
+}
+
+sidebar .menu-item.has-children:hover ,
+sidebar .menu-item.has-children:focus-within ,
+sidebar .menu-item.has-children:hover .menu-item,
+sidebar .menu-item.has-children:focus-within .menu-item {
+    padding-right : 5px;
+}
+
+
+sidebar .menu-item:hover,
+sidebar .menu-item:focus-within,
+sidebar .menu-item:hover .menu-item,
+sidebar .menu-item:focus-within .menu-item {
+    min-width : calc(var(--item-width) + 5px);
+
+    /*--width : calc(100% - 5px) ;*/
+    z-index : 25;
+}
+
+sidebar .menu-item > .item {
+    height           : var(--sidebar-compact);
+    background-color : hsla(var(--baseline-900));
+    overflow         : hidden;
+    width           : min-content;
+    min-width: 100%;
+}
+
+sidebar .menu-item > .item > button {
+    z-index : 5;
+}
+
+sidebar .menu-item > .item a {
+    display : contents;
+}
+
+
+sidebar .menu-item > .item a::before {
+    content  : '';
+    position : absolute;
+    inset    : 0;
+}
+
+sidebar .menu-item .label {
+    padding      : var(--small);
+    margin-right : auto;
+}
+
+/*#region Item Icon */
+sidebar nav .navigation i.icon {
+    height : var(--sidebar-compact);
+    width  : var(--sidebar-compact);
+}
+
+sidebar nav .navigation i.icon svg {
+    height : 1.5rem;
+    width  : 1.5rem;
+}
+
+/*#endregion */
+
+/*#region Submenu Toggle */
+
+
+sidebar nav div.item > button.submenu-toggle {
+    background : linear-gradient(90deg, hsla(var(--background), 0), hsl(var(--background)));
+    /*backdrop-filter : blur(2px);*/
+    opacity    : .5;
+    transition : opacity 200ms ease;
+}
+
+sidebar nav div.item > button.submenu-toggle i {
+    width: 2rem;
+}
+sidebar nav div.item > button.submenu-toggle svg {
+    height : 1rem;
+    width  : 1rem;
+}
+
+div.item > button.submenu-toggle:hover,
+div.item > button.submenu-toggle:focus-visible {
+    opacity : 1;
+}
+
+/*#endregion Submenu Toggle */
+
+sidebar .menu-item > .sub-menu {
+    position                   : absolute;
+    font-size                  : 0.875rem;
+    transition-property        : height, opacity, visibility;
+    transition-duration        : 200ms;
+    transition-timing-function : ease;
+    visibility                 : hidden;
+    /*overflow                   : hidden;*/
+    opacity                    : 0;
+
+    height                     : 0;
+}
+
+/*sidebar nav .sub-menu li:first-child { padding-top : var(--extra-small);}*/
+/*sidebar nav .sub-menu li:last-child { padding-bottom : var(--extra-small);}*/
+
+sidebar nav .sub-menu li .menu-item {
+    padding : var(--tiny) 0;
+}
+
+sidebar .menu-item > .sub-menu.open.animating {
+    overflow : hidden;
+}
+
+sidebar .menu-item > .sub-menu.open {
+    visibility : visible;
+    overflow   : visible;
+    opacity    : 1;
+}
+
+sidebar .menu-item.has-children::after {
+    z-index    : -1;
+    content    : '';
+    position   : absolute;
+    top        : 5px;
+    right      : 5px;
+    bottom     : 5px;
+    left       : var(--sidebar-width);
+    box-shadow : 1px 0 5px var(--shadow);
+}
+
+sidebar .menu-item.has-children.open {
+    /*--background : var(--background-open);*/
+}
+
+body[sidebar="compact"] sidebar .menu-item.has-children.open {
+    --background : var(--background-active);
+}
+
+sidebar .menu-item.has-children.open > .sub-menu,
+sidebar .menu-item > .sub-menu.open,
+sidebar .menu-item > .sub-menu.animating {
+    position : relative;
+}
+
+sidebar .menu-item.has-sub-menu {
+    transition : background-color 200ms ease-in-out;
+}
+
+/* Submenus **/
+
+
+/* sidebar nav > ul > li.active > a[aria-current="page"] > i { */
+sidebar nav .item.active > i {
+    /* color: hsla(var(--baseline-50)); */
+    background-color : orange;
+    color            : #fcfcfd;
+}
