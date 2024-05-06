@@ -2,60 +2,37 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
-use Northrook\Symfony\Core\File;
-use Northrook\Symfony\Core\Services\CurrentRequestService;
-use Northrook\Symfony\Core\Services\MailerService;
-use Northrook\Symfony\Core\Services\PathfinderService;
-use Northrook\Symfony\Core\Services\SecurityService;
-use Northrook\Symfony\Core\Services\StylesheetGenerationService;
-use Northrook\Symfony\Latte\Core;
-use Northrook\Symfony\Latte\Parameters;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
+use Northrook\Symfony\Core\DependencyInjection\Trait\CorePropertiesPromoter;
+use Northrook\Symfony\Core\DependencyInjection\Trait\LatteRenderer;
+use Northrook\Symfony\Core\DependencyInjection\Trait\NotificationServices;
+use Northrook\Symfony\Core\DependencyInjection\Trait\ResponseMethods;
+use Northrook\Symfony\Core\DependencyInjection\Trait\SecurityServices;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Stopwatch\Stopwatch;
 
 final readonly class PublicController
 {
-    use CoreControllerTrait;
+
+    use ResponseMethods, LatteRenderer, NotificationServices, SecurityServices, CorePropertiesPromoter;
+
+    public const STYLESHEETS          = [ 'dir.core.assets/styles' ];
+    public const DYNAMIC_TEMPLATE_DIR = 'public';
 
     public function __construct(
-        protected RouterInterface           $router,
-        protected HttpKernelInterface       $httpKernel,
-        protected ?SerializerInterface      $serializer,
-        protected SecurityService           $security,
-        protected CurrentRequestService     $request,
-        private PathfinderService           $pathfinder,
-        private ParameterBagInterface       $parameters,
-        private StylesheetGenerationService $stylesheet,
-        protected Core\Environment          $latte,
-        protected Parameters\Document       $document,
-        protected ?LoggerInterface          $logger,
-        private ?Stopwatch                  $stopwatch,
+        protected readonly CoreDependencies $get,
     ) {
 
-        $this->stylesheet->includeStylesheets(
-            [
-                'dir.core.assets/styles',
-            ],
-        );
-        $path  = File::path( 'dir.cache/styles/styles.css' );
-        $saved = $this->stylesheet->save( $path, true );
-        $this->document->addStylesheet( 'dir.cache/styles/styles.css' );
-        $this->document->addScript(
-            'dir.assets/scripts/core.js',
-            'dir.assets/scripts/components.js',
-        );
+        $this->stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );
 
+        $this->document->stylesheet( 'dir.cache/styles/styles.css' );
 
+        $this->document->script( 'dir.assets/scripts/core.js' );
+
+        $this->document->body();
     }
 
     public function index(
-        ?string       $route,
-        MailerService $mailer,
+        ?string $route,
     ) : Response {
         //
         // if ( time() % 2 === 0 ) {

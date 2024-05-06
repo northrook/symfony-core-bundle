@@ -7,7 +7,9 @@ use Northrook\Core\Service\ServiceResolver;
 use Northrook\Core\Service\ServiceResolverTrait;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\DocumentService;
-use Northrook\Symfony\Latte\Core\Environment;
+use Northrook\Symfony\Core\Services\MailerService;
+use Northrook\Symfony\Core\Services\StylesheetGenerationService;
+use Northrook\Symfony\Latte\Environment;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -29,6 +31,8 @@ use Symfony\Component\Stopwatch\Stopwatch;
  * @property CsrfTokenManagerInterface     $csrf
  * @property Environment                   $latte
  * @property DocumentService               $document
+ * @property StylesheetGenerationService   $stylesheet
+ * @property MailerService                 $mailer
  * @property ?LoggerInterface              $logger
  * @property ?Stopwatch                    $stopwatch
  */
@@ -47,6 +51,8 @@ final class CoreDependencies extends ServiceResolver
         CsrfTokenManagerInterface | Closure     $csrf,
         Environment | Closure                   $latte,
         DocumentService | Closure               $document,
+        StylesheetGenerationService | Closure   $stylesheet,
+        MailerService | Closure                 $mailer,
         null | LoggerInterface | Closure        $logger,
         null | Stopwatch | Closure              $stopwatch,
     ) {

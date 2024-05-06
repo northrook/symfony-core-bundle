@@ -5,25 +5,19 @@ namespace Northrook\Symfony\Core\Controller;
 use Northrook\Symfony\Core\Components\Menu\Menu;
 use Northrook\Symfony\Core\Components\Menu\Navigation;
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
+use Northrook\Symfony\Core\DependencyInjection\Trait\CorePropertiesPromoter;
 use Northrook\Symfony\Core\DependencyInjection\Trait\LatteRenderer;
 use Northrook\Symfony\Core\DependencyInjection\Trait\NotificationServices;
-use Northrook\Symfony\Core\DependencyInjection\Trait\PropertiesPromoter;
 use Northrook\Symfony\Core\DependencyInjection\Trait\ResponseMethods;
 use Northrook\Symfony\Core\DependencyInjection\Trait\SecurityServices;
-use Northrook\Symfony\Core\Services\CurrentRequestService;
-use Northrook\Symfony\Core\Services\DocumentService;
 use Northrook\Symfony\Core\Services\MailerService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 
-/**
- * @property CurrentRequestService $request
- * @property DocumentService       $document
- */
 final class AdminController
 {
-    use ResponseMethods, LatteRenderer, NotificationServices, SecurityServices, PropertiesPromoter;
+    use ResponseMethods, LatteRenderer, NotificationServices, SecurityServices, CorePropertiesPromoter;
 
     public const STYLESHEETS          = [ 'dir.core.assets/styles' ];
     public const DYNAMIC_TEMPLATE_DIR = 'admin';
@@ -32,7 +26,7 @@ final class AdminController
         protected readonly CoreDependencies $get,
     ) {
 
-        // $this->stylesheet->includeStylesheets( AdminController::STYLESHEETS )->save( force : true );
+        $this->stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );
 
         $this->denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
 
@@ -154,8 +148,9 @@ final class AdminController
     }
 
     public function dashboard() : Response {
-
-        // return $this->response(       );
+        return $this->response(
+            'admin/dashboard.latte',
+        );
     }
 
     public function api( string $action ) : Response {

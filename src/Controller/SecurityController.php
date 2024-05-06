@@ -3,33 +3,27 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
-use Northrook\Symfony\Core\DependencyInjection\Trait\ControllerServices;
+use Northrook\Symfony\Core\DependencyInjection\Trait\CorePropertiesPromoter;
+use Northrook\Symfony\Core\DependencyInjection\Trait\LatteRenderer;
 use Northrook\Symfony\Core\DependencyInjection\Trait\NotificationServices;
-use Northrook\Symfony\Core\DependencyInjection\Trait\PropertiesPromoter;
+use Northrook\Symfony\Core\DependencyInjection\Trait\ResponseMethods;
 use Northrook\Symfony\Core\DependencyInjection\Trait\SecurityServices;
-use Northrook\Symfony\Core\Services\CurrentRequestService;
-use Northrook\Symfony\Core\Services\DocumentService;
 use Northrook\Symfony\Core\Services\FormService;
-use Northrook\Symfony\Core\Services\SecurityService;
-use Northrook\Symfony\Core\Services\StylesheetGenerationService;
+use Northrook\Symfony\Core\Settings;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 
 final readonly class SecurityController
 {
-    use ControllerServices, NotificationServices, SecurityServices, PropertiesPromoter;
+
+    use ResponseMethods, LatteRenderer, NotificationServices, SecurityServices, CorePropertiesPromoter;
 
     public const STYLESHEETS = [ 'dir.core.assets/styles' ];
 
-
-    private CurrentRequestService $request;
-    private DocumentService       $document;
-
-    // public const DYNAMIC_TEMPLATE_DIR = 'admin';
+    public const DYNAMIC_TEMPLATE_DIR = 'security';
 
     public function __construct(
         protected readonly CoreDependencies $get,
@@ -37,13 +31,10 @@ final readonly class SecurityController
 
 
     public function login(
-        CsrfTokenManagerInterface   $csrfTokenManager,
-        StylesheetGenerationService $stylesheet,
-        FormService                 $form,
+        FormService $form,
     ) : Response {
 
-
-        $stylesheet->generate();
+        $this->stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );
 
         $this->document->stylesheet( 'dir.cache/styles/styles.css' );
 
@@ -62,12 +53,12 @@ final readonly class SecurityController
             parameters : [
                              'seenBefore'   => $this->lastKnownUsername() !== null,
                              'blurb'        => $blurb,
-                             'currentUser'  => $this->security->getUser(),
+                             'currentUser'  => $this->getUser(),
                              'lastUsername' => $this->lastKnownUsername(),
                              'error'        => $this->lastAuthenticationError(),
                              'form'         => [
                                  'template'   => null,
-                                 'csrf_token' => $csrfTokenManager->getToken( 'authenticate' )->getValue(),
+                                 'csrf_token' => $this->getToken( 'authenticate' )->getValue(),
                              ],
                          ],
         );
@@ -75,7 +66,7 @@ final readonly class SecurityController
 
     public function register() : Response {
 
-        if ( !$this->settings->public( 'registration' ) ) {
+        if ( !Settings::public( 'security.registration' ) ) {
             throw new NotFoundHttpException(
                 'Public Registration is currently disabled.',
             );

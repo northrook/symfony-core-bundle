@@ -3,23 +3,24 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Favicon\FaviconBundle;
+use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
+use Northrook\Symfony\Core\DependencyInjection\Trait\CorePropertiesPromoter;
+use Northrook\Symfony\Core\DependencyInjection\Trait\LatteRenderer;
+use Northrook\Symfony\Core\DependencyInjection\Trait\NotificationServices;
+use Northrook\Symfony\Core\DependencyInjection\Trait\ResponseMethods;
+use Northrook\Symfony\Core\DependencyInjection\Trait\SecurityServices;
 use Northrook\Symfony\Core\File;
-use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 
 final readonly class ApiController
 {
-    use CoreControllerTrait;
+    use ResponseMethods, LatteRenderer, NotificationServices, SecurityServices, CorePropertiesPromoter;
 
     public function __construct(
-        private PathfinderService     $pathfinder,
-        private ParameterBagInterface $parameters,
-        private ?LoggerInterface      $logger,
+        protected readonly CoreDependencies $get,
     ) {}
 
     // TODO: Public Stylesheets only. Admin and Component styles are precompiled.
@@ -37,31 +38,27 @@ final readonly class ApiController
         $path  = File::path( 'dir.cache/styles/styles.css' );
         $saved = $generator->save( $path, true );
 
-        return new JsonResponse(
-            [
-                'bundle' => $bundle,
-                'saved'  => $bundle,
-                'path'   => $path,
-            ],
+        return new Response(
+            $this->injectFlashBagNotifications(),
         );
     }
 
     public function favicon( string $action, FaviconBundle $generator ) : Response {
 
-        $favicon = $this->parameters->get( 'path.favicon' );
+        $favicon = $this->parameterBag->get( 'path.favicon' );
 
         $generator->load( $favicon );
         $generator->manifest->title = 'Symfony Playground';
 
         if ( 'generate' === $action ) {
-            $generator->save( $this->pathfinder->get( 'dir.public' ) );
+            $generator->save( File::path( 'dir.public' ) );
             $data = $generator->notices();
             $this->logger->info( 'Favicon generated', [ 'data' => $data ] );
             return new JsonResponse( $data, Response::HTTP_CREATED );
         }
 
         if ( 'purge' === $action ) {
-            $data = $generator->purge( $this->pathfinder->get( 'dir.public' ) );
+            $data = $generator->purge( File::path( 'dir.public' ) );
             $this->logger->info( 'Favicon purged', [ 'data' => $data ] );
             return new JsonResponse( $data, Response::HTTP_OK );
         }

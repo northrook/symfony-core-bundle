@@ -113,6 +113,8 @@ return static function ( ContainerConfigurator $container ) : void {
                      service_closure( 'security.csrf.token_manager' ),
                      service_closure( 'latte.environment' ),
                      service_closure( 'core.service.document' ),
+                     service_closure( 'core.service.stylesheet' ),
+                     service_closure( 'core.service.mailer' ),
                      service_closure( 'logger' )->nullOnInvalid(),
                      service_closure( 'debug.stopwatch' )->nullOnInvalid(),
                  ],
@@ -208,7 +210,7 @@ return static function ( ContainerConfigurator $container ) : void {
     /** # {}
      * Pathfinder Service
      */
-    $services->set( 'core.service.stylesheets', StylesheetGenerationService::class )
+    $services->set( 'core.service.stylesheet', StylesheetGenerationService::class )
              ->tag( 'controller.service_arguments' )
              ->args(
                  [
@@ -220,7 +222,7 @@ return static function ( ContainerConfigurator $container ) : void {
              )
              ->autowire()
              ->public()
-             ->alias( StylesheetGenerationService::class, 'core.service.stylesheets' );
+             ->alias( StylesheetGenerationService::class, 'core.service.stylesheet' );
     /** # 📩
      * Form Service
      */

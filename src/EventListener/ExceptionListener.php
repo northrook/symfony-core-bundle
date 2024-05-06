@@ -4,9 +4,9 @@ namespace Northrook\Symfony\Core\EventListener;
 
 use Northrook\Elements\Render\Template;
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
-use Northrook\Symfony\Core\DependencyInjection\Trait\PropertiesPromoter;
+use Northrook\Symfony\Core\DependencyInjection\Trait\CorePropertiesPromoter;
+use Northrook\Symfony\Core\DependencyInjection\Trait\ResponseMethods;
 use Northrook\Symfony\Core\Services\DocumentService;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
@@ -15,30 +15,11 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
  */
 final readonly class ExceptionListener
 {
-    use PropertiesPromoter;
+    use CorePropertiesPromoter, ResponseMethods;
 
     public function __construct(
         protected CoreDependencies $get,
     ) {}
-
-    /**
-     * Render a `.latte` template to string.
-     *
-     * @param string        $template
-     * @param object|array  $parameters
-     *
-     * @return string
-     */
-    protected function render(
-        string         $template,
-        object | array $parameters = [],
-    ) : string {
-
-        return $this->get->render(
-            template   : $template,
-            parameters : array_merge( [ 'document' => $this->document ], $parameters ),
-        );
-    }
 
     public function __invoke( ExceptionEvent $event ) : void {
 
@@ -68,8 +49,9 @@ final readonly class ExceptionListener
             }
 
             $event->setResponse(
-                new Response(
-                    $this->render( $template, $parameters ),
+                $this->response(
+                    $template,
+                    $parameters,
                     $exception->getStatusCode(),
                 ),
             );

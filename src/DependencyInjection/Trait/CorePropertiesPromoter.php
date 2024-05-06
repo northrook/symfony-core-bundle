@@ -4,7 +4,10 @@ namespace Northrook\Symfony\Core\DependencyInjection\Trait;
 
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
 
-trait PropertiesPromoter
+/**
+ * @mixin CoreDependencies
+ */
+trait CorePropertiesPromoter
 {
 
     protected readonly CoreDependencies $get;
@@ -18,7 +21,7 @@ trait PropertiesPromoter
         return $this->get->getMappedService( $service );
     }
 
-    /** {@see PropertiesPromoter} does not allow setting of properties. */
+    /** {@see CorePropertiesPromoter} does not allow setting of properties. */
     final public function __set( string $name, $service ) : void {}
 
     /**

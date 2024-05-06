@@ -37,9 +37,10 @@ trait LatteRenderer
         return $this->injectFlashBagNotifications( $content );
     }
 
-    private function injectFlashBagNotifications( string $string ) : string {
+    public function injectFlashBagNotifications( string $string = '' ) : string {
 
         $flashBag = $this->request->flashBag();
+
         if ( $flashBag->peekAll() ) {
             $notifications = [];
 

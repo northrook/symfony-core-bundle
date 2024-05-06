@@ -15,7 +15,6 @@ trait SecurityServices
 {
     protected readonly CoreDependencies $get;
 
-
     /**
      * Retrieve the current user from {@see $tokenStorage}.
      *
@@ -25,6 +24,10 @@ trait SecurityServices
      */
     final protected function getUser() : ?UserInterface {
         return $this->get->tokenStorage->getToken() ? $this->get->tokenStorage->getToken()->getUser() : null;
+    }
+
+    final protected function getToken( string $tokenId = self::class ) : CsrfToken {
+        return $this->get->csrf->getToken( $tokenId );
     }
 
     /**

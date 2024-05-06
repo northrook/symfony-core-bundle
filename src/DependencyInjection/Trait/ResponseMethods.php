@@ -37,14 +37,14 @@ trait ResponseMethods
         object | array $parameters = [],
         int            $status = Response::HTTP_OK,
     ) : Response {
-        
+
         if ( is_array( $parameters ) ) {
             $parameters[ 'document' ] = $this->get->document->getParameterObject();
         }
 
 
         return new Response(
-            content : $this->get->render( $template, $parameters ),
+            content : $this->render( $template, $parameters ),
             status  : $status,
             headers : [ 'Meta-Storage' => 'local' ],
         );
