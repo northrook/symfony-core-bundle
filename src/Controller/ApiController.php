@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 
-final readonly class ApiController
+final class ApiController
 {
     use ResponseMethods, LatteRenderer, NotificationServices, SecurityServices, CorePropertiesPromoter;
 

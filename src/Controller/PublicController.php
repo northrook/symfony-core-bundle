@@ -10,7 +10,7 @@ use Northrook\Symfony\Core\DependencyInjection\Trait\ResponseMethods;
 use Northrook\Symfony\Core\DependencyInjection\Trait\SecurityServices;
 use Symfony\Component\HttpFoundation\Response;
 
-final readonly class PublicController
+final class PublicController
 {
 
     use ResponseMethods, LatteRenderer, NotificationServices, SecurityServices, CorePropertiesPromoter;

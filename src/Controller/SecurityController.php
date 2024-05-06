@@ -16,9 +16,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 
-final readonly class SecurityController
+final class SecurityController
 {
-
     use ResponseMethods, LatteRenderer, NotificationServices, SecurityServices, CorePropertiesPromoter;
 
     public const STYLESHEETS = [ 'dir.core.assets/styles' ];
