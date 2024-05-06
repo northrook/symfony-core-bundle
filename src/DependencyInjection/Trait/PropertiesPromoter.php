@@ -18,7 +18,7 @@ trait PropertiesPromoter
         return $this->get->getMappedService( $service );
     }
 
-    /** {@see LazyDependencies} does not allow setting of properties. */
+    /** {@see PropertiesPromoter} does not allow setting of properties. */
     final public function __set( string $name, $service ) : void {}
 
     /**

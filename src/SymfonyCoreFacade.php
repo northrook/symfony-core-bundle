@@ -18,6 +18,7 @@ abstract class SymfonyCoreFacade
     protected static ContainerInterface $container;
 
     protected static function getKernel() : App\Kernel {
+
         try {
             return self::$container->get( 'kernel' );
         }
