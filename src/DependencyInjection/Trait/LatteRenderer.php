@@ -3,9 +3,11 @@
 namespace Northrook\Symfony\Core\DependencyInjection\Trait;
 
 
+use Latte;
 use Northrook\Logger\Log\Timestamp;
 use Northrook\Symfony\Core\Components\Notification;
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
+use Northrook\Symfony\Core\Security\ErrorEventException;
 use Northrook\Types\Path;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
@@ -29,10 +31,18 @@ trait LatteRenderer
         object | array $parameters = [],
     ) : string {
 
-        $content = $this->latte->render(
-            template   : $template,
-            parameters : $parameters,
-        );
+        try {
+            $content = $this->latte->render(
+                template   : $template,
+                parameters : $parameters,
+            );
+        }
+        catch ( Latte\RuntimeException $e ) {
+            throw new ErrorEventException(
+                message  : $e->getMessage(),
+                previous : $e,
+            );
+        }
 
         return $this->injectFlashBagNotifications( $content );
     }

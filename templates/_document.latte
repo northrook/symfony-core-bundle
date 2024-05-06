@@ -7,24 +7,25 @@
     <meta n:foreach="$document->robots as $robots" n:attr="{$robots}">
     <!-- Content Tags -->
     <title>{$document->title}</title>
-    <meta n:foreach="$document->content as $info" n:attr="{$info}">
+    <meta n:foreach="$document->content as $content" n:attr="$content">
+    <meta n:foreach="$document->meta() as $meta" n:attr="$meta">
 
     <!-- Preload Assets -->
 
     <!-- Styles -->
-    <link n:foreach="$document->stylesheets as $stylesheet" n:attr="{$stylesheet}">
+    <link n:foreach="$document->stylesheets as $stylesheet" n:attr="$stylesheet">
 
     <!-- Scripts -->
     <script src="https://unpkg.com/htmx.org@1.9.12/dist/htmx.min.js"></script>
-    <script n:foreach="$document->scripts as $script" n:attr="{$script}"></script>
+    <script n:foreach="$document->scripts as $script" n:attr="$script"></script>
 
     <!-- Favicon -->
-    <link n:foreach="$document->favicon() as $favicon" n:attr="{$favicon}">
+    <link n:foreach="$document->favicon() as $favicon" n:attr="$favicon">
 
     <!-- Theme -->
     <meta name="theme-color" content="{$get->theme->color}">
     <meta name="color-scheme" content="{$get->theme->scheme}">
-    {*    <meta n:foreach="$document->meta('msapplication') as $msapplication" n:attr="{$msapplication}">*}
+    <meta n:foreach="$document->meta('msapplication') as $msapplication" n:attr="{$msapplication}">
 
     <!-- Facebook -->
 
@@ -34,9 +35,11 @@
 
 </head>
 
+{clamp( )}
+
 <body n:attr="$document->bodyAttributes">
-<div id="skip-to-content"></div>
+{render( 'skip-to-content')}
 {block 'body'}{/block}
-<div id="return-to-top"></div>
+{render( 'return-to-top')}
 </body>
 </html>

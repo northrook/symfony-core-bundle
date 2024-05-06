@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
 /**
- * Trigger a HTTP Error.
+ * Trigger an HTTP Error.
  *
  * The Exception is intercepted by {@see ExceptionListener}, which may render an error page.
  *
