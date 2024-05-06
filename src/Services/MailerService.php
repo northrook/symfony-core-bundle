@@ -3,7 +3,7 @@
 namespace Northrook\Symfony\Core\Services;
 
 use JetBrains\PhpStorm\ExpectedValues;
-use Northrook\Symfony\Latte\Core as Latte;
+use Northrook\Symfony\Latte;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Envelope;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
