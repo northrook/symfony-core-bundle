@@ -6,7 +6,7 @@ use Northrook\Support\Filter;
 use Northrook\Support\Str;
 use Northrook\Symfony\Assets\Script;
 use Northrook\Symfony\Assets\Stylesheet;
-use Northrook\Symfony\Latte\Parameters\Document;
+use Northrook\Symfony\Latte\Variables\Document;
 
 final class DocumentService
 {
