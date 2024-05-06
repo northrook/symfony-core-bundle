@@ -51,5 +51,12 @@
     "doctrine/annotations": "^1.0",
     "symfony/web-profiler-bundle": "^7",
     "symfony/profiler-pack": "dev-main"
+  },
+  "replace": {
+    "symfony/polyfill-php80": "*",
+    "symfony/polyfill-php72": "*",
+    "symfony/polyfill-php71": "*",
+    "symfony/polyfill-php70": "*",
+    "symfony/polyfill-php56": "*"
   }
 }
