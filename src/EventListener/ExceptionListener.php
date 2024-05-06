@@ -13,12 +13,12 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 /**
  * @property DocumentService $document
  */
-final readonly class ExceptionListener
+final  class ExceptionListener
 {
     use CorePropertiesPromoter, ResponseMethods;
 
     public function __construct(
-        protected CoreDependencies $get,
+        protected readonly CoreDependencies $get,
     ) {}
 
     public function __invoke( ExceptionEvent $event ) : void {
