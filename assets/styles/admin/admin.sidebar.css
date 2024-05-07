@@ -47,8 +47,8 @@ sidebar .menu-item.has-children {
     /*outline-offset      : -1px;*/
 }
 
-sidebar .menu-item.has-children:hover ,
-sidebar .menu-item.has-children:focus-within ,
+sidebar .menu-item.has-children:hover,
+sidebar .menu-item.has-children:focus-within,
 sidebar .menu-item.has-children:hover .menu-item,
 sidebar .menu-item.has-children:focus-within .menu-item {
     padding-right : 5px;
@@ -62,15 +62,15 @@ sidebar .menu-item:focus-within .menu-item {
     min-width : calc(var(--item-width) + 5px);
 
     /*--width : calc(100% - 5px) ;*/
-    z-index : 25;
+    z-index   : 25;
 }
 
 sidebar .menu-item > .item {
     height           : var(--sidebar-compact);
     background-color : hsla(var(--baseline-900));
     overflow         : hidden;
-    width           : min-content;
-    min-width: 100%;
+    width            : min-content;
+    min-width        : 100%;
 }
 
 sidebar .menu-item > .item > button {
@@ -81,11 +81,16 @@ sidebar .menu-item > .item a {
     display : contents;
 }
 
+sidebar .menu-item .ripple > i.boundary {
+    top    : 5px;
+    right  : 5px;
+    bottom : 5px;
+}
 
 sidebar .menu-item > .item a::before {
     content  : '';
     position : absolute;
-    inset    : 0;
+    inset    : 5px;
 }
 
 sidebar .menu-item .label {
@@ -117,8 +122,9 @@ sidebar nav div.item > button.submenu-toggle {
 }
 
 sidebar nav div.item > button.submenu-toggle i {
-    width: 2rem;
+    width : 2rem;
 }
+
 sidebar nav div.item > button.submenu-toggle svg {
     height : 1rem;
     width  : 1rem;

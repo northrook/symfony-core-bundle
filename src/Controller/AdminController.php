@@ -25,11 +25,12 @@ final class AdminController
     public function __construct(
         protected readonly CoreDependencies $get,
     ) {
-
-        $this->stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );
-
         $this->denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
 
+        if ( false === $this->request->is( 'hypermedia' ) ) {
+            $this->stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );
+        }
+        
         $this->document->stylesheet( 'dir.cache/styles/styles.css' );
 
         $this->document->script( 'dir.assets/scripts/core.js' )

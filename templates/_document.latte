@@ -4,28 +4,28 @@
     <!-- Document Meta -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta n:foreach="$document->robots as $robots" n:attr="{$robots}">
+    <meta n:foreach="$document->robots as $meta_robots" n:attr="{$meta_robots}">
     <!-- Content Tags -->
     <title>{$document->title}</title>
-    <meta n:foreach="$document->content as $content" n:attr="$content">
-    <meta n:foreach="$document->meta() as $meta" n:attr="$meta">
+    <meta n:foreach="$document->content as $meta_content" n:attr="$meta_content">
+    <meta n:foreach="$document->meta() as $meta_meta" n:attr="$meta_meta">
 
     <!-- Preload Assets -->
 
     <!-- Styles -->
-    <link n:foreach="$document->stylesheets as $stylesheet" n:attr="$stylesheet">
+    <link n:foreach="$document->stylesheets as $meta_stylesheet" n:attr="$meta_stylesheet">
 
     <!-- Scripts -->
     <script src="https://unpkg.com/htmx.org@1.9.12/dist/htmx.min.js"></script>
-    <script n:foreach="$document->scripts as $script" n:attr="$script"></script>
+    <script n:foreach="$document->scripts as $meta_script" n:attr="$meta_script"></script>
 
     <!-- Favicon -->
-    <link n:foreach="$document->favicon() as $favicon" n:attr="$favicon">
+    <link n:foreach="$document->favicon() as $fmeta_avicon" n:attr="$fmeta_avicon">
 
     <!-- Theme -->
     <meta name="theme-color" content="{$get->theme->color}">
     <meta name="color-scheme" content="{$get->theme->scheme}">
-    <meta n:foreach="$document->meta('msapplication') as $msapplication" n:attr="{$msapplication}">
+    <meta n:foreach="$document->meta('msapplication') as $meta_msapplication" n:attr="{$meta_msapplication}">
 
     <!-- Facebook -->
 
@@ -34,12 +34,9 @@
     <!-- LinkedIn -->
 
 </head>
-
-{clamp( )}
-
 <body n:attr="$document->bodyAttributes">
-{render( 'skip-to-content')}
+{render('skip-to-content')}
 {block 'body'}{/block}
-{render( 'return-to-top')}
+{render('return-to-top')}
 </body>
 </html>

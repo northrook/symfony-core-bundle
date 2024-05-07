@@ -32,8 +32,9 @@ final class SecurityController
     public function login(
         FormService $form,
     ) : Response {
-
-        $this->stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );
+        if ( false === $this->request->is( 'hypermedia' ) ) {
+            $this->stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );
+        }
 
         $this->document->stylesheet( 'dir.cache/styles/styles.css' );
 

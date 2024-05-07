@@ -5,6 +5,7 @@ namespace Northrook\Symfony\Core\EventSubscriber;
 use Northrook\Logger\Log;
 use Northrook\Logger\Timer;
 use Northrook\Symfony\Core\Services\PathfinderService;
+use Northrook\Symfony\Latte\Loader;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Log\Logger;
 
@@ -22,11 +23,11 @@ use Symfony\Component\HttpKernel\Log\Logger;
  * @version 1.0.0 ✅
  * @author  Martin Nielsen <mn@northrook.com>
  */
-final class LogAggregationSubscriber implements EventSubscriberInterface
+final readonly class LogAggregationSubscriber implements EventSubscriberInterface
 {
 
     public function __construct(
-        private readonly ?Logger $logger = null,
+        private ?Logger $logger = null,
     ) {
         Timer::start( 'log_aggregation' );
     }
@@ -51,6 +52,14 @@ final class LogAggregationSubscriber implements EventSubscriberInterface
                 Log\Entry::class     => count( $log ),
                 $this->logger::class => $loggerStartCount,
                 'total'              => count( $this->logger->getLogs() ),
+            ],
+        );
+
+        $this->logger->info(
+            'Latte used {count} templates.',
+            [
+                'count'     => count( Loader::getLoadedTemplates() ),
+                'templates' => Loader::getLoadedTemplates(),
             ],
         );
 
