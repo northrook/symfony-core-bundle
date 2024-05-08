@@ -30,7 +30,7 @@ final class AdminController
         if ( false === $this->request->is( 'hypermedia' ) ) {
             $this->stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );
         }
-        
+
         $this->document->stylesheet( 'dir.cache/styles/styles.css' );
 
         $this->document->script( 'dir.assets/scripts/core.js' )
@@ -138,6 +138,8 @@ final class AdminController
 
         // dump( Settings::public() );
         // dd( $this->request->headerBag( has : 'hx-request'), $template );
+
+        // dd( $this->latte );
         return $this->response(
             template   : $this->request->is( 'hypermedia' ) ? $template : 'admin.latte',
             parameters : [

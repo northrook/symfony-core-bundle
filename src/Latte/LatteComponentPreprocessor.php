@@ -3,7 +3,6 @@
 namespace Northrook\Symfony\Core\Latte;
 
 use Northrook\Elements;
-use Northrook\Symfony\Core\Components;
 use Northrook\Symfony\Core\Components\Input;
 use Northrook\Symfony\Latte\Preprocessor\Preprocessor;
 
@@ -22,14 +21,14 @@ final class LatteComponentPreprocessor extends Preprocessor
     ];
 
     private const COMPONENTS = [
-        'field:text'     => Input::class,
-        'field:email'    => Input\Email::class,
         'field:password' => Input\Password::class,
-        'field:checkbox' => Input\Checkbox::class,
-        'field:toggle'   => Input\Toggle::class,
 
+        // 'field:text'     => Input::class,
+        // 'field:email'    => Input\Email::class,
+        // 'field:password' => Input\Password::class,
+        // 'field:checkbox' => Input\Checkbox::class,
+        // 'field:toggle'   => Input\Toggle::class,
         // 'field:textarea' => TextArea::class,
-
     ];
 
     /**
@@ -51,15 +50,15 @@ final class LatteComponentPreprocessor extends Preprocessor
                 continue;
             }
 
-            /** @var Component $component */
+            /** @var \Northrook\Symfony\Components\Component $component */
             $class = LatteComponentPreprocessor::COMPONENTS[ $name ];
 
-            if ( !is_subclass_of( $class, Component::class ) ) {
+            if ( !is_subclass_of( $class, \Northrook\Symfony\Components\Component::class ) ) {
                 $this->logger->error(
                     message : "{object} is not a subclass of {component}.",
                     context : [
                                   '$object'   => $class,
-                                  'component' => Component::class,
+                                  'component' => $class::class,
                               ],
                 );
                 continue;

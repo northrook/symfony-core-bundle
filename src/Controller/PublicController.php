@@ -35,30 +35,10 @@ final class PublicController
     public function index(
         ?string $route,
     ) : Response {
-        //
-        // if ( time() % 2 === 0 ) {
-        //     $this->addFlash( 'info', 'The `time()` is even.', 'Recorded timestamp: `' . time() . '`,' );
-        // }
-        // $this->addFlash( 'info', 'Info Message', __METHOD__ );
-        // $this->addFlash( 'info', 'Info Message' );
-        // $this->addFlash( 'error', 'An error occurred!', __METHOD__, );
-        // $this->addFlash( 'info', 'Info Message', __METHOD__ );
-        // $this->addFlash( 'warning', 'Warning!', 'Nuclear launch detected.' );
-        //
-        // $this->addFlash( 'error', 'This is an error title', );
-        // $this->addFlash( 'info', 'Info Message', __METHOD__ );
-        // $this->addFlash( 'notice', 'Notice me', 'Non-hinted type.' );
-        //
-        //
-        // // sleep(1);
-        // $this->addFlash( 'info', 'Info Message', __METHOD__ );
-
 
         return $this->response(
             template   : 'public.latte',
-            parameters : [
-                             'route' => $route,
-                         ],
+            parameters : [ 'route' => $route ],
         );
     }
 

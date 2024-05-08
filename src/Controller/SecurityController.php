@@ -30,6 +30,7 @@ final class SecurityController
 
 
     public function login(
+        string      $username,
         FormService $form,
     ) : Response {
         if ( false === $this->request->is( 'hypermedia' ) ) {

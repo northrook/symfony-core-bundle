@@ -1,10 +1,7 @@
 <?php
 
-namespace Northrook\Symfony\Core\Latte\Component;
+namespace Northrook\Symfony\Components\Component;
 
-use JetBrains\PhpStorm\Deprecated;
-
-#[Deprecated]
 enum RenderMethod : string
 {
     /** Render value and choices as static HTML */

@@ -1,8 +1,6 @@
 <?php
 
-namespace Northrook\Symfony\Core\Latte\Component;
-
-use JetBrains\PhpStorm\Deprecated;
+namespace Northrook\Symfony\Components\Component;
 
 /**
  * @property ?string $tag
@@ -21,7 +19,4 @@ use JetBrains\PhpStorm\Deprecated;
  * @property ?string $icon
  * @property ?string $label
  */
-#[Deprecated]
-final class Properties extends \Northrook\Elements\Element\Properties
-{
-}
+final class Properties extends \Northrook\Elements\Element\Properties { }

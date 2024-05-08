@@ -11,7 +11,8 @@
   ],
   "autoload": {
     "psr-4": {
-      "Northrook\\Symfony\\Core\\": "src/"
+      "Northrook\\Symfony\\Core\\": "src/",
+      "Northrook\\Symfony\\Components\\": "Components/"
     }
   },
   "prefer-stable": true,
@@ -37,7 +38,6 @@
     "northrook/logger": "dev-main",
     "northrook/favicon": "dev-main",
     "northrook/stylesheets": "dev-main",
-    "northrook/symfony-components-bundle": "dev-main",
     "northrook/symfony-latte-bundle": "dev-main",
     "ext-dom": "*",
     "ext-libxml": "*"

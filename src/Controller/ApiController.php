@@ -23,18 +23,12 @@ final class ApiController
         protected readonly CoreDependencies $get,
     ) {}
 
-    // TODO: Public Stylesheets only. Admin and Component styles are precompiled.
-    // public function stylesheet( string $action, StylesheetGenerationService $generator ) : Response {
-    //
-    // }
-
     public function stylesheet( string $bundle, StylesheetGenerationService $generator ) : Response {
 
         $generator->includeStylesheets(
-            [
-                'dir.core.assets/styles',
-            ],
+            [ 'dir.core.assets/styles', ],
         );
+
         $path  = File::path( 'dir.cache/styles/styles.css' );
         $saved = $generator->save( $path, true );
 

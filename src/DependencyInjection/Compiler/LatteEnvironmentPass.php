@@ -14,9 +14,8 @@ final class LatteEnvironmentPass implements CompilerPassInterface
         $container->register( 'core.latte.preprocessor', LatteComponentPreprocessor::class );
 
         $container->getDefinition( 'latte.environment' )->addMethodCall(
-            'addPreprocessor',
-            [ $container->getDefinition( 'core.latte.preprocessor' ) ],
+            'addPreprocessor', [ $container->getDefinition( 'core.latte.preprocessor' ) ],
         );
-
+        
     }
 }

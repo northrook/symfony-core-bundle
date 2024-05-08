@@ -43,7 +43,7 @@ readonly class CurrentRequestService
         $this->routeName = $this->currentRoute();
         $this->routeRoot = $this->currentRoute( true );
         $this->pathInfo  = $this->currentPathInfo();
-        $this->route     = $this->current->attributes->get( 'route' );
+        $this->route     = $this->current->attributes->get( 'route' ) ?? '';
     }
 
 
