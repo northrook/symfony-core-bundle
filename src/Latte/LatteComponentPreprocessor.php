@@ -48,6 +48,7 @@ final class LatteComponentPreprocessor extends Preprocessor
              ->matchFields()
              ->proccessElements();
 
+
         foreach ( $this->components as $name => $components ) {
 
             if ( !isset( LatteComponentPreprocessor::COMPONENTS[ $name ] ) || empty( $components ) ) {
@@ -87,7 +88,7 @@ final class LatteComponentPreprocessor extends Preprocessor
             flags   : PREG_SET_ORDER,
         );
 
-        if ( !$count ) {
+        if ( $count === 0 ) {
             return $this;
         }
 
@@ -111,7 +112,6 @@ final class LatteComponentPreprocessor extends Preprocessor
                 'type'       => $type,
             ];
         }
-
 
         return $this;
     }
@@ -156,7 +156,7 @@ final class LatteComponentPreprocessor extends Preprocessor
             }
         }
     }
-    
+
     private function getComponentNamespace( string $string ) : string {
         if ( str_contains( $string, ' ' ) ) {
             $string = explode( ' ', $string, 2 )[ 0 ];
