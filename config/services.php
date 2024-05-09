@@ -75,7 +75,8 @@ return static function ( ContainerConfigurator $container ) : void {
     /** # ☕
      * Latte Preprocessor
      */
-    $services->set( 'core.latte.preprocessor', LatteComponentPreprocessor::class );
+    $services->set( 'core.latte.preprocessor', LatteComponentPreprocessor::class )
+             ->args( [ service( 'core.dependencies' ) ] );
 
     /** # ⭐
      * Favicon Generator

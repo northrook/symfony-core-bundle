@@ -16,7 +16,7 @@ return static function ( RoutingConfigurator $routes ) : void {
            ->schemes( [ 'https' ] )
            ->methods( [ 'GET' ] );
 
-    $routes->add( 'core:security:register', '/register/{username}/' )
+    $routes->add( 'core:security:register', '/register' )
            ->controller( [ 'core.controller.security', 'register' ] )
            ->schemes( [ 'https' ] )
            ->methods( [ 'GET', 'POST' ] );
