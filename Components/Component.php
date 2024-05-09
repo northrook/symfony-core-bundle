@@ -4,7 +4,6 @@ namespace Northrook\Symfony\Components;
 
 use Northrook\Core\Get;
 use Northrook\Elements\Element;
-use Northrook\Symfony\Components\Component\Properties;
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
 use Symfony\Component\Stopwatch\Stopwatch;
 
@@ -21,14 +20,12 @@ abstract class Component implements \Stringable
 
     protected const TAG = 'component';
 
+    protected const CLASSES = null;
+
     private ?string $string;
 
-    protected readonly string     $className;
-    protected readonly Element    $element;
-    protected readonly Properties $properties;
-
-    /** @var string[] | Element[] */
-    protected array $component = [];
+    protected readonly string  $className;
+    protected readonly Element $component;
 
 
     public function __construct(
@@ -38,13 +35,32 @@ abstract class Component implements \Stringable
         $this->className = $this->getObjectClassName();
         $this->get->stopwatch?->start( $this->className, 'Component' );
 
-        $this->element    = new Element( $this::TAG );
-        $this->properties = new Properties();
+        $this->component = new Element( tag : $this::TAG, class : $this::CLASSES );
 
+        $this->component->template = $this->template();
+
+        $this->assignProperties();
         $this->construct();
     }
 
-    final protected function data( string $get, bool $preserve = false ) : mixed {
+    private function assignProperties() : void {
+
+        if ( property_exists( $this, 'id' ) ) {
+            $this->id = $this->properties( 'name' );
+        }
+
+        foreach ( $this->data[ 'properties' ] ?? [] as $name => $value ) {
+            if ( property_exists( $this, $name ) ) {
+                $this->$name = $value;
+            }
+        }
+    }
+
+    final protected function properties( string $get ) : null | string | array | bool {
+        return $this->data[ 'properties' ][ $get ] ?? null;
+    }
+
+    final public function data( string $get, bool $preserve = true ) : mixed {
         $data = $this->data[ $get ] ?? null;
 
         if ( false === $preserve && null !== $data ) {
@@ -68,6 +84,9 @@ abstract class Component implements \Stringable
         return implode( $separator ?? '', $component ??= $this->component );
     }
 
+    #[Language( 'Smarty' )]
+    abstract protected function template() : string;
+
     /**
      * Void method run at the end of {@see __construct()} when the {@see Component} is instantiated.
      *
@@ -88,9 +107,8 @@ abstract class Component implements \Stringable
      *
      * The above guidelines can be bent, I'm not the boss of you.
      *
-     * @return ?string
      */
-    abstract public function build() : ?string;
+    abstract public function build() : void;
 
     /**
      * @param bool  $pretty
@@ -106,11 +124,15 @@ abstract class Component implements \Stringable
      */
     final public function __toString() : string {
 
-        $string = $this->build();
+        $this->build();
+
+        $this->componentValidation();
+
+        $this->string = $this->component->print( true );
 
         $this->get->stopwatch?->stop( $this->className );
 
-        if ( !$string ) {
+        if ( !$this->string ) {
             $this->get->logger?->error(
                 'Component {className} failed to build.',
                 [ 'className' => $this->className ],
@@ -118,7 +140,13 @@ abstract class Component implements \Stringable
             return '';
         }
 
-        return $string;
+        return $this->string;
+    }
+
+    private function componentValidation() : void {
+        if ( !$this->component->has( 'id' ) ) {
+            $this->component->set( 'id', $this->properties( 'name' ) . '-field' );
+        }
     }
 
 }

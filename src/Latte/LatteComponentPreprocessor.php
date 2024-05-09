@@ -2,8 +2,9 @@
 
 namespace Northrook\Symfony\Core\Latte;
 
-use Northrook\Elements;
-use Northrook\Symfony\Core\Components\Input;
+use Northrook\Support\Html;
+use Northrook\Symfony\Components\Input;
+use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
 use Northrook\Symfony\Latte\Preprocessor\Preprocessor;
 
 /**
@@ -16,8 +17,8 @@ final class LatteComponentPreprocessor extends Preprocessor
 {
 
     private const ELEMENNTS = [
-        'button' => Components\Button::class,
-        'icon'   => Elements\Icon::class,
+        // 'button' => Components\Button::class,
+        // 'icon'   => Elements\Icon::class,
     ];
 
     private const COMPONENTS = [
@@ -36,9 +37,15 @@ final class LatteComponentPreprocessor extends Preprocessor
      */
     private array $components = [];
 
-    public function __construct() {}
+    public function __construct(
+        private readonly CoreDependencies $get,
+    ) {
+        // dump( __METHOD__);
+    }
 
     public function process() : self {
+
+        // dump( 1);
 
         $this->prepareContent( false )
              ->matchFields()
@@ -65,17 +72,10 @@ final class LatteComponentPreprocessor extends Preprocessor
             }
 
             foreach ( $components as $data ) {
+                $component = new ( $class )( $data, $this->get );
 
-                $component = new ( $class )(
-                    $data[ 'source' ],
-                    $data[ 'properties' ],
-                    $data[ 'type' ],
-                    $data[ 'tag' ],
-                    $this->logger,
-                    $this->stopwatch,
-                );
-
-                $this->updateContent( $component->source, $component->print( true ) );
+                $this->updateContent( $component->data( 'source', true ), $component->print( true ) );
+                // dump( $component );
             }
         }
 
@@ -112,7 +112,7 @@ final class LatteComponentPreprocessor extends Preprocessor
 
             $this->components[ $component ][] = [
                 'source'     => $source,
-                'properties' => $this->getComponentProperties( $element[ 0 ] ),
+                'properties' => Html::extractAttributes( $element[ 0 ] ),
                 'tag'        => $tag,
                 'type'       => $type,
             ];
