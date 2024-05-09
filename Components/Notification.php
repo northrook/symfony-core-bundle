@@ -1,6 +1,6 @@
 <?php
 
-namespace Northrook\Symfony\Core\Components;
+namespace Northrook\Symfony\Components;
 
 use Northrook\Elements\Button as Button;
 use Northrook\Elements\Element;

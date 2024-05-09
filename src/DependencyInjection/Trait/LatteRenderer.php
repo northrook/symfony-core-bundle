@@ -5,7 +5,7 @@ namespace Northrook\Symfony\Core\DependencyInjection\Trait;
 
 use Latte;
 use Northrook\Logger\Log\Timestamp;
-use Northrook\Symfony\Core\Components\Notification;
+use Northrook\Symfony\Components\Notification;
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
 use Northrook\Symfony\Core\Security\ErrorEventException;
 use Northrook\Types\Path;

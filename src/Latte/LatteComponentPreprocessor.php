@@ -2,7 +2,9 @@
 
 namespace Northrook\Symfony\Core\Latte;
 
+use Northrook\Elements\Asset;
 use Northrook\Support\Html;
+use Northrook\Symfony\Components;
 use Northrook\Symfony\Components\Input;
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
 use Northrook\Symfony\Latte\Preprocessor\Preprocessor;
@@ -17,8 +19,8 @@ final class LatteComponentPreprocessor extends Preprocessor
 {
 
     private const ELEMENNTS = [
-        // 'button' => Components\Button::class,
-        // 'icon'   => Elements\Icon::class,
+        'button' => Components\Button::class,
+        'icon'   => Asset\Icon::class,
     ];
 
     private const COMPONENTS = [
