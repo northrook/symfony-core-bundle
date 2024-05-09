@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\Latte;
 
+use Northrook\Core\Interface\Printable;
 use Northrook\Elements\Asset;
 use Northrook\Support\Html;
 use Northrook\Symfony\Components;
@@ -39,15 +40,9 @@ final class LatteComponentPreprocessor extends Preprocessor
      */
     private array $components = [];
 
-    public function __construct(
-        private readonly CoreDependencies $get,
-    ) {
-        // dump( __METHOD__);
-    }
+    public function __construct( private readonly CoreDependencies $get ) {}
 
     public function process() : self {
-
-        // dump( 1);
 
         $this->prepareContent( false )
              ->matchFields()
@@ -75,9 +70,7 @@ final class LatteComponentPreprocessor extends Preprocessor
 
             foreach ( $components as $data ) {
                 $component = new ( $class )( $data, $this->get );
-
                 $this->updateContent( $component->data( 'source', true ), $component->print( true ) );
-                // dump( $component );
             }
         }
 
@@ -111,7 +104,6 @@ final class LatteComponentPreprocessor extends Preprocessor
                 $source = $closingTag[ 0 ];
             }
 
-
             $this->components[ $component ][] = [
                 'source'     => $source,
                 'properties' => Html::extractAttributes( $element[ 0 ] ),
@@ -132,7 +124,7 @@ final class LatteComponentPreprocessor extends Preprocessor
             /** @lang PhpRegExp */
                 pattern : "/<(?<component>$tag).*?>/ms",
                 subject : $this->content,
-                matches : $elements,
+                matches : $components,
                 flags   : PREG_SET_ORDER,
             );
 
@@ -140,20 +132,31 @@ final class LatteComponentPreprocessor extends Preprocessor
                 return;
             }
 
-            foreach ( $elements as $element ) {
-                $source                     = $element[ 0 ];
-                $parser                     = new( $parser )( ... $this->getComponentProperties( $source ) );
-                $parser->tag->isSelfClosing = str_ends_with( $source, '/>' );
+            foreach ( $components as $component ) {
+                $source  = $component[ 0 ];
+                $element = new( $parser )( ... Html::extractAttributes( $source ) );
 
-                $this->updateContent( $source, $parser->print() );
+                if ( !$element instanceof Printable ) {
+                    $this->logger->error(
+                        message : "Element does not implement {class}. This is unexpected behaviour, please check the template file. Skipping.",
+                        context : [
+                                      'source'  => $source,
+                                      'element' => $element,
+                                      'class'   => Printable::class,
+                                  ],
+                    );
+                    continue;
+                }
+
+                if ( isset( $element->tag ) ) {
+                    $element->tag->isSelfClosing = str_ends_with( $source, '/>' );
+                }
+
+                $this->updateContent( $source, $element->print() );
             }
         }
     }
-
-    private function getComponentProperties( string $source ) : Component\Properties {
-        return new Component\Properties( Component::extractAttributes( $source ) );
-    }
-
+    
     private function getComponentNamespace( string $string ) : string {
         if ( str_contains( $string, ' ' ) ) {
             $string = explode( ' ', $string, 2 )[ 0 ];
@@ -161,6 +164,4 @@ final class LatteComponentPreprocessor extends Preprocessor
 
         return trim( $string );
     }
-
-
 }

@@ -2,8 +2,8 @@
 
 namespace Northrook\Symfony\Core\Components;
 
+use Northrook\Elements\Asset\Icon;
 use Northrook\Elements\Element;
-use Northrook\Elements\Icon;
 
 /**
  * # Button
@@ -44,7 +44,7 @@ class Button extends Element
 
         if ( array_key_exists( 'icon', $set ) ) {
             $icon                    = $set[ 'icon' ];
-            $this->content[ 'icon' ] = $icon instanceof Icon ? $icon : Icon::svg( $icon );
+            $this->content[ 'icon' ] = new Icon( $icon );
             $this->class->add( 'icon' );
             unset( $set[ 'icon' ] );
         }

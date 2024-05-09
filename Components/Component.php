@@ -3,7 +3,9 @@
 namespace Northrook\Symfony\Components;
 
 use Northrook\Core\Get;
+use Northrook\Core\Interface\Printable;
 use Northrook\Elements\Element;
+use Northrook\Elements\Render\Template;
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
 use Symfony\Component\Stopwatch\Stopwatch;
 
@@ -13,7 +15,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
  *
  * @author  Martin Nielsen <mn@northrook.com>
  */
-abstract class Component implements \Stringable
+abstract class Component implements Printable
 {
 
     use Get\ObjectClassName;
@@ -71,20 +73,8 @@ abstract class Component implements \Stringable
     }
 
     /**
-     * Assembles the {@see Component} into a string.
-     *
-     * * Will use {@see Component::$component} unless provided an array.
-     *
-     * @param null|array   $component
-     * @param null|string  $separator
-     *
-     * @return string
+     * @return string The string representation of the {@see Template} used to build the {@see Component}.
      */
-    final protected function assemble( ?array $component = null, ?string $separator = PHP_EOL ) : string {
-        return implode( $separator ?? '', $component ??= $this->component );
-    }
-
-    #[Language( 'Smarty' )]
     abstract protected function template() : string;
 
     /**
@@ -116,7 +106,8 @@ abstract class Component implements \Stringable
      * @return null|string
      */
     final public function print( bool $pretty = true ) : ?string {
-        return $pretty ? Element\Html::pretty( $this->__toString() ) : null;
+        $string = $this->__toString();
+        return $pretty ? Element\Html::pretty( $string ) : $string;
     }
 
     /**
