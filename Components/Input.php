@@ -2,6 +2,9 @@
 
 namespace Northrook\Symfony\Components;
 
+/**
+ * # `<field:text>`
+ */
 class Input extends Component
 {
     protected const TAG     = 'field';

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            targetNamespace="http://symfony.com/schema/dic/field"
-            elementFormDefault="qualified">
+            xmlns="http://fwrk.dev/schema/dic/latte"
+            targetNamespace="http://fwrk.dev/schema/dic/latte"
+            elementFormDefault="qualified"
+>
 
 
     <!-- Input Fields - Text, Email, Password -->

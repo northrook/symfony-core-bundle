@@ -1,5 +1,6 @@
-<form xmlns:field="core"
-      novalidate {* We handle validation client-side, as well as server-side *}
+<form
+        novalidate {* We handle validation client-side, as well as server-side *}
+        xmlns:field="latte"
 >
 
     <field:email
@@ -22,6 +23,8 @@
             name="_remember_me"
             checked
     />
+    
+    {render('forms/login-form-error')}
 
     <footer class="actions">
 

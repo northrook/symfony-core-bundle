@@ -2,13 +2,7 @@
 
 namespace Northrook\Symfony\Core\Latte;
 
-use Northrook\Core\Interface\Printable;
-use Northrook\Elements\Asset;
-use Northrook\Support\Html;
-use Northrook\Symfony\Components;
-use Northrook\Symfony\Components\Input;
-use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
-use Northrook\Symfony\Latte\Preprocessor\Preprocessor;
+use Northrook\Core\Interface\Printable;use Northrook\Elements\Asset;use Northrook\Support\Html;use Northrook\Symfony\Components;use Northrook\Symfony\Components\Input;use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;use Northrook\Symfony\Latte\Preprocessor\Preprocessor;
 
 /**
  * # Field Component Preprocessor
@@ -26,6 +20,7 @@ final class LatteComponentPreprocessor extends Preprocessor
 
     private const COMPONENTS = [
         'field:password' => Input\Password::class,
+        'field:email' => Input\Email::class,
 
         // 'field:text'     => Input::class,
         // 'field:email'    => Input\Email::class,
@@ -62,8 +57,8 @@ final class LatteComponentPreprocessor extends Preprocessor
                 $this->logger->error(
                     message : "{object} is not a subclass of {component}.",
                     context : [
-                                  '$object'   => $class,
-                                  'component' => $class::class,
+                                  '$object'   => $name,
+                                  'component' => $class,
                               ],
                 );
                 continue;

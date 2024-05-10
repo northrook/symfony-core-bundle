@@ -105,7 +105,7 @@ abstract class Component implements Printable
      *
      * @return null|string
      */
-    final public function print( bool $pretty = true ) : ?string {
+    final public function print( bool $pretty = true ) : string {
         $string = $this->__toString();
         return $pretty ? Element\Html::pretty( $string ) : $string;
     }
