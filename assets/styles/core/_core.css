@@ -8,8 +8,8 @@ html {
     --outline      : var(--baseline-600);
     --disabled     : var(--baseline-400);
     --inactive     : var(--baseline-600);
-    --intent       : var(--primary-intent);
-    --active       : var(--primary-active);
+    --intent       : var(--primary);
+    --active       : var(--primary-tint);
     --shadow-color : hsla(var(--baseline-100), 0.25);
 
     /*Light / Dark variants*/
@@ -39,6 +39,7 @@ html {
     --large        : 1.5rem;
     --section-gap  : 2rem;
 }
+
 body {
     --button-size : 2rem;
     --input-size  : 2rem;
