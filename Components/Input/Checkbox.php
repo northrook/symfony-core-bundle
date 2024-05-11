@@ -8,11 +8,11 @@ class Checkbox extends Input {
 
     protected const CLASSES = [ 'checkbox', 'field' ];
 
-    protected string  $id    = 'name';
+    protected string  $id;
     protected string  $name;
     protected ?string $value = null;
     protected string  $label;
-    protected bool    $required;
+    protected bool    $required = false;
 
     public function build() : void {
 
@@ -23,6 +23,7 @@ class Checkbox extends Input {
             'label'     => '<span>' . $this->label . '</span>',
             ],
         );
+
         $input  = Element::input(
             type         : 'checkbox',
             id           : $this->id,

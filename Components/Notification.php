@@ -2,26 +2,9 @@
 
 namespace Northrook\Symfony\Components;
 
-use Northrook\Elements\Button as Button;
-use Northrook\Elements\Element;
-use Northrook\Elements\Icon;
-use Northrook\Logger\Log\Timestamp;
-use Northrook\Support\Format;
+use Northrook\Elements\Asset\SVG;use Northrook\Elements\Element;use Northrook\Logger\Log\Timestamp;use Northrook\Support\Format;
 
-/**
- * ```
- * <toast {...attributes}>
- *     <button:close/>
- *     <output role="status">
- *         <i>{icon}</i>
- *         <span class="title">{title}</span>
- *         <div class="message">{message|nl2auto}</div>
- *     </output>
- * </toast>
- * ```
- * ---
- *
- */
+
 class Notification extends Element
 {
     public const  TAG     = 'toast';
@@ -99,6 +82,6 @@ class Notification extends Element
 
         $icon = $get[ strtolower( $type ) ] ?? false;
 
-        return $icon ? Icon::svg( $icon, 'icon' ) : null;
+        return $icon ? SVG::icon( $icon, "icon $type" ) : null;
     }
 }

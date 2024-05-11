@@ -2,8 +2,7 @@
 
 namespace Northrook\Symfony\Components;
 
-use Northrook\Elements\Asset as Asset;
-use Northrook\Elements\Element;
+use Northrook\Elements\Asset as Asset;use Northrook\Elements\Element;
 
 /**
  * # Button
@@ -50,5 +49,21 @@ class Button extends Element
         }
 
         parent::__construct( ...$set );
+    }
+
+    public static function close(
+        string $label = 'Close',
+        bool   $tooltip = false,
+    ) : self {
+        $button = new static( class : 'icon close' );
+
+        if ( $tooltip ) {
+            $button->tooltip = $label;
+        }
+        else {
+            $button->set( 'aria-label', $label );
+        }
+
+        return $button;
     }
 }

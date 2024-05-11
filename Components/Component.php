@@ -2,12 +2,7 @@
 
 namespace Northrook\Symfony\Components;
 
-use Northrook\Core\Get;
-use Northrook\Core\Interface\Printable;
-use Northrook\Elements\Element;
-use Northrook\Elements\Render\Template;
-use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
-use Symfony\Component\Stopwatch\Stopwatch;
+use Northrook\Core\Get;use Northrook\Core\Interface\Printable;use Northrook\Elements\Element;use Northrook\Elements\Render\Template;use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
  * @property-read  ?Stopwatch $stopwatch
@@ -26,6 +21,7 @@ abstract class Component implements Printable
 
     private ?string $string;
 
+    protected string $id;
     protected readonly string  $className;
     protected readonly Element $component;
 
@@ -58,8 +54,28 @@ abstract class Component implements Printable
         }
     }
 
-    final protected function properties( string $get ) : null | string | array | bool {
-        return $this->data[ 'properties' ][ $get ] ?? null;
+    final protected function properties( string | array $get ) : null | string | array  {
+
+        if ( is_string( $get ) ) {
+            return $this->data[ 'properties' ][ $get ] ?? null;
+        }
+
+        $properties = [];
+
+        foreach ( $get as $key => $value ) {
+
+            $name = is_string( $key ) ? $key : $value;
+
+            if ( is_string( $key )) {
+                $properties[ $name ] = $this->data[ 'properties' ][ $name ] ?? $value ?? null;
+            }
+            else {
+                $properties[ $value ] = $this->data[ 'properties' ][ $value ] ?? null;
+            }
+
+        }
+
+        return $properties;
     }
 
     final public function data( string $get, bool $preserve = true ) : mixed {
