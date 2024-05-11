@@ -21,6 +21,8 @@ final class LatteComponentPreprocessor extends Preprocessor
     private const COMPONENTS = [
         'field:password' => Input\Password::class,
         'field:email' => Input\Email::class,
+        'field:checkbox' => Input\Checkbox::class,
+        'field:toggle'   => Input\Toggle::class,
 
         // 'field:text'     => Input::class,
         // 'field:email'    => Input\Email::class,

@@ -2,7 +2,7 @@
 
 namespace Northrook\Symfony\Components\Input;
 
-use Northrook\Elements\Asset\Icon;use Northrook\Elements\Element;use Northrook\Symfony\Components\Input;
+use Northrook\Elements\Asset\Icon;use Northrook\Elements\Asset\SVG;use Northrook\Elements\Element;use Northrook\Symfony\Components\Input;
 
 class Password extends Input
 {
@@ -45,7 +45,7 @@ class Password extends Input
     private function revealPassword( int | string $duration ) : string {
 
         $tooltip = '<tooltip>Reveal Password' . Element::keybind( 'alt+R' ) . '</tooltip>';
-        $icon    = new Icon( 'reveal-password:ui', 'indicator' );
+        $icon    = new SVG( 'reveal-password:ui', 'indicator' );
         $timeout = Icon::circle( 'timeout' );
 
         $duration = is_int( $duration ) ? " timeout=\"$duration\"" : '';
