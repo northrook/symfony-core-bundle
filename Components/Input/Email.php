@@ -8,7 +8,7 @@ class Email extends Input {
 
     protected const CLASSES = [ 'email', 'field' ];
 
-    protected string  $id    = 'name';
+    protected string  $id ;
     protected string  $name;
     protected ?string $value = null;
     protected string  $label;
