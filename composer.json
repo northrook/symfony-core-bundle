@@ -11,8 +11,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Northrook\\Symfony\\Core\\": "src/",
-      "Northrook\\Symfony\\Components\\": "Components/"
+      "Northrook\\Symfony\\Core\\": "src/"
     }
   },
   "prefer-stable": true,
