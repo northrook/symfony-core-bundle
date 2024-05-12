@@ -3,14 +3,8 @@
 namespace Northrook\Symfony\Core\DependencyInjection\Trait;
 
 
-use Latte;
-use Northrook\Logger\Log\Timestamp;
-use Northrook\Symfony\Components\Notification;
-use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
-use Northrook\Symfony\Core\Security\ErrorEventException;
-use Northrook\Types\Path;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-
+use Latte;use Northrook\Logger\Log\Timestamp;use Northrook\Symfony\Components\Component\Notification;use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;use Northrook\Symfony\Core\Security\ErrorEventException;use Northrook\Types\Path;use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+ 
 /**
  * @property CoreDependencies $get
  */

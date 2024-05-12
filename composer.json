@@ -38,6 +38,7 @@
     "northrook/favicon": "dev-main",
     "northrook/stylesheets": "dev-main",
     "northrook/symfony-latte-bundle": "dev-main",
+    "northrook/symfony-components-bundle": "dev-main",
     "northrook/symfony-assets-bundle": "dev-main",
     "ext-dom": "*",
     "ext-libxml": "*"
