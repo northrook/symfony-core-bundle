@@ -53,7 +53,9 @@
     "symfony/profiler-pack": "dev-main"
   },
   "replace": {
+    "symfony/polyfill-php81": "*",
     "symfony/polyfill-php80": "*",
+    "symfony/polyfill-php73": "*",
     "symfony/polyfill-php72": "*",
     "symfony/polyfill-php71": "*",
     "symfony/polyfill-php70": "*",

@@ -2,7 +2,7 @@
 
 namespace Northrook\Symfony\Components;
 
-use Northrook\Core\Get;use Northrook\Core\Interface\Printable;use Northrook\Elements\Element;use Northrook\Elements\Render\Template;use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;use Symfony\Component\Stopwatch\Stopwatch;
+use Northrook\Core\Get;use Northrook\Core\Interface\Printable;use Northrook\Elements\Element;use Northrook\Elements\Element\Attribute;use Northrook\Elements\Render\Template;use Northrook\Support\Html;use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
  * @property-read  ?Stopwatch $stopwatch
@@ -13,7 +13,7 @@ use Northrook\Core\Get;use Northrook\Core\Interface\Printable;use Northrook\Elem
 abstract class Component implements Printable
 {
 
-    use Get\ObjectClassName;
+    use Get\ClassNameMethods;
 
     protected const TAG = 'component';
 
@@ -21,7 +21,7 @@ abstract class Component implements Printable
 
     private ?string $string;
 
-    protected string $id;
+    protected string           $id;
     protected readonly string  $className;
     protected readonly Element $component;
 
@@ -50,11 +50,14 @@ abstract class Component implements Printable
         foreach ( $this->data[ 'properties' ] ?? [] as $name => $value ) {
             if ( property_exists( $this, $name ) ) {
                 $this->$name = $value;
+                unset( $this->data[ 'properties' ][$name] );
             }
         }
+
+        $this->component->addAttributes( $this->data[ 'properties' ] ?? [] );
     }
 
-    final protected function properties( string | array $get ) : null | string | array  {
+    final protected function properties( string | array $get ) : null | string | array {
 
         if ( is_string( $get ) ) {
             return $this->data[ 'properties' ][ $get ] ?? null;
@@ -66,7 +69,7 @@ abstract class Component implements Printable
 
             $name = is_string( $key ) ? $key : $value;
 
-            if ( is_string( $key )) {
+            if ( is_string( $key ) ) {
                 $properties[ $name ] = $this->data[ 'properties' ][ $name ] ?? $value ?? null;
             }
             else {
@@ -123,7 +126,8 @@ abstract class Component implements Printable
      */
     final public function print( bool $pretty = true ) : string {
         $string = $this->__toString();
-        return $pretty ? Element\Html::pretty( $string ) : $string;
+
+        return $pretty ? Html::pretty( $string ) : $string;
     }
 
     /**
@@ -152,7 +156,8 @@ abstract class Component implements Printable
 
     private function componentValidation() : void {
         if ( !$this->component->has( 'id' ) ) {
-            $this->component->set( 'id', $this->properties( 'name' ) . '-field' );
+            $id = $this->getExtendingClasses() + [ $this->id, 'field' ];
+            $this->component->set( 'id', Attribute::id( $id, true ) );
         }
     }
 

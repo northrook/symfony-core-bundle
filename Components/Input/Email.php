@@ -8,11 +8,13 @@ class Email extends Input {
 
     protected const CLASSES = [ 'email', 'field' ];
 
-    protected string  $id ;
+    protected string  $id;
     protected string  $name;
-    protected ?string $value = null;
+    protected ?string $value     = null;
     protected string  $label;
-    protected bool    $required;
+    protected bool    $autofocus = false;
+    protected ?string $autocomplete = null;
+    protected bool    $required  = false;
 
     public function build() : void {
 
