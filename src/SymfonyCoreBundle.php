@@ -4,7 +4,7 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core;
 
-use Northrook\Symfony\Core\DependencyInjection\Facade;use Northrook\Symfony\Core\Support\Console;use Northrook\Types\Path;use Symfony\Component\DependencyInjection\ContainerBuilder;use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
+use Northrook\Symfony\Core\Support\Console;use Northrook\Types\Path;use Symfony\Component\DependencyInjection\ContainerBuilder;use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
 
 /**
@@ -63,7 +63,12 @@ final class SymfonyCoreBundle extends AbstractBundle
         if ( $this->container ) {
             // Settings::config( $this->container->get( 'core.service.settings' ) );
             SymfonyCoreFacade::set( $this->container );
-            Facade::container( $this->container );
+            new \Northrook\Core\App(
+                $this->container->getParameter( 'kernel.environment' ),
+                $this->container->getParameter( 'kernel.debug' ),
+                $this->container->getParameter( 'kernel.environment' ) === 'prod',
+                $this->container->getParameter( 'kernel.project_dir' ),
+            );
         }
     }
 
