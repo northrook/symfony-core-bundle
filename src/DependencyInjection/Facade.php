@@ -4,21 +4,9 @@ namespace Northrook\Symfony\Core\DependencyInjection;
 
 abstract class Facade
 {
-    /**
-     * Get the service identifier.
-     *
-     * @return string
-     */
-    abstract protected static function getServiceIdentifier() : string;
+    private static mixed $instance = null;
 
-    /**
-     * Get the service instance.
-     *
-     * @return mixed
-     */
-    public static function instance():mixed {
-        return Container::get( static::getServiceIdentifier() );
-    }
+    protected static bool $cache = true;
 
     /**
      * Call the service.
@@ -29,8 +17,33 @@ abstract class Facade
      * @return mixed
      */
     public static function __callStatic( string $method, array $arguments ) {
-        // Get the instance and call the method.
-        return Facade::instance()->$method( ...$arguments );
+        return static::service()->$method( ...$arguments );
     }
+
+    /**
+     * Get the service identifier.
+     *
+     * @return string
+     */
+    abstract protected static function serviceId() : string;
+
+    /**
+     * Get the service instance.
+     *
+     * @return mixed
+     */
+    protected static function service() : mixed {
+
+        if ( true === static::$cache  ) {
+            return static::$instance ??= Container::get( static::serviceId() );
+        }
+
+        return Container::get( static::serviceId() );
+    }
+
+    public static function clear() : void {
+        static::$instance = null;
+    }
+
 
 }
