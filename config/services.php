@@ -212,7 +212,6 @@ return static function ( ContainerConfigurator $container ) : void {
              ->args(
                  [
                      service( 'parameter_bag' ),
-                     service( 'cache.adapter.array' ),
                      service( 'logger' )->nullOnInvalid(),
                  ],
              )
