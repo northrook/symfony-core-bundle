@@ -2,22 +2,37 @@
 
 namespace Northrook\Symfony\Core\Services;
 
-use Northrook\Core\Cache;use Northrook\Support\Str;use Northrook\Types\Path;use Psr\Log\LoggerInterface;use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Northrook\Core\Cache;use Northrook\Support\Str;use Northrook\Types\Path;use Psr\Log\LoggerInterface;use Symfony\Component\Cache\Adapter\PhpArrayAdapter;use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 // TODO: Support creating missing directories
 
 
-final class PathService
+final readonly class PathService
 {
+    private PhpArrayAdapter $cached;
+
+    private array $parameters;
 
 
     public function __construct(
-        private readonly ParameterBagInterface $parameter,
-        private readonly Cache                 $cache,
-        private readonly ?LoggerInterface      $logger = null,
-    ) {}
+        private  ParameterBagInterface $parameter,
+        private  Cache                 $cache,
+        private  ?LoggerInterface      $logger = null,
+    ) {
+        $this->cached = \Northrook\Symfony\Core\Cache::staticArray();
+
+        if ( \Northrook\Symfony\Core\Cache::needsWarmup()) {
+            $this->cached->warmUp( [
+                'path.parameters' => $this->getParameters(),
+            ]);
+        }
+
+    }
 
     public function test( string $path = '' ) : string {
+        dump(
+            $this->cached->getItem( 'path.parameters')
+        );
         return $path;
     }
 
