@@ -9,7 +9,7 @@ use Northrook\Symfony\Core\DependencyInjection\Facade;use Northrook\Symfony\Core
  */
 final class Path extends Facade {
 
-    protected const NAMESPACE = PathService::class;
+    protected const SERVICE = PathService::class;
 
     /**
 * @param string | class-string $path

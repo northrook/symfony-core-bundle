@@ -7,7 +7,7 @@ use Northrook\Core\Cache;use Northrook\Support\Str;use Northrook\Types\Path;use 
 // TODO: Support creating missing directories
 
 
-final  class PathService
+final class PathService
 {
 
 
