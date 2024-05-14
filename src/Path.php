@@ -2,23 +2,14 @@
 
 namespace Northrook\Symfony\Core;
 
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;use Symfony\Contracts\Cache\CacheInterface;
+use Northrook\Symfony\Core\DependencyInjection\Facade;use Northrook\Symfony\Core\Services\PathService;
 
-final readonly class Path {
+/**
+ * @method static string test( string $path = ''  )
+ */
+final class Path extends Facade {
 
-    private ParameterBagInterface $parameterBag;
-    private CacheInterface $cache;
-
-    public function dependencyInjection(
-        ParameterBagInterface $parameterBag,
-        CacheInterface $cache,
-    )  : void{
-        $this->parameterBag = $parameterBag;
-        $this->cache = $cache;
-
-        dump( $this);
-    }
-
+    protected const NAMESPACE = PathService::class;
 
     /**
 * @param string | class-string $path
