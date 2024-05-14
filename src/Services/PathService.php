@@ -4,13 +4,16 @@ namespace Northrook\Symfony\Core\Services;
 
 use Northrook\Core\Cache;use Northrook\Support\Str;use Northrook\Types\Path;use Psr\Log\LoggerInterface;use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
+// TODO: Support creating missing directories
 
-final  class PathService {
 
-    private readonly Cache $cache;
+final  class PathService
+{
+
 
     public function __construct(
         private readonly ParameterBagInterface $parameter,
+        private readonly Cache                 $cache,
         private readonly ?LoggerInterface      $logger = null,
     ) {}
 
@@ -24,23 +27,23 @@ final  class PathService {
 
     public function get( string $path = '' ) : ?string {
 
-        $key =  $this->key($path);
+        $key = $this->key( $path );
 
-        if ( $this->cache->has($this->key($key) ) ) {
-            return $this->cache->get( $this->key($key) );
+        if ( $this->cache->has( $key  ) ) {
+            return $this->cache->get( $key  );
         }
 
-        return $this->cache->value( $this->key($key), $this->resolvePath( $path ) );
+        return $this->cache->value( $key , $this->resolvePath( $path ) );
     }
 
-    private function key( string $path)  : string {
-        return "path.$path";
+    private function key( string $path ) : string {
+        return "path:$path";
     }
 
     private function resolvePath( string $path ) : ?string {
 
 
-        $key = $this->key($path);
+        $key = $this->key( $path );
 
         $separator = Str::contains( $path, [ '/', '\\' ], true, true );
 
@@ -72,18 +75,18 @@ final  class PathService {
         $this->logger->Error(
             'Unable to resolve path {path}, the file or directory does not exist. The value was return raw, and not cached',
             [
-                'cacheKey'    => $key,
-                'path'        => $path,
-                'cache'       => Cache::getCacheStore(),
+                'cacheKey' => $key,
+                'path'     => $path,
+                'cache'    => Cache::getCacheStore(),
             ],
         );
 
-        return $path;
+        return null;
     }
 
     private function getParameters() : array {
 
-        if ( $this->cache->has( 'path.parameters')) {
+        if ( $this->cache->has( 'path.parameters' ) ) {
             return $this->cache->get( 'path.parameters' );
         }
 
@@ -105,6 +108,6 @@ final  class PathService {
             $parameters[ $key ] = Path::normalize( $value );
         }
 
-        return $this->cache->value( 'path.parameters', $parameters );
+        return $this->cache->value( 'path:parameters', $parameters );
     }
 }
