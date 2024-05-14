@@ -2,11 +2,9 @@
 
 namespace Northrook\Symfony\Core\Services;
 
-use Northrook\Support\Str;
-use Northrook\Types\Path;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use JetBrains\PhpStorm\Deprecated;use Northrook\Support\Str;use Northrook\Types\Path;use Psr\Log\LoggerInterface;use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
+#[Deprecated]
 class PathfinderService
 {
 

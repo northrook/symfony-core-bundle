@@ -2,8 +2,9 @@
 
 namespace Northrook\Symfony\Core;
 
-use Northrook\Support\Functions\FilesystemFunctions;use Northrook\Symfony\Core\Services\PathfinderService;use Northrook\Types as Type;
+use JetBrains\PhpStorm\Deprecated;use Northrook\Support\Functions\FilesystemFunctions;use Northrook\Symfony\Core\Services\PathfinderService;use Northrook\Types as Type;
 
+#[Deprecated]
 final class File extends SymfonyCoreFacade
 {
 

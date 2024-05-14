@@ -2,7 +2,7 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
-use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;use Northrook\Symfony\Core\DependencyInjection\Trait\CorePropertiesPromoter;use Northrook\Symfony\Core\DependencyInjection\Trait\LatteRenderer;use Northrook\Symfony\Core\DependencyInjection\Trait\NotificationServices;use Northrook\Symfony\Core\DependencyInjection\Trait\ResponseMethods;use Northrook\Symfony\Core\DependencyInjection\Trait\SecurityServices;use Northrook\Symfony\Core\Path;use Symfony\Component\HttpFoundation\Response;
+use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;use Northrook\Symfony\Core\DependencyInjection\Trait\CorePropertiesPromoter;use Northrook\Symfony\Core\DependencyInjection\Trait\LatteRenderer;use Northrook\Symfony\Core\DependencyInjection\Trait\NotificationServices;use Northrook\Symfony\Core\DependencyInjection\Trait\ResponseMethods;use Northrook\Symfony\Core\DependencyInjection\Trait\SecurityServices;use Symfony\Component\HttpFoundation\Response;
 
 final class PublicController
 {
@@ -29,7 +29,6 @@ final class PublicController
     public function index(
         ?string $route,
     ) : Response {
-        dump(Path::get( 'dir.cache/styles/styles.css' ));
         return $this->response(
             template   : 'public.latte',
             parameters : [ 'route' => $route ],
