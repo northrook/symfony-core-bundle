@@ -63,6 +63,7 @@ final class SymfonyCoreBundle extends AbstractBundle
             $this->container->getParameter( 'kernel.environment' ),
             $this->container->getParameter( 'kernel.debug' ),
         );
+        SymfonyCoreFacade::set( $this->container );
         Container::set( $this->container );
     }
 
