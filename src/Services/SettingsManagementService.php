@@ -2,7 +2,7 @@
 
 namespace Northrook\Symfony\Core\Services;
 
-use Northrook\Symfony\Core\App;
+use Northrook\Symfony\Core\Env;
 
 /**
  * @property string $MAILER_DSN
@@ -85,7 +85,7 @@ final class SettingsManagementService
             );
 
             $app[ 'LOCALE' ]      ??= 'en'; //TODO : This is a placeholder
-            $app[ 'DEBUG' ]       ??= App::env( 'debug' );
+            $app[ 'DEBUG' ]       ??= Env::isDebug();
             $app[ 'NAME' ]        ??= $_ENV[ 'APP_NAME' ] ?? 'symfony-core'; // TODO : This is a placeholder
             $app[ 'HOME_URL' ]    ??= $_ENV[ 'HOME_URL' ] ?? 'https://example.com';
             $app[ 'MAILER_DSN' ]  = $_ENV[ 'MAILER_DSN' ] ?? null;

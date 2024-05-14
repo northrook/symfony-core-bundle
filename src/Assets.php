@@ -33,7 +33,4 @@ namespace Northrook\Symfony\Core;
  * Put all these in northrook\symfony-components-bundle
  *
  */
-final class Assets extends SymfonyCoreFacade
-{
-
-}
+final class Assets {}

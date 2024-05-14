@@ -43,6 +43,7 @@ return static function ( ContainerConfigurator $container ) : void {
                      LoggerInterface::class => service( 'logger' )->nullOnInvalid(),
                      Stopwatch::class => service( 'debug.stopwatch' )->nullOnInvalid(),
 ]])
+
     ->public();
 
     //

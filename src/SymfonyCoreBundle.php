@@ -59,18 +59,11 @@ final class SymfonyCoreBundle extends AbstractBundle
 
     public function boot() : void {
         parent::boot();
-
-        if ( $this->container ) {
-            // Settings::config( $this->container->get( 'core.service.settings' ) );
-            SymfonyCoreFacade::set( $this->container );
-            Container::set( $this->container );
-            new \Northrook\Core\App(
-                $this->container->getParameter( 'kernel.environment' ),
-                $this->container->getParameter( 'kernel.debug' ),
-                $this->container->getParameter( 'kernel.environment' ) === 'prod',
-                $this->container->getParameter( 'kernel.project_dir' ),
-            );
-        }
+        new Env(
+            $this->container->getParameter( 'kernel.environment' ),
+            $this->container->getParameter( 'kernel.debug' ),
+        );
+        Container::set( $this->container );
     }
 
     public function getPath() : string {
