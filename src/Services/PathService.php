@@ -2,44 +2,46 @@
 
 namespace Northrook\Symfony\Core\Services;
 
-use Northrook\Core\Cache;use Northrook\Support\Str;use Northrook\Types\Path;use Psr\Cache\InvalidArgumentException;use Psr\Log\LoggerInterface;use Symfony\Component\Cache\Adapter\TraceableAdapter;use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Northrook\Support\Str;use Northrook\Types\Path;use Psr\Cache\InvalidArgumentException;use Psr\Log\LoggerInterface;use Symfony\Component\Cache\Adapter\TraceableAdapter;use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 // TODO: Support creating missing directories
 
 
 final readonly class PathService
 {
-
-    private array $parameters;
-
     public function __construct(
         private  ParameterBagInterface $parameterBag,
         private  TraceableAdapter      $cache,
         private  ?LoggerInterface      $logger = null,
-    ) {    }
-
-    public function test( string $path = '' ) : self{
-        return $this;
-    }
+    ) {}
 
     public function getParameter( string $name ) : ?string {
         return $this->getParameters()[$name] ?? null;
     }
 
     public function get( string $path  ) : ?string {
+
         try{
-            return $this->cache->get( $this->key( $path ), fn () => $this->resolvePath( $path ) );
+            $item = $this->cache->getItem( $this->key( $path ) );
         }catch(InvalidArgumentException $e){
             $this->logger->Error(
                 'The passed key, {key}, is somehow not a {type}. This really should not happen. Returning {return} instead.',
-                ['key' => print_r($path, true),'type' => $path, 'return' => 'null', 'message' => $e->getMessage()],
+                ['key' => 'pathfinder.parameters','type' => 'string', 'return' => 'null', 'message' => $e->getMessage()],
             );
             return null;
         }
-    }
 
-    private function key( string $path ) : string {
-        return str_replace(['@', '{', '(', ')', '}', ':', '\\', '/'], ['%', '[', '[', ']', ']', '.', '_'], $path);
+        if ( $item->isHit() ) {
+            return $item->get();
+        }
+
+        $path = $this->resolvePath( $path );
+
+        if ( $path !== null ) {
+            $this->cache->save( $item->set( $path ) );
+        }
+
+        return $path;
     }
 
     private function resolvePath( string $path ) : ?string {
@@ -78,7 +80,7 @@ final readonly class PathService
             [
                 'cacheKey' => $key,
                 'path'     => $path,
-                'cache'    => Cache::getCacheStore(),
+                'cache'    => $this->cache,
             ],
         );
 
@@ -113,11 +115,16 @@ final readonly class PathService
             return [];
         }
     }
+
     private function directoryParameters() : array {
         return array_filter(
             array    : $this->parameterBag->all(),
             callback : static fn ( $value, $key ) => is_string( $value ) && str_contains( $key, 'dir' ),
             mode     : ARRAY_FILTER_USE_BOTH,
         );
+    }
+
+    private function key( string $path ) : string {
+        return str_replace(['@', '{', '(', ')', '}', ':', '\\', '/'], ['%', '[', '[', ']', ']', '.', '_', '_'], $path);
     }
 }

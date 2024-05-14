@@ -5,7 +5,7 @@ namespace Northrook\Symfony\Core;
 use Northrook\Symfony\Core\DependencyInjection\Facade;use Northrook\Symfony\Core\Services\PathService;
 
 /**
- * @method static string test( string $path = ''  )
+ * @method static string get( string $path   )
  */
 final class Path extends Facade {
 

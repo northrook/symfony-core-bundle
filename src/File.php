@@ -2,9 +2,7 @@
 
 namespace Northrook\Symfony\Core;
 
-use Northrook\Support\Functions\FilesystemFunctions;
-use Northrook\Symfony\Core\Services\PathfinderService;
-use Northrook\Types\Path;
+use Northrook\Support\Functions\FilesystemFunctions;use Northrook\Symfony\Core\Services\PathfinderService;use Northrook\Types as Type;
 
 final class File extends SymfonyCoreFacade
 {
@@ -16,8 +14,8 @@ final class File extends SymfonyCoreFacade
      *
      * @return Path
      */
-    public static function path( string $get ) : Path {
-        return File::getPathfinderService()->get( $get );
+    public static function path( string $get ) : Type\Path {
+        return new Type\Path(Path::get( $get ));
     }
 
     public static function pathfinder() : PathfinderService {
