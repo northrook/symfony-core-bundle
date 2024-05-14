@@ -44,7 +44,9 @@ final class SymfonyCoreBundle extends AbstractBundle
     ) : void {
         $this->projectDir ??= $builder->getParameterBag()->get( 'kernel.project_dir' );
 
+        $container->import( '../config/cache.php');
         $container->import( '../config/services.php' );
+        $container->import( '../config/facades.php');
 
         // Autoconfigure Notes
         // Look for .yaml files in config folder, remove them if adding .php version and vice versa

@@ -2,7 +2,7 @@
 
 namespace Northrook\Symfony\Core\Services;
 
-use Northrook\Core\Cache;use Northrook\Support\Str;use Northrook\Types\Path;use Psr\Log\LoggerInterface;use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Northrook\Core\Cache;use Northrook\Support\Str;use Northrook\Types\Path;use Psr\Cache\InvalidArgumentException;use Psr\Log\LoggerInterface;use Symfony\Component\Cache\Adapter\TraceableAdapter;use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 // TODO: Support creating missing directories
 
@@ -12,43 +12,30 @@ final readonly class PathService
 
     private array $parameters;
 
-
     public function __construct(
         private  ParameterBagInterface $parameterBag,
-        private  Cache                 $cache,
+        private  TraceableAdapter      $cache,
         private  ?LoggerInterface      $logger = null,
-    ) {
-        $static = $this->cache::staticArrayCache(
-            $this->parameterBag->get( 'kernel.cache_dir' ) .'/pathParameters.cache',
-         );
-
-        if ( $static->has( 'path.parameters' ) ) {
-            $this->parameters = $static->get( 'path.parameters' );
-        } else {
-            $static->adapter->warmUp(
-                ['path.parameters' => $this->getParameters()]
-            );
-        }
-
-    }
+    ) {    }
 
     public function test( string $path = '' ) : string {
         return $path;
     }
 
     public function getParameter( string $name ) : ?string {
-        return $this->parameters[ $name ] ?? null;
+        return $this->getParameters()[$name] ?? null;
     }
 
-    public function get( string $path = '' ) : ?string {
-
-        $key = $this->key( $path );
-
-        if ( $this->cache->has( $key  ) ) {
-            return $this->cache->get( $key  );
+    public function get( string $path  ) : ?string {
+        try{
+            return $this->cache->get( $path, $this->resolvePath( $path ) );
+        }catch(InvalidArgumentException $e){
+            $this->logger->Error(
+                'The passed key, {key}, is somehow not a {type}. This really should not happen. Returning {return} instead.',
+                ['key' => print_r($path, true),'type' => $path, 'return' => 'null', 'message' => $e->getMessage()],
+            );
+            return null;
         }
-
-        return $this->cache->value( $key , $this->resolvePath( $path ) );
     }
 
     private function key( string $path ) : string {
@@ -56,7 +43,6 @@ final readonly class PathService
     }
 
     private function resolvePath( string $path ) : ?string {
-
 
         $key = $this->key( $path );
 
@@ -101,8 +87,8 @@ final readonly class PathService
 
     private function getParameters() : array {
 
-        if ( $this->cache->has( 'path.parameters' ) ) {
-            return $this->cache->get( 'path.parameters' );
+        if ( isset( $this->parameters ) ) {
+            return $this->parameters;
         }
 
         $parameters = array_filter(
@@ -123,6 +109,6 @@ final readonly class PathService
             $parameters[ $key ] = Path::normalize( $value );
         }
 
-        return $this->cache->value( 'path:parameters', $parameters );
+        return $this->parameters = $parameters;
     }
 }
