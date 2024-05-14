@@ -18,8 +18,8 @@ final readonly class PathService
         private  ?LoggerInterface      $logger = null,
     ) {    }
 
-    public function test( string $path = '' ) : string {
-        return $path;
+    public function test( string $path = '' ) : self{
+        return $this;
     }
 
     public function getParameter( string $name ) : ?string {
@@ -28,7 +28,7 @@ final readonly class PathService
 
     public function get( string $path  ) : ?string {
         try{
-            return $this->cache->get( $path, $this->resolvePath( $path ) );
+            return $this->cache->get( $this->key( $path ), fn () => $this->resolvePath( $path ) );
         }catch(InvalidArgumentException $e){
             $this->logger->Error(
                 'The passed key, {key}, is somehow not a {type}. This really should not happen. Returning {return} instead.',
@@ -39,7 +39,7 @@ final readonly class PathService
     }
 
     private function key( string $path ) : string {
-        return "path:$path";
+        return str_replace(['@', '{', '(', ')', '}', ':', '\\', '/'], ['%', '[', '[', ']', ']', '.', '_'], $path);
     }
 
     private function resolvePath( string $path ) : ?string {
@@ -86,29 +86,38 @@ final readonly class PathService
     }
 
     private function getParameters() : array {
+        try{
+            return $this->cache->get( 'pathfinder.parameters', function () {
 
-        if ( isset( $this->parameters ) ) {
-            return $this->parameters;
+                $parameters = $this->directoryParameters();
+
+                foreach ( $parameters  as $key => $value ) {
+
+                    // Simple sorting:
+                    // Unset bundle-defined directories at their current position
+                    // They will be appended to the array after all Symfony-defined directories
+                    if ( str_starts_with( $key, 'dir' ) ) {
+                        unset( $parameters[ $key ] );
+                    }
+
+                    $parameters[ $key ] = Path::normalize( $value );
+                }
+
+                return $parameters;
+            } );
+        }catch(InvalidArgumentException $e){
+            $this->logger->Error(
+                'The passed key, {key}, is somehow not a {type}. This really should not happen. Returning {return} instead.',
+                ['key' => 'pathfinder.parameters','type' => 'string', 'return' => '[]', 'message' => $e->getMessage()],
+            );
+            return [];
         }
-
-        $parameters = array_filter(
+    }
+    private function directoryParameters() : array {
+        return array_filter(
             array    : $this->parameterBag->all(),
             callback : static fn ( $value, $key ) => is_string( $value ) && str_contains( $key, 'dir' ),
             mode     : ARRAY_FILTER_USE_BOTH,
         );
-
-        foreach ( $parameters as $key => $value ) {
-
-            // Simple sorting:
-            // Unset bundle-defined directories at their current position
-            // They will be appended to the array after all Symfony-defined directories
-            if ( str_starts_with( $key, 'dir' ) ) {
-                unset( $parameters[ $key ] );
-            }
-
-            $parameters[ $key ] = Path::normalize( $value );
-        }
-
-        return $this->parameters = $parameters;
     }
 }

@@ -9,8 +9,7 @@ return static function ( ContainerConfigurator $container ) : void {
     $services = $container->services();
 
     $services->set( 'cache.core.pathfinder', PhpFilesAdapter::class )
-        ->args(['core'])
+        ->args(['core', 0, '%kernel.project_dir%/var/cache/core/pathfinder'])
         ->tag('cache.pool');
-
 
 };
