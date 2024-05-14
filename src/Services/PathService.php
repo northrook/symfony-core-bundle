@@ -2,42 +2,42 @@
 
 namespace Northrook\Symfony\Core\Services;
 
-use Northrook\Core\Cache;use Northrook\Support\Str;use Northrook\Types\Path;use Psr\Log\LoggerInterface;use Symfony\Component\Cache\Adapter\PhpArrayAdapter;use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Northrook\Core\Cache;use Northrook\Support\Str;use Northrook\Types\Path;use Psr\Log\LoggerInterface;use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 // TODO: Support creating missing directories
 
 
 final readonly class PathService
 {
-    private PhpArrayAdapter $cached;
 
     private array $parameters;
 
 
     public function __construct(
-        private  ParameterBagInterface $parameter,
+        private  ParameterBagInterface $parameterBag,
         private  Cache                 $cache,
         private  ?LoggerInterface      $logger = null,
     ) {
-        $this->cached = \Northrook\Symfony\Core\Cache::staticArray();
+        $static = $this->cache::staticArrayCache(
+            $this->parameterBag->get( 'kernel.cache_dir' ) .'/pathParameters.cache',
+         );
 
-        if ( \Northrook\Symfony\Core\Cache::needsWarmup()) {
-            $this->cached->warmUp( [
-                'path.parameters' => $this->getParameters(),
-            ]);
+        if ( $static->has( 'path.parameters' ) ) {
+            $this->parameters = $static->get( 'path.parameters' );
+        } else {
+            $static->adapter->warmUp(
+                ['path.parameters' => $this->getParameters()]
+            );
         }
 
     }
 
     public function test( string $path = '' ) : string {
-        dump(
-            $this->cached->getItem( 'path.parameters')
-        );
         return $path;
     }
 
     public function getParameter( string $name ) : ?string {
-        return $this->getParameters()[ $name ] ?? null;
+        return $this->parameters[ $name ] ?? null;
     }
 
     public function get( string $path = '' ) : ?string {
@@ -106,7 +106,7 @@ final readonly class PathService
         }
 
         $parameters = array_filter(
-            array    : $this->parameter->all(),
+            array    : $this->parameterBag->all(),
             callback : static fn ( $value, $key ) => is_string( $value ) && str_contains( $key, 'dir' ),
             mode     : ARRAY_FILTER_USE_BOTH,
         );

@@ -52,18 +52,12 @@ final class SymfonyCoreBundle extends AbstractBundle
         $this->autoconfigureRoutes();
     }
 
-    // TODO : Can we set the Static Container here ?
-    public function build( ContainerBuilder $container ) : void {
-        Cache::signalWarmupNeeded();
-    }
-
     public function boot() : void {
         parent::boot();
         new Env(
             $this->container->getParameter( 'kernel.environment' ),
             $this->container->getParameter( 'kernel.debug' ),
         );
-        Cache::setCacheDir( $this->container->getParameter( 'kernel.cache_dir' ) );
         SymfonyCoreFacade::set( $this->container );
         Container::set( $this->container );
     }
