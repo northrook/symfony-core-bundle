@@ -65,6 +65,12 @@ return static function ( ContainerConfigurator $container ) : void {
     $services->set( 'core.service.locator', ServiceLocator::class )
         ->tag( 'container.service_locator' )
         ->args([[
+             // In use
+             PathfinderService::class => service( 'core.service.pathfinder' ),
+             LoggerInterface::class => service( 'logger' )->nullOnInvalid(),
+             Stopwatch::class => service( 'debug.stopwatch' )->nullOnInvalid(),
+
+             // Dev
              RouterInterface::class =>service( 'router' ),
              HttpKernelInterface::class =>service( 'http_kernel' ),
              CurrentRequestService::class => service( 'core.service.request' ),
@@ -72,9 +78,6 @@ return static function ( ContainerConfigurator $container ) : void {
              AuthorizationCheckerInterface::class => service( 'security.authorization_checker' ),
              TokenStorageInterface::class => service( 'security.token_storage' ),
              CsrfTokenManagerInterface::class => service( 'security.csrf.token_manager' ),
-             PathfinderService::class => service( 'core.service.path' ),
-             LoggerInterface::class => service( 'logger' )->nullOnInvalid(),
-             Stopwatch::class => service( 'debug.stopwatch' )->nullOnInvalid(),
         ]])
         ->public();
 
