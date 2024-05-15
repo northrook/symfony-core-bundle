@@ -2,42 +2,51 @@
 
 namespace Northrook\Symfony\Core\Services;
 
-use JetBrains\PhpStorm\Deprecated;use Northrook\Support\Str;use Northrook\Types\Path;use Psr\Log\LoggerInterface;use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Northrook\Support\Str;use Northrook\Types\Path;use Psr\Cache\InvalidArgumentException;use Psr\Log\LoggerInterface;use Symfony\Component\Cache\Adapter\TraceableAdapter;use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-#[Deprecated]
-class PathfinderService
+// TODO: Support creating missing directories
+
+
+final readonly class PathfinderService
 {
-
-    /**
-     * Only valid Paths will be cached
-     *
-     * @var Path[]
-     */
-    private static array $cache = [];
-
-    /**
-     * @var string[]
-     */
-    private static array $parametersCache;
-
     public function __construct(
-        private readonly ParameterBagInterface $parameter,
-        private readonly ?LoggerInterface      $logger = null,
+        private  ParameterBagInterface $parameterBag,
+        private  TraceableAdapter      $cache,
+        private  ?LoggerInterface      $logger = null,
     ) {}
 
-    /**
-     * @param string  $path  {@see ParameterBagInterface::get}
-     *
-     * @return Path
-     */
-    public function get( string $path ) : Path {
+    public function getParameter( string $name ) : ?string {
+        return $this->getParameters()[$name] ?? null;
+    }
 
+    public function get( string $path  ) : ?string {
 
-        if ( isset( PathfinderService::$cache[ $path ] ) ) {
-            return PathfinderService::$cache[ $path ];
+        try{
+            $item = $this->cache->getItem( $this->key( $path ) );
+        }catch(InvalidArgumentException $e){
+            $this->logger->Error(
+                'The passed key, {key}, is somehow not a {type}. This really should not happen. Returning {return} instead.',
+                ['key' => 'pathfinder.parameters','type' => 'string', 'return' => 'null', 'message' => $e->getMessage()],
+            );
+            return null;
         }
 
-        $key = $path;
+        if ( $item->isHit() ) {
+            return $item->get();
+        }
+
+        $path = $this->resolvePath( $path );
+
+        if ( $path !== null ) {
+            $this->cache->save( $item->set( $path ) );
+        }
+
+        return $path;
+    }
+
+    private function resolvePath( string $path ) : ?string {
+
+        $key = $this->key( $path );
 
         $separator = Str::contains( $path, [ '/', '\\' ], true, true );
 
@@ -62,67 +71,60 @@ class PathfinderService
             $path = $this->getParameter( $path ) ?? $path;
         }
 
-        $path = new Path( $path );
-
-        if ( $path->isValid ) {
-            return PathfinderService::$cache[ $key ] = $path;
+        if ( file_exists( $path ) ) {
+            return $path;
         }
 
         $this->logger->Error(
-            'Unable to resolve path {path}, the file or directory does not exist. The returned {type::class} is invalid.',
+            'Unable to resolve path {path}, the file or directory does not exist. The value was return raw, and not cached',
             [
-                'cacheKey'    => $path,
-                'path'        => $path->value,
-                'type'        => $path,
-                'type::class' => $path::class,
-                'cache'       => PathfinderService::$cache,
+                'cacheKey' => $key,
+                'path'     => $path,
+                'cache'    => $this->cache,
             ],
         );
 
-        return $path;
+        return null;
     }
 
-    private function getParameters() : array {
+    public function getParameters() : array {
+        try{
+            return $this->cache->get( 'pathfinder.parameters', function () {
 
-        if ( isset( PathfinderService::$parametersCache ) ) {
-            return PathfinderService::$parametersCache;
+                $parameters = $this->directoryParameters();
+
+                foreach ( $parameters  as $key => $value ) {
+
+                    // Simple sorting:
+                    // Unset bundle-defined directories at their current position
+                    // They will be appended to the array after all Symfony-defined directories
+                    if ( str_starts_with( $key, 'dir' ) ) {
+                        unset( $parameters[ $key ] );
+                    }
+
+                    $parameters[ $key ] = Path::normalize( $value );
+                }
+
+                return $parameters;
+            } );
+        }catch(InvalidArgumentException $e){
+            $this->logger->Error(
+                'The passed key, {key}, is somehow not a {type}. This really should not happen. Returning {return} instead.',
+                ['key' => 'pathfinder.parameters','type' => 'string', 'return' => '[]', 'message' => $e->getMessage()],
+            );
+            return [];
         }
+    }
 
-        $parameters = array_filter(
-            array    : $this->parameter->all(),
+    private function directoryParameters() : array {
+        return array_filter(
+            array    : $this->parameterBag->all(),
             callback : static fn ( $value, $key ) => is_string( $value ) && str_contains( $key, 'dir' ),
             mode     : ARRAY_FILTER_USE_BOTH,
         );
-
-        foreach ( $parameters as $key => $value ) {
-
-            // Simple sorting:
-            // Unset bundle-defined directories at their current position
-            // They will be appended to the array after all Symfony-defined directories
-            if ( str_starts_with( $key, 'dir' ) ) {
-                unset( $parameters[ $key ] );
-            }
-
-            $parameters[ $key ] = Path::normalize( $value );
-        }
-
-        return PathfinderService::$parametersCache = $parameters;
     }
 
-    public function getParameter( string $name ) : ?string {
-        return $this->getParameters()[ $name ] ?? null;
-    }
-
-    public static function getCache( bool $parameterCache = false ) : array {
-
-        if ( $parameterCache ) {
-            return PathfinderService::$parametersCache ?? [];
-        }
-
-        return PathfinderService::$cache;
-    }
-
-    public static function clearCache() : void {
-        PathfinderService::$cache = [];
+    private function key( string $path ) : string {
+        return str_replace(['@', '{', '(', ')', '}', ':', '\\', '/'], ['%', '[', '[', ']', ']', '.', '_', '_'], $path);
     }
 }

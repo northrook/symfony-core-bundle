@@ -1,13 +1,20 @@
 <?php
 
+//------------------------------------------------------------------
+// config / Services
+//------------------------------------------------------------------
+
+declare(strict_types=1);
+
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Northrook\Favicon\FaviconBundle;use Northrook\Symfony\Components\LatteComponentPreprocessor;use Northrook\Symfony\Core\Controller\AdminController;use Northrook\Symfony\Core\Controller\ApiController;use Northrook\Symfony\Core\Controller\PublicController;use Northrook\Symfony\Core\Controller\SecurityController;use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;use Northrook\Symfony\Core\EventListener\ExceptionListener;use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;use Northrook\Symfony\Core\EventSubscriber\ResponseEventSubscriber;use Northrook\Symfony\Core\File;use Northrook\Symfony\Core\Services\CurrentRequestService;use Northrook\Symfony\Core\Services\DocumentService;use Northrook\Symfony\Core\Services\FormService;use Northrook\Symfony\Core\Services\MailerService;use Northrook\Symfony\Core\Services\PathfinderService;use Northrook\Symfony\Core\Services\PathService;use Northrook\Symfony\Core\Services\SettingsManagementService;use Northrook\Symfony\Core\Services\StylesheetGenerationService;use Psr\Log\LoggerInterface;use Symfony\Component\DependencyInjection\ServiceLocator;use Symfony\Component\HttpKernel\HttpKernelInterface;use Symfony\Component\HttpKernel\Profiler\Profiler;use Symfony\Component\Routing\RouterInterface;use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;use Symfony\Component\Serializer\SerializerInterface;use Symfony\Component\Stopwatch\Stopwatch;
+use Northrook\Favicon\FaviconBundle;use Northrook\Symfony\Components\LatteComponentPreprocessor;use Northrook\Symfony\Core\Controller\AdminController;use Northrook\Symfony\Core\Controller\ApiController;use Northrook\Symfony\Core\Controller\PublicController;use Northrook\Symfony\Core\Controller\SecurityController;use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;use Northrook\Symfony\Core\EventListener\ExceptionListener;use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;use Northrook\Symfony\Core\EventSubscriber\ResponseEventSubscriber;use Northrook\Symfony\Core\File;use Northrook\Symfony\Core\Services\CurrentRequestService;use Northrook\Symfony\Core\Services\DocumentService;use Northrook\Symfony\Core\Services\FormService;use Northrook\Symfony\Core\Services\MailerService;use Northrook\Symfony\Core\Services\PathfinderService;use Northrook\Symfony\Core\Services\SettingsManagementService;use Northrook\Symfony\Core\Services\StylesheetGenerationService;use Psr\Log\LoggerInterface;use Symfony\Component\DependencyInjection\ServiceLocator;use Symfony\Component\HttpKernel\HttpKernelInterface;use Symfony\Component\HttpKernel\Profiler\Profiler;use Symfony\Component\Routing\RouterInterface;use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;use Symfony\Component\Serializer\SerializerInterface;use Symfony\Component\Stopwatch\Stopwatch;
 
 return static function ( ContainerConfigurator $container ) : void {
 
     $services   = $container->services();
     $parameters = $container->parameters();
+
 
     //
     // Parameters
@@ -39,7 +46,7 @@ return static function ( ContainerConfigurator $container ) : void {
              AuthorizationCheckerInterface::class => service( 'security.authorization_checker' ),
              TokenStorageInterface::class => service( 'security.token_storage' ),
              CsrfTokenManagerInterface::class => service( 'security.csrf.token_manager' ),
-             PathService::class => service( 'core.service.path' ),
+             PathfinderService::class => service( 'core.service.path' ),
              LoggerInterface::class => service( 'logger' )->nullOnInvalid(),
              Stopwatch::class => service( 'debug.stopwatch' )->nullOnInvalid(),
         ]])
@@ -49,38 +56,6 @@ return static function ( ContainerConfigurator $container ) : void {
     // Core Path Helper
     //--------------------------------------------------------------------
 
-    //
-    // Profiler Alias
-    $container->services()->alias( Profiler::class, 'profiler' );
-
-
-
-    /**
-     * Core `Public` Controller
-     */
-    $services->set( 'core.controller.public', PublicController::class )
-             ->tag( 'controller.service_arguments' )
-             ->args( [ service( 'core.dependencies' ) ] );
-
-    /**
-     * Core `Admin` Controller
-     */
-    $services->set( 'core.controller.admin', AdminController::class )
-             ->tag( 'controller.service_arguments' )
-             ->args( [ service( 'core.dependencies' ) ] );
-
-    /**
-     * Core `Security` Controller
-     */
-    $services->set( 'core.controller.security', SecurityController::class )
-             ->tag( 'controller.service_arguments' )
-             ->args( [ service( 'core.dependencies' ) ] );
-    /**
-     * Core `API` Controller
-     */
-    $services->set( 'core.controller.api', ApiController::class )
-             ->tag( 'controller.service_arguments' )
-             ->args( [ service( 'core.dependencies' ) ] );
 
     /** # ☕
      * Latte Preprocessor
@@ -208,25 +183,11 @@ return static function ( ContainerConfigurator $container ) : void {
     /** # ../
      * Path Service
      */
-    $services->set( 'core.service.path', PathService::class )
-             ->args(
-                 [
-                     service( 'parameter_bag' ),
-                     service( 'cache.core.pathfinder' ),
-                     service( 'logger' )->nullOnInvalid(),
-                 ],
-             )
-             ->autowire()
-             ->public()
-             ->alias( PathfinderService::class, 'core.service.pathfinder' );
-
-    /** # ../
-     * Pathfinder Service
-     */
     $services->set( 'core.service.pathfinder', PathfinderService::class )
              ->args(
                  [
                      service( 'parameter_bag' ),
+                     service( 'cache.core.pathfinder' ),
                      service( 'logger' )->nullOnInvalid(),
                  ],
              )

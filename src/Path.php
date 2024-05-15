@@ -2,14 +2,18 @@
 
 namespace Northrook\Symfony\Core;
 
-use Northrook\Symfony\Core\DependencyInjection\Facade;use Northrook\Symfony\Core\Services\PathService;
+use Northrook\Core\Type\PathType;use Northrook\Symfony\Core\DependencyInjection\Facade;use Northrook\Symfony\Core\Services\PathfinderService;
 
 /**
  * @method static string get( string $path   )
  */
 final class Path extends Facade {
 
-    protected const SERVICE = PathService::class;
+    protected const SERVICE = PathfinderService::class;
+
+    public static function normalize( string $path ) : string {
+        return  PathType::normalize( $path );
+    }
 
     /**
 * @param string | class-string $path

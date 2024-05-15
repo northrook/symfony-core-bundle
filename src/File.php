@@ -7,7 +7,6 @@ use JetBrains\PhpStorm\Deprecated;use Northrook\Support\Functions\FilesystemFunc
 #[Deprecated]
 final class File extends SymfonyCoreFacade
 {
-
     use FilesystemFunctions;
 
     /**
@@ -19,8 +18,5 @@ final class File extends SymfonyCoreFacade
         return new Type\Path(Path::get( $get ));
     }
 
-    public static function pathfinder() : PathfinderService {
-        return File::getPathfinderService();
-    }
 
 }

@@ -5,11 +5,12 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core\Services;
 
 use Northrook\Core\Service\Status;
+use Northrook\Core\Type\PathType;
 use Northrook\Stylesheets\ColorPalette;
 use Northrook\Stylesheets\Stylesheet;
 use Northrook\Support\Arr;
 use Northrook\Symfony\Core\File;
-use Northrook\Types\Path;
+use Northrook\Symfony\Core\Path;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
@@ -43,7 +44,7 @@ final class StylesheetGenerationService
         private readonly ?LoggerInterface      $logger = null,
         private readonly ?Stopwatch            $stopwatch = null,
     ) {
-        $this->rootDirectory = $this->pathfinder->get( 'dir.root' )->value;
+        $this->rootDirectory = \Northrook\Symfony\Core\Path::get( 'dir.root' );
 
         $this->palette = new ColorPalette( StylesheetGenerationService::PALETTE );
     }
@@ -52,16 +53,21 @@ final class StylesheetGenerationService
 
         foreach ( (array) $path as $add ) {
 
-            if ( $add instanceof Path ) {
-                $this->includedStylesheets[] = (string) $add;
-            }
-            else {
-                $add = File::path( $add );
+            /** @var PathType $stylesheet */
+            $stylesheet = ( $add instanceof PathType ) ? $ $add : new Stylesheet( $add );
 
-                if ( $add->exists ) {
-                    $this->includedStylesheets[] = (string) $add;
-                }
+            if ( ! $stylesheet->exists ) {
+                $this->logger?->error(
+                    'Stylesheet {stylesheet} does not exist. File not found. Skipping.',
+                    [
+                        'stylesheet' => $stylesheet->value,
+                        'service'    => $this::class,
+                    ],
+                );
+                continue;
             }
+
+            $this->includedStylesheets[] = (string) $add;
         }
 
         return $this;
@@ -69,7 +75,7 @@ final class StylesheetGenerationService
 
     public function scanTemplateFiles( string ...$in ) : self {
         foreach ( $in as $path ) {
-            $this->templateDirectories[] = File::path( $path )->value;
+            $this->templateDirectories[] = $this->pathfinder->get( $path );
         }
         return $this;
     }
@@ -91,21 +97,21 @@ final class StylesheetGenerationService
      *
      * @return Status
      */
-    public function save( null | Path | string $path = null, ?bool $force = null ) : Status {
+    public function save( null | PathType | string $path = null, ?bool $force = null ) : Status {
 
         $force ??= $this->force;
 
         $this->stopwatch->start( 'save', 'StylesheetGenerationService' );
 
         if ( $path ) {
-            $path = $path instanceof Path ? $path : $this->pathfinder->get( $path );
+            $path = $path instanceof PathType ? $path : $this->pathfinder->get( $path );
         }
         else {
             $path = $this->pathfinder->get( 'dir.cache/styles/styles.css' );
         }
 
         $templates = array_filter(
-            $this->pathfinder::getCache( true ),
+            $this->pathfinder->getParameters(),
             static fn ( $v, $key ) => str_contains( $key, 'templates' ),
             ARRAY_FILTER_USE_BOTH,
         );
@@ -120,13 +126,13 @@ final class StylesheetGenerationService
 
         foreach ( $this->includedStylesheets as $stylesheet ) {
             if ( substr_count( $stylesheet, '.' ) > 1 ) {
-                $path = new Path( strstr( $stylesheet, '.', true ) . '.css' );
-                if ( $path->isValid ) {
+                $path = new PathType( strstr( $stylesheet, '.', true ) . '.css' );
+                if ( $path->exists ) {
                     $this->generator->addStylesheets( (string) $path );
                 }
             }
-            $stylesheet = new Path( $stylesheet );
-            if ( $stylesheet->isValid ) {
+            $stylesheet = new PathType( $stylesheet );
+            if ( $stylesheet->exists ) {
                 $this->generator->addStylesheets( (string) $stylesheet );
             }
         }

@@ -11,19 +11,24 @@ final class Container {
 
     private static ?ServiceLocator $serviceLocator = null;
 
+    /**
+     * Assign a container instance to the static container.
+     *
+     * @param ContainerInterface $container
+     */
     public static function set( ContainerInterface $container ) : void {
         Container::$instance = $container;
         Container::$serviceLocator = $container->get(
             id: 'core.service.locator',
-             invalidBehavior: ContainerInterface::NULL_ON_INVALID_REFERENCE,
-             );
+            invalidBehavior: ContainerInterface::NULL_ON_INVALID_REFERENCE,
+        );
     }
 
     /**
- * @param string | class-string $serviceId
-*
-* @return mixed
- */
+     * @param class-string $serviceId
+     *
+     * @return mixed
+     */
     public static function get( string $serviceId ) : mixed {
 
         if (Container::$instance->has($serviceId) ) {

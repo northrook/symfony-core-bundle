@@ -4,9 +4,14 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core;
 
-use Northrook\Symfony\Core\DependencyInjection\Container;use Northrook\Symfony\Core\Support\Console;use Northrook\Types\Path;use Symfony\Component\DependencyInjection\ContainerBuilder;use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
+use Northrook\Symfony\Core\DependencyInjection\Container;
+use Northrook\Symfony\Core\Support\Console;
+use Northrook\Types\Path;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
-
+ 
 /**
  * @version 1.0 ☑️
  * @author  Martin Nielsen <mn@northrook.com>
@@ -47,6 +52,7 @@ final class SymfonyCoreBundle extends AbstractBundle
         $container->import( '../config/cache.php');
         $container->import( '../config/services.php' );
         $container->import( '../config/facades.php');
+        $container->import( '../config/controllers.php' );
 
         // Autoconfigure Notes
         // Look for .yaml files in config folder, remove them if adding .php version and vice versa

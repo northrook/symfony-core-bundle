@@ -2,17 +2,9 @@
 
 namespace Northrook\Symfony\Core;
 
-use Northrook\Logger\Log;
-use Northrook\Symfony\Core\Services\CurrentRequestService;
-use Northrook\Symfony\Core\Services\PathfinderService;
-use Northrook\Symfony\Latte\Core\Environment;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel as App;
+use JetBrains\PhpStorm\Deprecated;use Northrook\Logger\Log;use Northrook\Symfony\Core\Services\CurrentRequestService;use Northrook\Symfony\Latte\Core\Environment;use Psr\Container\ContainerExceptionInterface;use Psr\Container\ContainerInterface;use Psr\Container\NotFoundExceptionInterface;use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;use Symfony\Component\HttpFoundation\RequestStack;use Symfony\Component\HttpKernel as App;
 
+#[Deprecated]
 abstract class SymfonyCoreFacade
 {
     protected static ContainerInterface $container;
