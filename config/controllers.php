@@ -50,7 +50,6 @@ return static function ( ContainerConfigurator $container ) : void {
              ->tag( 'controller.service_arguments' )
              ->args( [
                  service( 'core.dependencies' ),
-                 service( 'core.service.pathfinder' ),
                   ] );
 
 
