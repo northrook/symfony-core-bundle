@@ -4,7 +4,6 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core;
 
-use Northrook\Symfony\Core\DependencyInjection\Container;
 use Northrook\Symfony\Core\Support\Console;
 use Northrook\Types\Path;
 use Northrook\Support\File;
@@ -67,7 +66,7 @@ final class SymfonyCoreBundle extends AbstractBundle
             $this->container->getParameter( 'kernel.environment' ),
             $this->container->getParameter( 'kernel.debug' ),
         );
-        Container::set( $this->container );
+        DependencyInjection\Container::set( $this->container );
     }
 
     public function getPath() : string {

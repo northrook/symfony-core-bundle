@@ -2,31 +2,39 @@
 
 namespace Northrook\Symfony\Core\Services;
 
-use Northrook\Support\Str;use Northrook\Types\Path;use Psr\Cache\InvalidArgumentException;use Psr\Log\LoggerInterface;use Symfony\Component\Cache\Adapter\TraceableAdapter;use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Northrook\Support\Str;
+use Northrook\Types\Path;
+use Psr\Cache\InvalidArgumentException;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\TraceableAdapter;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 // TODO: Support creating missing directories
-
 
 final readonly class PathfinderService
 {
     public function __construct(
-        private  ParameterBagInterface $parameterBag,
-        private  TraceableAdapter      $cache,
-        private  ?LoggerInterface      $logger = null,
+        private ParameterBagInterface $parameterBag,
+        private TraceableAdapter      $cache,
+        private ?LoggerInterface      $logger = null,
     ) {}
 
     public function getParameter( string $name ) : ?string {
-        return $this->getParameters()[$name] ?? null;
+        return $this->getParameters()[ $name ] ?? null;
     }
 
-    public function get( string $path  ) : ?string {
+    public function get( string $path ) : ?string {
 
-        try{
+        try {
             $item = $this->cache->getItem( $this->key( $path ) );
-        }catch(InvalidArgumentException $e){
+        }
+        catch ( InvalidArgumentException $e ) {
             $this->logger->Error(
                 'The passed key, {key}, is somehow not a {type}. This really should not happen. Returning {return} instead.',
-                ['key' => 'pathfinder.parameters','type' => 'string', 'return' => 'null', 'message' => $e->getMessage()],
+                [
+                    'key'     => 'pathfinder.parameters', 'type' => 'string', 'return' => 'null',
+                    'message' => $e->getMessage(),
+                ],
             );
             return null;
         }
@@ -72,7 +80,7 @@ final readonly class PathfinderService
         }
 
         if ( file_exists( $path ) ) {
-            return $path;
+            return Path::normalize( $path );
         }
 
         $this->logger->Error(
@@ -88,12 +96,13 @@ final readonly class PathfinderService
     }
 
     public function getParameters() : array {
-        try{
-            return $this->cache->get( 'pathfinder.parameters', function () {
+        try {
+            return $this->cache->get(
+                'pathfinder.parameters', function () {
 
                 $parameters = $this->directoryParameters();
 
-                foreach ( $parameters  as $key => $value ) {
+                foreach ( $parameters as $key => $value ) {
 
                     // Simple sorting:
                     // Unset bundle-defined directories at their current position
@@ -106,11 +115,16 @@ final readonly class PathfinderService
                 }
 
                 return $parameters;
-            } );
-        }catch(InvalidArgumentException $e){
+            },
+            );
+        }
+        catch ( InvalidArgumentException $e ) {
             $this->logger->Error(
                 'The passed key, {key}, is somehow not a {type}. This really should not happen. Returning {return} instead.',
-                ['key' => 'pathfinder.parameters','type' => 'string', 'return' => '[]', 'message' => $e->getMessage()],
+                [
+                    'key'     => 'pathfinder.parameters', 'type' => 'string', 'return' => '[]',
+                    'message' => $e->getMessage(),
+                ],
             );
             return [];
         }
@@ -119,12 +133,14 @@ final readonly class PathfinderService
     private function directoryParameters() : array {
         return array_filter(
             array    : $this->parameterBag->all(),
-            callback : static fn ( $value, $key ) => is_string( $value ) && str_contains( $key, 'dir' ),
+            callback : static fn ( $value, $key ) => is_string( $value ) && Str::contains( $key, [ 'dir', 'path' ] ),
             mode     : ARRAY_FILTER_USE_BOTH,
         );
     }
 
     private function key( string $path ) : string {
-        return str_replace(['@', '{', '(', ')', '}', ':', '\\', '/'], ['%', '[', '[', ']', ']', '.', '_', '_'], $path);
+        return str_replace(
+            [ '@', '{', '(', ')', '}', ':', '\\', '/' ], [ '%', '[', '[', ']', ']', '.', '_', '_' ], $path,
+        );
     }
 }

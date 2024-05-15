@@ -12,7 +12,7 @@ use Northrook\Support\Arr;
 use Northrook\Support\File;
 use Northrook\Symfony\Core\Path;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Stopwatch\Stopwatch;
+use Northrook\Symfony\Core\Stopwatch;
 
 /**
  * TODO : Create a Palette cache file. Readable from {@see Settings::site()->palette}
@@ -42,9 +42,8 @@ final class StylesheetGenerationService
         private readonly CurrentRequestService $session,
         private readonly PathfinderService     $pathfinder,
         private readonly ?LoggerInterface      $logger = null,
-        private readonly ?Stopwatch            $stopwatch = null,
     ) {
-        $this->rootDirectory = \Northrook\Symfony\Core\Path::get( 'dir.root' );
+        $this->rootDirectory = Path::get( 'dir.root' );
 
         $this->palette = new ColorPalette( StylesheetGenerationService::PALETTE );
     }
@@ -53,10 +52,9 @@ final class StylesheetGenerationService
 
         foreach ( (array) $path as $add ) {
 
-            /** @var PathType $stylesheet */
-            $stylesheet = ( $add instanceof PathType ) ? $ $add : new Stylesheet( $add );
+            $stylesheet = ( $add instanceof PathType ) ? $add : new PathType( $this->pathfinder->get( $add ) );
 
-            if ( ! $stylesheet->exists ) {
+            if ( !$stylesheet->exists ) {
                 $this->logger?->error(
                     'Stylesheet {stylesheet} does not exist. File not found. Skipping.',
                     [
@@ -67,7 +65,7 @@ final class StylesheetGenerationService
                 continue;
             }
 
-            $this->includedStylesheets[] = (string) $add;
+            $this->includedStylesheets[] = (string) $stylesheet;
         }
 
         return $this;
@@ -92,8 +90,8 @@ final class StylesheetGenerationService
 
 
     /**
-     * @param null|Path|string  $path   Defaults to `var/cache/styles/styles.css`
-     * @param null|bool         $force  Force updating the stylesheet, even if no monitored .css files have changed
+     * @param null|PathType|string  $path   Defaults to `var/cache/styles/styles.css`
+     * @param null|bool             $force  Force updating the stylesheet, even if no monitored .css files have changed
      *
      * @return Status
      */
@@ -101,20 +99,21 @@ final class StylesheetGenerationService
 
         $force ??= $this->force;
 
-        $this->stopwatch->start( 'save', 'StylesheetGenerationService' );
+        Stopwatch::start( 'save', 'StylesheetGenerationService' );
 
-        if ( $path ) {
-            $path = $path instanceof PathType ? $path : $this->pathfinder->get( $path );
-        }
-        else {
-            $path = $this->pathfinder->get( 'dir.cache/styles/styles.css' );
-        }
+        $savePath = $path instanceof PathType
+            ? $path
+            : new PathType(
+                $this->pathfinder->get( $path ?? 'dir.cache/styles/styles.css' ),
+            );
+
 
         $templates = array_filter(
             $this->pathfinder->getParameters(),
             static fn ( $v, $key ) => str_contains( $key, 'templates' ),
             ARRAY_FILTER_USE_BOTH,
         );
+
 
         $this->templateDirectories = Arr::unique( $templates + $this->templateDirectories );
 
@@ -126,9 +125,9 @@ final class StylesheetGenerationService
 
         foreach ( $this->includedStylesheets as $stylesheet ) {
             if ( substr_count( $stylesheet, '.' ) > 1 ) {
-                $path = new PathType( strstr( $stylesheet, '.', true ) . '.css' );
-                if ( $path->exists ) {
-                    $this->generator->addStylesheets( (string) $path );
+                $stylesheet = new PathType( strstr( $stylesheet, '.', true ) . '.css' );
+                if ( $stylesheet->exists ) {
+                    $this->generator->addStylesheets( (string) $stylesheet );
                 }
             }
             $stylesheet = new PathType( $stylesheet );
@@ -155,10 +154,9 @@ final class StylesheetGenerationService
 
         $status->set( 'success' );
 
-        $this->updated = File::save( $path->value, $this->stylesheet );
+        $this->updated = File::save( $savePath->value, $this->stylesheet );
 
-        $this->stopwatch->stop( 'save' );
-
+        Stopwatch::stop( 'save' );
 
         $this->session->addFlash(
             $status->status,

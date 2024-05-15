@@ -20,7 +20,7 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-return static function ( ContainerConfigurator $container ) : void {
+return static function ( ContainerConfigurator $container ) : void {å
 
     $services = $container->services();
 
