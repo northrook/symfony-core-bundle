@@ -9,7 +9,7 @@ use Northrook\Core\Type\PathType;
 use Northrook\Stylesheets\ColorPalette;
 use Northrook\Stylesheets\Stylesheet;
 use Northrook\Support\Arr;
-use Northrook\Symfony\Core\File;
+use Northrook\Support\File;
 use Northrook\Symfony\Core\Path;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;

@@ -2,23 +2,9 @@
 
 namespace Northrook\Symfony\Core;
 
-use Symfony\Component\HttpFoundation\Response;
+use Northrook\Symfony\Core\DependencyInjection\Facade;
 
-final class Latte extends SymfonyCoreFacade
+final class Latte extends Facade
 {
-
-    public static function response() : Response {
-        return new Response();
-    }
-
-    public static function render(
-        string         $template,
-        object | array $parameters = [],
-    ) : ?string {
-        return self::getLatteEnvironment()?->render(
-            template   : $template,
-            parameters : $parameters,
-        );
-    }
 
 }

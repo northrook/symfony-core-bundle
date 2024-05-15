@@ -7,6 +7,7 @@ namespace Northrook\Symfony\Core;
 use Northrook\Symfony\Core\DependencyInjection\Container;
 use Northrook\Symfony\Core\Support\Console;
 use Northrook\Types\Path;
+use Northrook\Support\File;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
@@ -66,7 +67,6 @@ final class SymfonyCoreBundle extends AbstractBundle
             $this->container->getParameter( 'kernel.environment' ),
             $this->container->getParameter( 'kernel.debug' ),
         );
-        SymfonyCoreFacade::set( $this->container );
         Container::set( $this->container );
     }
 
