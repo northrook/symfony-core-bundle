@@ -5,7 +5,9 @@ namespace Northrook\Symfony\Core;
 use Northrook\Core\Type\PathType;use Northrook\Symfony\Core\DependencyInjection\Facade;use Northrook\Symfony\Core\Services\PathfinderService;
 
 /**
- * @method static string get( string $path   )
+ * @method static string get( string $path )
+ * @method static string getParameter( string $name )
+ * @method static array  getParameters()
  */
 final class Path extends Facade {
 
