@@ -30,12 +30,12 @@ return static function ( ContainerConfigurator $container ) : void {
                  [
                      [
                          // In use
+                         RouterInterface::class               => service( 'router' ),
                          PathfinderService::class             => service( 'core.service.pathfinder' ),
                          LoggerInterface::class               => service( 'logger' )->nullOnInvalid(),
                          Stopwatch::class                     => service( 'debug.stopwatch' )->nullOnInvalid(),
 
                          // Dev
-                         RouterInterface::class               => service( 'router' ),
                          HttpKernelInterface::class           => service( 'http_kernel' ),
                          CurrentRequestService::class         => service( 'core.service.request' ),
                          SerializerInterface::class           => service( 'serializer' ),
