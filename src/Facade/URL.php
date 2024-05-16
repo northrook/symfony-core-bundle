@@ -20,23 +20,23 @@ use Symfony\Component\Routing\RouterInterface;
 final class URL extends Facade
 {
     /**
-     * Generates a URL or path for a specific route based on the given parameters.
+     * Get the URL or path for a specific route based on the given parameters.
      *
      * Uses {@see UrlGeneratorInterface::generate()} to generate the URL.
      *
-     * @param string  $name
+     * @param string  $route
      * @param array   $parameters
      * @param int     $referenceType
      *
      * @return string
      */
-    public static function generate(
-        string $name,
+    public static function get(
+        string $route,
         array  $parameters = [],
         int    $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH,
     ) : string {
         return URL::getService( RouterInterface::class )
-                  ->generate( $name, $parameters, $referenceType );
+                  ->generate( $route, $parameters, $referenceType );
     }
 
     /**
