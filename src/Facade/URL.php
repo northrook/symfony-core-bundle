@@ -3,12 +3,22 @@
 namespace Northrook\Symfony\Core\Facade;
 
 use Northrook\Symfony\Core\DependencyInjection\Facade;
+use Northrook\Symfony\Core\Settings\Setting;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
+
+/**
+ * - Add support for {@see Setting\URL}.
+ *
+ */
+
+
+/**
+ * @see UrlGeneratorInterface, RouterInterface
+ */
 final class URL extends Facade
 {
-
     /**
      * Generates a URL or path for a specific route based on the given parameters.
      *
@@ -29,10 +39,44 @@ final class URL extends Facade
                   ->generate( $name, $parameters, $referenceType );
     }
 
-    public static function current() : string {
-        return URL::getService( RouterInterface::class )->getContext()->getBaseUrl();
+    /**
+     * Returns the base URL.
+     *
+     * @param null|string  $append
+     * @param bool         $absolute
+     *
+     * @return string
+     *
+     * @todo This needs to retrieve the full URL, not just the base path by default.
+     *
+     */
+    public static function base( ?string $append = null, bool $absolute = false ) : string {
+        $url = URL::getService( RouterInterface::class )->getContext()->getBaseUrl();
+
+        if ( $append ) {
+            $url .= '/' . trim( $append, '/' );
+        }
+
+        return $url;
     }
-    
+
+    /**
+     * Returns the current URL.
+     *
+     * @param null|string  $append
+     *
+     * @return string
+     */
+    public static function current( ?string $append = null ) : string {
+        $url = URL::getService( RouterInterface::class )->getContext()->getPathInfo();
+
+        if ( $append ) {
+            $url .= '/' . trim( $append, '/' );
+        }
+
+        return $url;
+    }
+
     /**
      * Determine if the given path is a valid URL.
      *
