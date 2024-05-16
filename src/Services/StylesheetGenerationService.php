@@ -10,9 +10,10 @@ use Northrook\Stylesheets\ColorPalette;
 use Northrook\Stylesheets\Stylesheet;
 use Northrook\Support\Arr;
 use Northrook\Support\File;
-use Northrook\Symfony\Core\Path;
+use Northrook\Symfony\Core\Facade\Path;
+use Northrook\Symfony\Core\Facade\Settings;
+use Northrook\Symfony\Core\Facade\Stopwatch;
 use Psr\Log\LoggerInterface;
-use Northrook\Symfony\Core\Stopwatch;
 
 /**
  * TODO : Create a Palette cache file. Readable from {@see Settings::site()->palette}

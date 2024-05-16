@@ -10,7 +10,9 @@ use Northrook\Symfony\Core\DependencyInjection\Trait\LatteRenderer;
 use Northrook\Symfony\Core\DependencyInjection\Trait\NotificationServices;
 use Northrook\Symfony\Core\DependencyInjection\Trait\ResponseMethods;
 use Northrook\Symfony\Core\DependencyInjection\Trait\SecurityServices;
-use Northrook\Symfony\Core\Logger;use Northrook\Symfony\Core\Path;use Northrook\Symfony\Core\Services\PathfinderService;
+use Northrook\Symfony\Core\Facade\Logger;
+use Northrook\Symfony\Core\Facade\Path;
+use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,26 +26,27 @@ final class ApiController
         protected readonly CoreDependencies $get,
     ) {}
 
-    public function stylesheet( string $bundle, StylesheetGenerationService $generator, PathfinderService $pathfinder ) : Response {
+    public function stylesheet( string $bundle, StylesheetGenerationService $generator, PathfinderService $pathfinder,
+    ) : Response {
 
         $generator->includeStylesheets(
             [ 'dir.core.assets/styles', ],
         );
 
-        $path  = new PathType($pathfinder->get( 'dir.cache/styles/styles.css' ));
+        $path = new PathType( $pathfinder->get( 'dir.cache/styles/styles.css' ) );
 
-        if ( ! $path->exists) {
+        if ( !$path->exists ) {
 
             $this->addFlash(
                 'error',
-                 'No stylesheet generated',
-                  'The save path is not valid. See the logs for more information.',
-                   );
+                'No stylesheet generated',
+                'The save path is not valid. See the logs for more information.',
+            );
 
             return new Response(
                 $this->injectFlashBagNotifications(),
-             Response::HTTP_NO_CONTENT,
-             );
+                Response::HTTP_NO_CONTENT,
+            );
         }
 
         $saved = $generator->save( $path, true );

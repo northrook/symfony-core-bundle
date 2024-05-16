@@ -1,10 +1,10 @@
 <?php
 
-namespace Northrook\Symfony\Core;
+namespace Northrook\Symfony\Core\Facade;
 
 use Northrook\Core\Type\PathType;
 use Northrook\Symfony\Core\DependencyInjection\Facade;
-use Northrook\Symfony\Core\DependencyInjection\StaticFacadeInstance;
+use Northrook\Symfony\Core\DependencyInjection\Facade\StaticInstance;
 use Northrook\Symfony\Core\Services\PathfinderService;
 
 /**
@@ -14,7 +14,7 @@ use Northrook\Symfony\Core\Services\PathfinderService;
  */
 final class Path extends Facade
 {
-    use StaticFacadeInstance;
+    use StaticInstance;
 
     protected const SERVICE = PathfinderService::class;
 

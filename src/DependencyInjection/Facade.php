@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\DependencyInjection;
 
+
 abstract class Facade
 {
     /**
@@ -12,7 +13,7 @@ abstract class Facade
     protected const SERVICE = null;
 
     /**
-     * Call the service. 
+     * Call the service.
      *
      * @param string  $method
      * @param array   $arguments
@@ -20,17 +21,19 @@ abstract class Facade
      * @return mixed
      */
     public static function __callStatic( string $method, array $arguments ) {
-        return static::getService()->$method( ...$arguments );
+        return static::getService( static::SERVICE )?->$method( ...$arguments );
     }
 
     /**
-     * Get the service instance.
-     * @return mixed
+     * @template Service
+     *
+     * @param class-string<Service>  $className
+     *
+     * @return Service
      */
-    protected static function getService() : mixed {
-        return Container::get( static::SERVICE );
+    protected static function getService( string $className ) : mixed {
+        return Facade\Container::get( $className );
     }
-
 
 
 }

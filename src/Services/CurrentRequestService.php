@@ -30,7 +30,7 @@ readonly class CurrentRequestService
 
 
     /**
-     * Injected into {@see Core\Controller\CoreController} as `$request`, and available via {@see Core\Request} om-demand.
+     * Injected into {@see Core\Controller\CoreController} as `$request`, and available via {@see \Northrook\Symfony\Core\Facade\Request} om-demand.
      *
      * @param Http\RequestStack     $requestStack
      * @param null|LoggerInterface  $logger

@@ -4,14 +4,14 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core;
 
+use Northrook\Support\File;
 use Northrook\Symfony\Core\Support\Console;
 use Northrook\Types\Path;
-use Northrook\Support\File;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
- 
+
 /**
  * @version 1.0 ☑️
  * @author  Martin Nielsen <mn@northrook.com>
@@ -49,9 +49,9 @@ final class SymfonyCoreBundle extends AbstractBundle
     ) : void {
         $this->projectDir ??= $builder->getParameterBag()->get( 'kernel.project_dir' );
 
-        $container->import( '../config/cache.php');
+        $container->import( '../config/cache.php' );
         $container->import( '../config/services.php' );
-        $container->import( '../config/facades.php');
+        $container->import( '../config/facades.php' );
         $container->import( '../config/controllers.php' );
 
         // Autoconfigure Notes
@@ -66,7 +66,7 @@ final class SymfonyCoreBundle extends AbstractBundle
             $this->container->getParameter( 'kernel.environment' ),
             $this->container->getParameter( 'kernel.debug' ),
         );
-        DependencyInjection\Container::set( $this->container );
+        DependencyInjection\Facade\Container::set( $this->container );
     }
 
     public function getPath() : string {

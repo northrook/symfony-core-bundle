@@ -1,6 +1,6 @@
 <?php
 
-namespace Northrook\Symfony\Core;
+namespace Northrook\Symfony\Core\Facade;
 
 use Northrook\Symfony\Core\DependencyInjection\Facade;
 
