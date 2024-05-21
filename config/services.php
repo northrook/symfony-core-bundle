@@ -111,16 +111,6 @@ return static function ( ContainerConfigurator $container ) : void {
     // Event Listeners and Subscribers
     //--------------------------------------------------------------------
 
-    /** # ? Response Event Subscriber
-     *
-     * -
-     * @todo do we use this?
-     *
-     */
-    // $services->set( ResponseEventSubscriber::class )
-    //          ->tag( 'kernel.event_subscriber', [ 'priority' => 125 ] );
-
-
     /** # 🗂
      * Log Aggregating Event Subscriber
      */

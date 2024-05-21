@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\Services;
 
+use JetBrains\PhpStorm\ExpectedValues;
 use Northrook\Symfony\Core\Env;
 
 /**
@@ -38,7 +39,10 @@ final class SettingsManagementService
 
     public function __construct() {}
 
-    public function public( ?string $name = null ) : mixed {
+    public function public(
+        #[ExpectedValues]
+        ?string $name = null,
+    ) : mixed {
 
 
         if ( !isset( $this->public ) ) {

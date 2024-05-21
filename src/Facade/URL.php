@@ -77,6 +77,17 @@ final class URL extends Facade
         return $url;
     }
 
+    public static function normalize( string $url, ?bool $trailingSlash = null ) : mixed {
+
+        $trailingSlash ??= Settings::get( 'url.trailingSlash' );
+
+        $explode = \Northrook\Support\Arr::explode( '/', $url );
+
+        $url = '/' . implode( '/', $explode );
+
+        return $trailingSlash ? $url . '/' : $url;
+    }
+
     /**
      * Determine if the given path is a valid URL.
      *

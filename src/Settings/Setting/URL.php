@@ -7,7 +7,7 @@ namespace Northrook\Symfony\Core\Settings\Setting;
  */
 class URL
 {
-    private const SETTINGS = [
+    public const SETTINGS = [
         'url',
         'url.trailingSlash',
         'url.enforceHttps',

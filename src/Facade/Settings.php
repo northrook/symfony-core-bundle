@@ -12,7 +12,19 @@ final class Settings
         'security.password_reset',
         'security.email_verification',
         'security.admin',
+        'url',
+        'url.trailingSlash',
+        'url.enforceHttps',
+        'url.log.insecureUrl',
+        'url.log.404',
     ];
+
+
+    public static function get(
+        string $setting,
+    ) : mixed {
+        return false;
+    }
 
     // Global Settings
     public static function app() : self {
