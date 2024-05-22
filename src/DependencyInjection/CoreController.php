@@ -64,7 +64,7 @@ abstract class CoreController extends Facade
             $latte->addGlobalVariable(
                 'document',
                 $this->document instanceof DocumentService
-                    ? $this->document->getParameterObject()
+                    ? $this->document->getDocumentVariable()
                     : $this->document,
             );
         }

@@ -7,6 +7,7 @@ use Northrook\Support\Str;
 use Northrook\Symfony\Assets\Script;
 use Northrook\Symfony\Assets\Stylesheet;
 use Northrook\Symfony\Core\Latte\Document;
+use Northrook\Symfony\Core\Latte\Document\Theme;
 
 final class DocumentService
 {
@@ -27,32 +28,68 @@ final class DocumentService
     private array $stylesheet = [];
     /** @var array {name: string, value: array} */
     private array $schema = [];
-    public bool   $public = false;
+
+
+    private array $robots = [];
+
+
+    public bool $public = false;
 
     public function __construct(
         private readonly CurrentRequestService $request,
     ) {}
 
-    public function getParameterObject() : Document {
+    public function getDocumentVariable() : Document {
+        return new Document(
+            title          : $this->getTitle(),
+            description    : $this->getDescription(),
+            author         : $this->getAuthor(),
+            keywords       : $this->getKeywords(),
+            robots         : $this->getRobots(),
+            theme          : $this->getTheme(),
+            bodyAttributes : $this->getBodyAttributes(),
+            stylesheets    : $this->getStylesheets(),
+            scripts        : $this->getScripts(),
+        );
+    }
+
+    private function getTitle() : string {
+        return $this->meta[ 'title' ] ??= ucfirst(
+            trim( str_replace( '/', ' ', $this->request->pathInfo ) ),
+        );
+    }
+
+    private function getDescription() : ?string {
+        return $this->meta[ 'description' ] ?? null;
+    }
+
+    private function getKeywords() : ?string {
+        return $this->meta[ 'keywords' ] ?? null;
+    }
+
+    private function getAuthor() : ?string {
+        return $this->meta[ 'author' ] ??= 'Northrook';
+    }
+
+    private function getRobots() : string | array {
 
         if ( $this->public === false ) {
-            $this->meta[ 'robots' ][ 'robots' ] = $this::PRIVATE;
+            return $this::PRIVATE;
         }
 
+        return $this->meta[ 'robots' ] ??= $this::PRIVATE;
+    }
+
+    private function getTheme() : Theme {
+        return new Theme( '#ff0000', 'dark' );
+    }
+
+    private function getBodyAttributes() : array {
         if ( !isset( $this->bodyAttributes[ 'id' ] ) ) {
             $this->bodyAttributes = [ 'id' => $this->getIdFromRoute(), ... $this->bodyAttributes ];
         }
 
-        if ( !isset( $this->meta[ 'title' ] ) ) {
-            $this->meta[ 'title' ] = ucwords( trim( str_replace( '/', ' ', $this->request->pathInfo ) ) );
-        }
-
-        return new Document(
-            $this->meta,
-            $this->stylesheet,
-            $this->script,
-            $this->bodyAttributes,
-        );
+        return $this->bodyAttributes;
     }
 
     public function getMetaTags() : array {
