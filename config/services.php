@@ -12,12 +12,12 @@ use Northrook\Favicon\FaviconBundle;
 use Northrook\Support\File;
 use Northrook\Symfony\Components\LatteComponentPreprocessor;
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
-use Northrook\Symfony\Core\EventListener\ExceptionListener;
 use Northrook\Symfony\Core\EventSubscriber\LogAggregationSubscriber;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\DocumentService;
 use Northrook\Symfony\Core\Services\FormService;
 use Northrook\Symfony\Core\Services\MailerService;
+use Northrook\Symfony\Core\Services\NotificationService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Symfony\Core\Services\SettingsManagementService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
@@ -117,15 +117,7 @@ return static function ( ContainerConfigurator $container ) : void {
     $services->set( LogAggregationSubscriber::class )
              ->args( [ service( 'logger' )->nullOnInvalid() ], )
              ->tag( 'kernel.event_subscriber', [ 'priority' => 100 ] );
-
-    /** # Error Pages
-     * Exception Listener
-     */
-    $services->set( ExceptionListener::class )
-             ->args( [ service( 'core.dependencies' ) ] )
-             ->tag( 'kernel.event_listener', [ 'priority' => 100 ] );
-
-
+    
     //--------------------------------------------------------------------
     // Services
     //--------------------------------------------------------------------
@@ -210,5 +202,20 @@ return static function ( ContainerConfigurator $container ) : void {
              ->autowire()
              ->public()
              ->alias( FormService::class, 'core.service.form' );
+
+
+    /** # 📩
+     * Form Service
+     */
+    $services->set( 'core.service.notification', NotificationService::class )
+             ->tag( 'controller.service_arguments' )
+             ->args(
+                 [
+                     service( 'core.service.request' ),
+                     service( 'parameter_bag' ),
+                 ],
+             )
+             ->autowire()
+             ->alias( NotificationService::class, 'core.service.notification' );
 
 };

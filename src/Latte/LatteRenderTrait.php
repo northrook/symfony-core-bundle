@@ -3,7 +3,6 @@
 namespace Northrook\Symfony\Core\Latte;
 
 use Northrook\Elements\Element;
-use Northrook\Symfony\Latte\Core;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

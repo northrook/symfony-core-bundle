@@ -4,26 +4,21 @@ namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Core\Type\PathType;
 use Northrook\Favicon\FaviconBundle;
-use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
-use Northrook\Symfony\Core\DependencyInjection\Trait\CorePropertiesPromoter;
-use Northrook\Symfony\Core\DependencyInjection\Trait\LatteRenderer;
-use Northrook\Symfony\Core\DependencyInjection\Trait\NotificationServices;
-use Northrook\Symfony\Core\DependencyInjection\Trait\ResponseMethods;
-use Northrook\Symfony\Core\DependencyInjection\Trait\SecurityServices;
+use Northrook\Symfony\Core\DependencyInjection\CoreController;
 use Northrook\Symfony\Core\Facade\Logger;
 use Northrook\Symfony\Core\Facade\Path;
+use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 
-final class ApiController
+final class ApiController extends CoreController
 {
-    use ResponseMethods, LatteRenderer, NotificationServices, SecurityServices, CorePropertiesPromoter;
 
     public function __construct(
-        protected readonly CoreDependencies $get,
+        protected readonly CurrentRequestService $request,
     ) {}
 
     public function stylesheet( string $bundle, StylesheetGenerationService $generator, PathfinderService $pathfinder,

@@ -3,6 +3,7 @@
 namespace Northrook\Symfony\Core\DependencyInjection\Trait;
 
 
+use JetBrains\PhpStorm\Deprecated;
 use LogicException;
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
 use SensitiveParameter;
@@ -11,6 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Throwable;
 
+#[Deprecated]
 trait SecurityServices
 {
     protected readonly CoreDependencies $get;

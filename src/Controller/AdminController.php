@@ -4,28 +4,27 @@ namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Symfony\Core\Components\Menu\Menu;
 use Northrook\Symfony\Core\Components\Menu\Navigation;
-use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
-use Northrook\Symfony\Core\DependencyInjection\Trait\CorePropertiesPromoter;
-use Northrook\Symfony\Core\DependencyInjection\Trait\LatteRenderer;
-use Northrook\Symfony\Core\DependencyInjection\Trait\NotificationServices;
-use Northrook\Symfony\Core\DependencyInjection\Trait\ResponseMethods;
-use Northrook\Symfony\Core\DependencyInjection\Trait\SecurityServices;
+use Northrook\Symfony\Core\DependencyInjection\CoreController;
+use Northrook\Symfony\Core\Facade\Auth;
+use Northrook\Symfony\Core\Services\CurrentRequestService;
+use Northrook\Symfony\Core\Services\DocumentService;
 use Northrook\Symfony\Core\Services\MailerService;
+use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 
-final class AdminController
+final class AdminController extends CoreController
 {
-    use ResponseMethods, LatteRenderer, NotificationServices, SecurityServices, CorePropertiesPromoter;
-
     public const STYLESHEETS          = [ 'dir.core.assets/styles' ];
     public const DYNAMIC_TEMPLATE_DIR = 'admin';
 
     public function __construct(
-        protected readonly CoreDependencies $get,
+        protected readonly CurrentRequestService       $request,
+        protected readonly DocumentService             $document,
+        protected readonly StylesheetGenerationService $stylesheet,
     ) {
-        $this->denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
+        Auth::denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
 
         if ( false === $this->request->is( 'hypermedia' ) ) {
             $this->stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );

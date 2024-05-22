@@ -8,16 +8,23 @@ trait StaticInstance
 {
 
     /**
-     * @var null|mixed The service instance, if {@see $cache} is true.
+     * @var mixed The service instance for this {@see Facade}.
      */
     private static mixed $instance = null;
 
-    public static function getInstance() : mixed {
+    /**
+     * @template Service
+     *
+     * @param class-string<Service>  $className
+     *
+     * @return Service
+     */
+    protected static function getService( string $className ) : mixed {
 
         if ( !method_exists( parent::class, 'getService' ) ) {
             throw new \LogicException( 'The service must be defined in the container.' );
         }
 
-        return self::$instance ?: self::$instance = parent::getService();
+        return self::$instance ?: self::$instance = parent::getService( $className );
     }
 }

@@ -2,25 +2,22 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
-use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
-use Northrook\Symfony\Core\DependencyInjection\Trait\CorePropertiesPromoter;
-use Northrook\Symfony\Core\DependencyInjection\Trait\LatteRenderer;
-use Northrook\Symfony\Core\DependencyInjection\Trait\NotificationServices;
-use Northrook\Symfony\Core\DependencyInjection\Trait\ResponseMethods;
-use Northrook\Symfony\Core\DependencyInjection\Trait\SecurityServices;
+use Northrook\Symfony\Core\DependencyInjection\CoreController;
 use Northrook\Symfony\Core\Facade\Path;
+use Northrook\Symfony\Core\Services\CurrentRequestService;
+use Northrook\Symfony\Core\Services\DocumentService;
+use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Symfony\Component\HttpFoundation\Response;
 
-final class PublicController
+final class PublicController extends CoreController
 {
-
-    use ResponseMethods, LatteRenderer, NotificationServices, SecurityServices, CorePropertiesPromoter;
-
     public const STYLESHEETS          = [ 'dir.core.assets/styles' ];
     public const DYNAMIC_TEMPLATE_DIR = 'public';
 
     public function __construct(
-        protected readonly CoreDependencies $get,
+        protected readonly CurrentRequestService       $request,
+        protected readonly DocumentService             $document,
+        protected readonly StylesheetGenerationService $stylesheet,
     ) {
         if ( false === $this->request->is( 'hypermedia' ) ) {
             $this->stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );

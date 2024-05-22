@@ -9,6 +9,6 @@ use Northrook\Symfony\Core\DependencyInjection\Facade;
  */
 final class Latte extends Facade
 {
-    public const ENVIRONMENT = \Northrook\Symfony\Latte\Environment::class;
+    public const SERVICE = \Northrook\Symfony\Latte\Environment::class;
 
 }

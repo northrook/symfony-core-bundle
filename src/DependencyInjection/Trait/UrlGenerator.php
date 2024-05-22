@@ -2,9 +2,11 @@
 
 namespace Northrook\Symfony\Core\DependencyInjection\Trait;
 
+use JetBrains\PhpStorm\Deprecated;
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+#[Deprecated]
 trait UrlGenerator
 {
     protected readonly CoreDependencies $get;

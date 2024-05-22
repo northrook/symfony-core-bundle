@@ -2,11 +2,13 @@
 
 namespace Northrook\Symfony\Core\DependencyInjection\Trait;
 
+use JetBrains\PhpStorm\Deprecated;
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
 
 /**
  * @mixin CoreDependencies
  */
+#[Deprecated]
 trait CorePropertiesPromoter
 {
 

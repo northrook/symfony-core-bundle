@@ -3,23 +3,20 @@
 namespace Northrook\Symfony\Core\EventListener;
 
 use Northrook\Elements\Render\Template;
-use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
-use Northrook\Symfony\Core\DependencyInjection\Trait\CorePropertiesPromoter;
-use Northrook\Symfony\Core\DependencyInjection\Trait\LatteRenderer;
-use Northrook\Symfony\Core\DependencyInjection\Trait\ResponseMethods;
+use Northrook\Symfony\Core\DependencyInjection\CoreController;
+use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\DocumentService;
+use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
-/**
- * @property DocumentService $document
- */
-final  class ExceptionListener
+final  class ExceptionListener extends CoreController
 {
-    use CorePropertiesPromoter, ResponseMethods, LatteRenderer;
 
     public function __construct(
-        protected readonly CoreDependencies $get,
+        protected readonly CurrentRequestService       $request,
+        protected readonly DocumentService             $document,
+        protected readonly StylesheetGenerationService $stylesheet,
     ) {}
 
     public function __invoke( ExceptionEvent $event ) : void {

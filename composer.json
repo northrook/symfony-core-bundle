@@ -42,7 +42,8 @@
     "northrook/symfony-components-bundle": "dev-main",
     "northrook/symfony-assets-bundle": "dev-main",
     "ext-dom": "*",
-    "ext-libxml": "*"
+    "ext-libxml": "*",
+    "symfony/translation": "^7.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

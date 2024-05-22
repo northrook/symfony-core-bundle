@@ -9,6 +9,7 @@ declare( strict_types = 1 );
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Symfony\Core\Services\CurrentRequestService;
+use Northrook\Symfony\Core\Services\NotificationService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Symfony\Latte\Environment;
 use Psr\Log\LoggerInterface;
@@ -36,14 +37,15 @@ return static function ( ContainerConfigurator $container ) : void {
                          LoggerInterface::class               => service( 'logger' )->nullOnInvalid(),
                          Stopwatch::class                     => service( 'debug.stopwatch' )->nullOnInvalid(),
                          Environment::class                   => service( 'latte.environment' ),
+                         CsrfTokenManagerInterface::class     => service( 'security.csrf.token_manager' ),
+                         HttpKernelInterface::class           => service( 'http_kernel' ),
+                         NotificationService::class           => service( 'core.service.notification' ),
 
                          // Dev
-                         HttpKernelInterface::class           => service( 'http_kernel' ),
                          CurrentRequestService::class         => service( 'core.service.request' ),
                          SerializerInterface::class           => service( 'serializer' ),
                          AuthorizationCheckerInterface::class => service( 'security.authorization_checker' ),
                          TokenStorageInterface::class         => service( 'security.token_storage' ),
-                         CsrfTokenManagerInterface::class     => service( 'security.csrf.token_manager' ),
                      ],
                  ],
              )

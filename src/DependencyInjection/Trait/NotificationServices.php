@@ -2,8 +2,10 @@
 
 namespace Northrook\Symfony\Core\DependencyInjection\Trait;
 
+use JetBrains\PhpStorm\Deprecated;
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
 
+#[Deprecated]
 trait NotificationServices
 {
     protected readonly CoreDependencies $get;
