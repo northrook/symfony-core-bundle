@@ -23,7 +23,6 @@ final class Request extends Facade
         #[SensitiveParameter]
         ?string $token,
     ) : bool {
-
         return Request::getService( CsrfTokenManagerInterface::class )
                       ->isTokenValid( new CsrfToken( $id, $token ) );
     }

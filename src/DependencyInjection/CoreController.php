@@ -264,14 +264,14 @@ abstract class CoreController extends Facade
         return new NotFoundHttpException( $message, $previous );
     }
 
-    final protected function getToken( ?string $tokenId = null ) : ?CsrfToken {
-
-        // Purely for debugging
-        if ( 'authenticate' === $tokenId ) {
-            dd( str_replace( '\\', '_', static::class ) );
-        }
-
-        $tokenId ??= str_replace( '\\', '_', static::class );
+    /**
+     * Generate a {@see CsrfToken} for the given tokenId.
+     *
+     * @param string  $tokenId
+     *
+     * @return CsrfToken
+     */
+    final protected function getToken( string $tokenId ) : CsrfToken {
         return static::getService( CsrfTokenManagerInterface::class )->getToken( $tokenId );
     }
 
