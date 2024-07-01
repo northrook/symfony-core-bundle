@@ -74,15 +74,20 @@ final class AutoConfigure
                 declare( strict_types = 1 );
                 
                 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
-                
-                return static function( RoutingConfigurator \$routes ) : void {
-                    \$routes->import( [
-                        'path'		=> '../src/Controller/',
-                        'namespace'	=> 'App\Controller',
-                    ], 'attribute' );
+
+                return static function ( RoutingConfigurator \$routes ) : void {
+                    \$routes->import(
+                        [
+                            'path'      => '../src/Controller/',
+                            'namespace' => 'App\Controller',
+                        ],
+                        'attribute',
+                    );
                 };
                 PHP,
         );
+
+        echo "AutoConfigure generated config/routes.php." . PHP_EOL;
 
         return $this;
     }
