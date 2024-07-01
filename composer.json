@@ -14,46 +14,15 @@
       "Northrook\\Symfony\\Core\\": "src/"
     }
   },
-  "prefer-stable": true,
   "minimum-stability": "dev",
+  "prefer-stable": true,
   "require": {
     "php": ">=8.2",
-    "symfony/config": "^7.0",
-    "symfony/cache": "^7.0",
-    "symfony/http-kernel": "^7.0",
-    "symfony/dependency-injection": "^7.0",
-    "symfony/deprecation-contracts": "^3.0",
-    "symfony/event-dispatcher": "^7.0",
-    "symfony/security-bundle": "^7",
-    "symfony/mailer": "^7",
-    "symfonycasts/reset-password-bundle": "^1.21",
-    "symfonycasts/verify-email-bundle": "^1.17",
-    "symfony/serializer": "^7",
-    "symfony/form": "^7",
-    "symfony/validator": "^7",
-    "symfony/stopwatch": "^7",
-    "northrook/support": "dev-main",
-    "northrook/elements": "dev-main",
-    "northrook/types": "dev-main",
-    "northrook/logger": "dev-main",
-    "northrook/favicon": "dev-main",
-    "northrook/stylesheets": "dev-main",
-    "northrook/symfony-latte-bundle": "dev-main",
-    "northrook/symfony-components-bundle": "dev-main",
-    "northrook/symfony-assets-bundle": "dev-main",
-    "ext-dom": "*",
-    "ext-libxml": "*",
-    "symfony/translation": "^7.0"
+    "symfony/http-kernel": "@stable",
+    "symfony/dependency-injection": "^7.0"
   },
   "require-dev": {
-    "roave/security-advisories": "dev-latest",
-    "doctrine/orm": "^2.13",
-    "symfony/framework-bundle": "^7.0",
-    "symfony/phpunit-bridge": "^7.0",
-    "doctrine/doctrine-bundle": "^2.8",
-    "doctrine/annotations": "^1.0",
-    "symfony/web-profiler-bundle": "^7",
-    "symfony/profiler-pack": "dev-main"
+    "roave/security-advisories": "dev-latest"
   },
   "replace": {
     "symfony/polyfill-php81": "*",
