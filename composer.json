@@ -23,14 +23,5 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"
-  },
-  "replace": {
-    "symfony/polyfill-php81": "*",
-    "symfony/polyfill-php80": "*",
-    "symfony/polyfill-php73": "*",
-    "symfony/polyfill-php72": "*",
-    "symfony/polyfill-php71": "*",
-    "symfony/polyfill-php70": "*",
-    "symfony/polyfill-php56": "*"
   }
 }
