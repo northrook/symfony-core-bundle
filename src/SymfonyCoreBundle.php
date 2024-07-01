@@ -5,6 +5,7 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core;
 
 use Northrook\Core\Env;
+use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
@@ -39,32 +40,18 @@ final class SymfonyCoreBundle extends AbstractBundle
         ],
     ];
 
-    private bool $recompileContainer = false;
 
     public function build( ContainerBuilder $container ) : void {
 
-        $this->autoconfigureApplicationConfig(
+        // Remove Symfony default .yaml config, create .php config
+        ( new ApplicationAutoConfiguration(
             $container->getParameter( 'kernel.project_dir' ),
-        );
+        ) )
+            ->createConfigPreload()
+            ->createConfigRoutes()
+            ->createConfigServices();
 
         parent::build( $container );
-
-        // $container->addCompilerPass(
-        //     new ApplicationConfigurationPass(
-        //         $container->getParameter( 'kernel.project_dir' ),
-        //     ),
-        // );
-    }
-
-    private function autoconfigureApplicationConfig(
-        string $projectDir,
-    ) {
-        $config = new AutoConfigure( $projectDir );
-        $config->configPreload()
-               ->configRoutes()
-               ->configPreload();
-
-        $this->recompileContainer = $config->recompileRequired;
     }
 
     public function loadExtension(
@@ -102,10 +89,6 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         if ( PHP_SAPI === 'cli' ) {
             return;
-        }
-
-        if ( $this->recompileContainer ) {
-            dump( $this->container->get( 'kernel' ) );
         }
 
         new Env(

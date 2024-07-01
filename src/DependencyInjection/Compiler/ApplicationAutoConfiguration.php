@@ -13,27 +13,12 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core\DependencyInjection\Compiler;
 
 use Northrook\Symfony\AutoConfigure;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-final readonly class ApplicationConfigurationPass implements CompilerPassInterface
+final class ApplicationAutoConfiguration extends AutoConfigure
 {
-    private AutoConfigure $autoConfigure;
 
-    public function __construct(
-        private string $projectDir,
-    ) {
-        $this->autoConfigure = new AutoConfigure( $this->projectDir );
-    }
-
-    public function process( ContainerBuilder $container ) : void {
-        $this->configPreload()
-             ->configRoutes()
-             ->configServices();
-    }
-
-    public function configPreload() : self {
-        $this->autoConfigure->createConfigFile(
+    public function createConfigPreload() : self {
+        $this->createConfigFile(
             'preload.php',
             <<<PHP
                 <?php
@@ -49,9 +34,9 @@ final readonly class ApplicationConfigurationPass implements CompilerPassInterfa
         return $this;
     }
 
-    public function configRoutes() : self {
-        $this->autoConfigure->removeConfigFile( 'routes.yaml' );
-        $this->autoConfigure->createConfigFile(
+    public function createConfigRoutes() : self {
+        $this->removeConfigFile( 'routes.yaml' );
+        $this->createConfigFile(
             'routes.php',
             <<<PHP
                 <?php
@@ -75,9 +60,9 @@ final readonly class ApplicationConfigurationPass implements CompilerPassInterfa
         return $this;
     }
 
-    public function configServices() : self {
-        $this->autoConfigure->removeConfigFile( 'services.yaml' );
-        $this->autoConfigure->createConfigFile(
+    public function createConfigServices() : self {
+        $this->removeConfigFile( 'services.yaml' );
+        $this->createConfigFile(
             'services.php',
             <<<PHP
                 <?php
