@@ -2,7 +2,7 @@
 
 namespace Northrook\Symfony\Core\Facade;
 
-use Northrook\Core\Type\PathType;
+use Northrook\Support\Str;
 use Northrook\Symfony\Core\DependencyInjection\Facade;
 use Northrook\Symfony\Core\DependencyInjection\Facade\StaticInstance;
 use Northrook\Symfony\Core\Services\PathfinderService;
@@ -12,14 +12,14 @@ use Northrook\Symfony\Core\Services\PathfinderService;
  * @method static string getParameter( string $name )
  * @method static array  getParameters()
  */
-final class Path extends Facade
+final class Pathfinder extends Facade
 {
     use StaticInstance;
 
     protected const SERVICE = PathfinderService::class;
 
     public static function normalize( string $path ) : string {
-        return PathType::normalize( $path );
+        return Str::normalizePath( $path );
     }
 
     /**

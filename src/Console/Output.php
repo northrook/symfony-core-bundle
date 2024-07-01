@@ -1,10 +1,18 @@
 <?php
 
-namespace Northrook\Symfony\Core\Support;
+declare( strict_types = 1 );
+
+namespace Northrook\Symfony\Core\Console;
 
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 
-final class Console
+
+/**
+ * Provides a simple output formatter.
+ *
+ * @author Martin Nielsen <mn@northrook.com>
+ */
+final class Output
 {
 
     private function __construct() {}
@@ -32,7 +40,7 @@ final class Console
         $output->setForeground( 'black' );
         $output->setOption( 'bold' );
 
-        return self::print( $output->apply( ' [ INFO ] ' ), $messages );
+        return Output::print( $output->apply( ' [ INFO ] ' ), $messages );
     }
 
     public static function OK(
@@ -44,7 +52,7 @@ final class Console
         $output->setForeground( 'black' );
         $output->setOption( 'bold' );
 
-        return self::print( $output->apply( ' [ OK ] ' ), $messages );
+        return Output::print( $output->apply( ' [ OK ] ' ), $messages );
     }
 
     public static function error(
@@ -56,6 +64,6 @@ final class Console
         $output->setForeground( 'black' );
         $output->setOption( 'bold' );
 
-        return self::print( $output->apply( ' [ ERROR ] ' ), $messages );
+        return Output::print( $output->apply( ' [ ERROR ] ' ), $messages );
     }
 }

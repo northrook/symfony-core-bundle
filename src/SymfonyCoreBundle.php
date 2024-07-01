@@ -4,8 +4,8 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core;
 
+use Northrook\Core\Env;
 use Northrook\Support\File;
-use Northrook\Symfony\Core\Support\Console;
 use Northrook\Types\Path;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -78,9 +78,10 @@ final class SymfonyCoreBundle extends AbstractBundle
         $apiController = new Path( $this->projectDir . '/config/routes/core.yaml' );
         $coreConfig    = [];
 
+
         if ( $apiController->exists ) {
             if ( 'cli' === PHP_SAPI ) {
-                echo Console::info( 'northrook.core.api', 'Config exists: ' . $apiController->value );
+                echo Console\Output::info( 'northrook.core.api', 'Config exists: ' . $apiController->value );
             }
             return;
         }
@@ -99,10 +100,10 @@ final class SymfonyCoreBundle extends AbstractBundle
         }
 
         if ( !$status ) {
-            echo Console::error( 'northrook.core.api:', 'Config file not created: ' . $apiController->value );
+            echo Console\Output::error( 'northrook.core.api:', 'Config file not created: ' . $apiController->value );
         }
         else {
-            echo Console::OK( 'northrook.core.api:', 'Config created: ' . $apiController->value );
+            echo Console\Output::OK( 'northrook.core.api:', 'Config created: ' . $apiController->value );
         }
     }
 }

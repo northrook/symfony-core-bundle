@@ -49,7 +49,7 @@ return static function ( ContainerConfigurator $container ) : void {
               ->set( 'ttl.cache', 86400 );
 
     //--------------------------------------------------------------------
-    // Core Path Helper
+    // Core Pathfinder Helper
     //--------------------------------------------------------------------
 
 
@@ -117,7 +117,7 @@ return static function ( ContainerConfigurator $container ) : void {
     $services->set( LogAggregationSubscriber::class )
              ->args( [ service( 'logger' )->nullOnInvalid() ], )
              ->tag( 'kernel.event_subscriber', [ 'priority' => 100 ] );
-    
+
     //--------------------------------------------------------------------
     // Services
     //--------------------------------------------------------------------
@@ -159,7 +159,7 @@ return static function ( ContainerConfigurator $container ) : void {
              ->alias( CurrentRequestService::class, 'core.service.request' );
 
     /** # ../
-     * Path Service
+     * Pathfinder Service
      */
     $services->set( 'core.service.pathfinder', PathfinderService::class )
              ->args(

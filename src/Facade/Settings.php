@@ -22,6 +22,7 @@ final class Settings
 
     public static function get(
         string $setting,
+        string $key,
     ) : mixed {
         return false;
     }

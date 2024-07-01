@@ -6,6 +6,9 @@ namespace Northrook\Symfony\Core\Latte;
 
 use Northrook\Symfony\Core\Latte\Document\Theme;
 
+/**
+ * @link https://web.dev/articles/icons-and-browser-colors
+ */
 final class Document
 {
 

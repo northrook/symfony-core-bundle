@@ -1,13 +1,17 @@
 <?php
 
+declare( strict_types = 1 );
+
 namespace Northrook\Symfony\Core\Latte\Document;
 
 use InvalidArgumentException;
 use JetBrains\PhpStorm\ExpectedValues;
 
+/**
+ * @internal
+ */
 final readonly class Theme implements \Stringable
 {
-
     private const SCHEME = [
         'normal',
         'light',

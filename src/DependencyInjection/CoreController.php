@@ -6,7 +6,7 @@ use Exception;
 use Latte\RuntimeException;
 use LogicException;
 use Northrook\Symfony\Core\Facade\Logger;
-use Northrook\Symfony\Core\Facade\Path;
+use Northrook\Symfony\Core\Facade\Pathfinder;
 use Northrook\Symfony\Core\Security\ErrorEventException;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\DocumentService;
@@ -86,6 +86,10 @@ abstract class CoreController extends Facade
                      ->injectFlashBagNotifications( $content );
     }
 
+    private function injectFlashes( string $content = '' ) : string {
+        return CoreController::getService( NotificationService::class )
+                             ->injectFlashBagNotifications( $content );
+    }
 
     /**
      * Return a {@see Response}`view` from a `.latte` template.
@@ -97,12 +101,12 @@ abstract class CoreController extends Facade
      * @return Response
      */
     final protected function response(
-        string         $template,
+        ?string        $template = null,
         object | array $parameters = [],
         int            $status = Response::HTTP_OK,
     ) : Response {
 
-        $content = $this->render( $template, $parameters );
+        $content = $template ? $this->render( $template, $parameters ) : $this->injectFlashes();
 
         return new Response(
             content : $content,
@@ -284,6 +288,6 @@ abstract class CoreController extends Facade
         $dir  ??= defined( static::class . '::DYNAMIC_TEMPLATE_DIR' ) ? static::DYNAMIC_TEMPLATE_DIR : '';
         $file = str_replace( '/', '.', $this->request->route ) . '.latte';
 
-        return Path::normalize( $dir . DIRECTORY_SEPARATOR . $file );
+        return Pathfinder::normalize( $dir . DIRECTORY_SEPARATOR . $file );
     }
 }

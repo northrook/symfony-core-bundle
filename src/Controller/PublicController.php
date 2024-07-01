@@ -3,7 +3,7 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
-use Northrook\Symfony\Core\Facade\Path;
+use Northrook\Symfony\Core\Facade\Pathfinder;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\DocumentService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
@@ -34,7 +34,7 @@ final class PublicController extends CoreController
         ?string $route,
     ) : Response {
 
-        print_r( Path::getParameter( 'path.favicon' ) );
+        print_r( Pathfinder::getParameter( 'path.favicon' ) );
 
         return $this->response(
             template   : 'public.latte',

@@ -2,14 +2,15 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
-use Northrook\Core\Type\PathType;
+
 use Northrook\Favicon\FaviconBundle;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
 use Northrook\Symfony\Core\Facade\Logger;
-use Northrook\Symfony\Core\Facade\Path;
+use Northrook\Symfony\Core\Facade\Pathfinder;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
+use Northrook\Type\Path;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,14 +22,17 @@ final class ApiController extends CoreController
         protected readonly CurrentRequestService $request,
     ) {}
 
-    public function stylesheet( string $bundle, StylesheetGenerationService $generator, PathfinderService $pathfinder,
+    public function stylesheet(
+        string                      $bundle,
+        StylesheetGenerationService $generator,
+        PathfinderService           $pathfinder,
     ) : Response {
 
         $generator->includeStylesheets(
             [ 'dir.core.assets/styles', ],
         );
 
-        $path = new PathType( $pathfinder->get( 'dir.cache/styles/styles.css' ) );
+        $path = new Path( $pathfinder->get( 'dir.cache/styles/styles.css' ) );
 
         if ( !$path->exists ) {
 
@@ -38,23 +42,17 @@ final class ApiController extends CoreController
                 'The save path is not valid. See the logs for more information.',
             );
 
-            return new Response(
-                $this->injectFlashBagNotifications(),
-                Response::HTTP_NO_CONTENT,
-            );
+            return $this->response( status : Response::HTTP_NO_CONTENT );
         }
 
         $saved = $generator->save( $path, true );
 
-        return new Response(
-            $this->injectFlashBagNotifications(),
-            Response::HTTP_ACCEPTED,
-        );
+        return $this->response( status : Response::HTTP_ACCEPTED );
     }
 
     public function favicon( string $action, FaviconBundle $generator, PathfinderService $pathfinder ) : Response {
 
-        $generator->load( Path::getParameter( 'path.favicon' ) );
+        $generator->load( Pathfinder::getParameter( 'path.favicon' ) );
         $generator->manifest->title = 'Symfony Playground';
 
         if ( 'generate' === $action ) {
@@ -78,6 +76,6 @@ final class ApiController extends CoreController
             'ip'     => $_SERVER[ 'REMOTE_ADDR' ],
         ],
         );
-        return new Response( status : Response::HTTP_ACCEPTED );
+        return $this->response( status : Response::HTTP_ACCEPTED );
     }
 }

@@ -79,7 +79,7 @@ final class URL extends Facade
 
     public static function normalize( string $url, ?bool $trailingSlash = null ) : mixed {
 
-        $trailingSlash ??= Settings::get( 'url.trailingSlash' );
+        $trailingSlash ??= Settings::get( 'url.trailingSlash', '' );
 
         $explode = \Northrook\Support\Arr::explode( '/', $url );
 

@@ -84,14 +84,6 @@ final class DocumentService
         return new Theme( '#ff0000', 'dark' );
     }
 
-    private function getBodyAttributes() : array {
-        if ( !isset( $this->bodyAttributes[ 'id' ] ) ) {
-            $this->bodyAttributes = [ 'id' => $this->getIdFromRoute(), ... $this->bodyAttributes ];
-        }
-
-        return $this->bodyAttributes;
-    }
-
     public function getMetaTags() : array {
         if ( !isset( $this->meta[ 'robots' ] ) ) {
             $this->meta[ 'robots' ] = $this->public ? $this::PUBLIC : $this::PRIVATE;
@@ -106,6 +98,16 @@ final class DocumentService
     public function getScripts() : array {
         return $this->script;
     }
+
+
+    private function getBodyAttributes() : array {
+        if ( !isset( $this->bodyAttributes[ 'id' ] ) ) {
+            $this->bodyAttributes = [ 'id' => $this->getIdFromRoute(), ... $this->bodyAttributes ];
+        }
+
+        return $this->bodyAttributes;
+    }
+
 
     private function getIdFromRoute() : ?string {
         return $this->routeId ??= Str::key( $this->request->pathInfo, '-' );
@@ -175,6 +177,17 @@ final class DocumentService
 
         return $this;
     }
+
+    public function meta( string $name, string $content ) : self {
+        $this->meta[ $name ] = $content;
+        return $this;
+    }
+
+    public function link( string $rel, string $href ) : self {
+        $this->meta[ 'link' ][] = link( $rel, $href );
+        return $this;
+    }
+
 
     public function stylesheet( string $path, ?string $id = null ) : self {
         $asset = new Stylesheet( source : $path, name : $id );

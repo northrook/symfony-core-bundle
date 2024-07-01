@@ -3,7 +3,7 @@
 namespace Northrook\Symfony\Core\Services;
 
 use JetBrains\PhpStorm\ExpectedValues;
-use Northrook\Symfony\Core\Env;
+use Northrook\Core\Env;
 
 /**
  * @property string $MAILER_DSN

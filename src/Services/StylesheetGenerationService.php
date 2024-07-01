@@ -4,15 +4,15 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\Services;
 
-use Northrook\Core\Service\Status;
-use Northrook\Core\Type\PathType;
+use Northrook\Core\Process\Status;
 use Northrook\Stylesheets\ColorPalette;
 use Northrook\Stylesheets\Stylesheet;
 use Northrook\Support\Arr;
 use Northrook\Support\File;
-use Northrook\Symfony\Core\Facade\Path;
+use Northrook\Symfony\Core\Facade\Pathfinder;
 use Northrook\Symfony\Core\Facade\Settings;
 use Northrook\Symfony\Core\Facade\Stopwatch;
+use Northrook\Types\Path;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -44,7 +44,7 @@ final class StylesheetGenerationService
         private readonly PathfinderService     $pathfinder,
         private readonly ?LoggerInterface      $logger = null,
     ) {
-        $this->rootDirectory = Path::get( 'dir.root' );
+        $this->rootDirectory = Pathfinder::get( 'dir.root' );
 
         $this->palette = new ColorPalette( StylesheetGenerationService::PALETTE );
     }
@@ -53,7 +53,7 @@ final class StylesheetGenerationService
 
         foreach ( (array) $path as $add ) {
 
-            $stylesheet = ( $add instanceof PathType ) ? $add : new PathType( $this->pathfinder->get( $add ) );
+            $stylesheet = ( $add instanceof Path ) ? $add : new Path( $this->pathfinder->get( $add ) );
 
             if ( !$stylesheet->exists ) {
                 $this->logger?->error(
@@ -96,17 +96,15 @@ final class StylesheetGenerationService
      *
      * @return Status
      */
-    public function save( null | PathType | string $path = null, ?bool $force = null ) : Status {
+    public function save( null | Path | string $path = null, ?bool $force = null ) : Status {
 
         $force ??= $this->force;
 
         Stopwatch::start( 'save', 'StylesheetGenerationService' );
 
-        $savePath = $path instanceof PathType
+        $savePath = $path instanceof Path
             ? $path
-            : new PathType(
-                $this->pathfinder->get( $path ?? 'dir.cache/styles/styles.css' ),
-            );
+            : new Path( $this->pathfinder->get( $path ?? 'dir.cache/styles/styles.css' ) );
 
 
         $templates = array_filter(
@@ -126,12 +124,12 @@ final class StylesheetGenerationService
 
         foreach ( $this->includedStylesheets as $stylesheet ) {
             if ( substr_count( $stylesheet, '.' ) > 1 ) {
-                $stylesheet = new PathType( strstr( $stylesheet, '.', true ) . '.css' );
+                $stylesheet = new Path( strstr( $stylesheet, '.', true ) . '.css' );
                 if ( $stylesheet->exists ) {
                     $this->generator->addStylesheets( (string) $stylesheet );
                 }
             }
-            $stylesheet = new PathType( $stylesheet );
+            $stylesheet = new Path( $stylesheet );
             if ( $stylesheet->exists ) {
                 $this->generator->addStylesheets( (string) $stylesheet );
             }

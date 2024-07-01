@@ -24,6 +24,7 @@ final class AdminController extends CoreController
         protected readonly DocumentService             $document,
         protected readonly StylesheetGenerationService $stylesheet,
     ) {
+
         Auth::denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
 
         if ( false === $this->request->is( 'hypermedia' ) ) {
