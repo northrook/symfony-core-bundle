@@ -22,8 +22,8 @@
     "symfony/http-kernel": "@stable",
     "symfony/dependency-injection": "@stable",
     "northrook/core": "dev-main",
-    "northrook/symfony-support": "dev-main",
-    "northrook/support": "dev-main"
+    "northrook/support": "dev-main",
+    "northrook/symfony-core": "dev-main"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"

@@ -5,6 +5,7 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core;
 
 use Northrook\Core\Env;
+use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationConfigurationPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
@@ -41,18 +42,21 @@ final class SymfonyCoreBundle extends AbstractBundle
 
     private readonly string $projectDir;
 
+    public function build( ContainerBuilder $container ) : void {
+        parent::build( $container );
+
+        $container->addCompilerPass(
+            new ApplicationConfigurationPass(
+                $this->container->getParameter( 'kernel.project_dir' ),
+            ),
+        );
+    }
+
     public function loadExtension(
         array                 $config,
         ContainerConfigurator $container,
         ContainerBuilder      $builder,
     ) : void {
-
-        ( new AutoConfigure(
-            $builder->getParameterBag()->get( 'kernel.project_dir' ),
-        ) )
-            ->configPreload()
-            ->configRoutes()
-            ->configServices();
 
         foreach ( [
             'dir.root'          => '%kernel.project_dir%',
