@@ -47,18 +47,31 @@ final class SymfonyCoreBundle extends AbstractBundle
         ContainerBuilder      $builder,
     ) : void {
 
-        $rootDir   = normalizePath( '%kernel.project_dir%' );
-        $configDir = normalizePath( '%kernel.project_dir%/config' );
-
-        $builder->setParameter( 'dir.root', $rootDir );
-        $builder->setParameter( 'dir.config', $configDir );
+        foreach ( [
+            'dir.root'          => '%kernel.project_dir%',
+            'dir.config'        => '%kernel.project_dir%/config',
+            'dir.src'           => '%kernel.project_dir%/src',
+            'dir.templates'     => '%kernel.project_dir%/templates',
+            'dir.assets'        => '%kernel.project_dir%/assets',
+            'dir.public.assets' => '%kernel.project_dir%/public/assets',
+            'dir.public'        => '%kernel.project_dir%/public',
+            'dir.core.assets'   => dirname( __DIR__ ) . '/assets',
+        ] as $name => $value ) {
+            $builder->setParameter( $name, normalizePath( $value ) );
+        }
 
         // $container->import( '../config/cache.php' );
         // $container->import( '../config/services.php' );
         // $container->import( '../config/facades.php' );
         // $container->import( '../config/controllers.php' );
 
-        $autoConfigure = new AutoConfigure( $rootDir, $configDir );
+        $autoConfigure = new AutoConfigure(
+            $builder->getParameterBag()->get( 'kernel.project_dir' ),
+        );
+
+        $autoConfigure
+            ->configPreload()
+            ->configRoutes();
 
         // Autoconfigure Notes
         // Look for .yaml files in config folder, remove them if adding .php version and vice versa

@@ -18,6 +18,7 @@
   "prefer-stable": true,
   "require": {
     "php": ">=8.2",
+    "ext-zend-opcache": "*",
     "symfony/http-kernel": "@stable",
     "symfony/dependency-injection": "@stable",
     "northrook/core": "dev-main",
