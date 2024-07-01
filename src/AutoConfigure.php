@@ -5,7 +5,7 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core;
 
 use Northrook\Logger\Log;
-use Northrook\Symfony\Support\Console\Output;
+use Northrook\Symfony\Console\Output;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use function Northrook\Core\Function\normalizePath;
@@ -14,17 +14,18 @@ use function Northrook\Core\Function\normalizePath;
  * @internal
  * @author Martin Nielsen <mn@northrook.com>
  */
-final readonly class AutoConfigure
+final class AutoConfigure
 {
 
     private Filesystem $file;
     private string     $configDirectory;
+    public bool        $recompileRequired = false;
 
     public function __construct(
-        private string $projectDirectory,
+        string $projectDirectory,
     ) {
         $this->file            = new Filesystem();
-        $this->configDirectory = normalizePath( $this->projectDirectory . '/config' );
+        $this->configDirectory = normalizePath( $projectDirectory . '/config' );
 
         if ( 'cli' === PHP_SAPI ) {
             Output::init( 'AutoConfigure called by ' . SymfonyCoreBundle::class );
@@ -158,6 +159,7 @@ final readonly class AutoConfigure
         try {
             $this->file->dumpFile( $path, $content );
             Output::OK( "AutoConfigure: Generated config/$name." );
+            $this->recompileRequired = true;
         }
         catch ( IOException $exception ) {
             $message = "AutoConfigure: Could not generate config/$name. {$exception->getMessage()}";
