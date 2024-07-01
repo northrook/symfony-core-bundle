@@ -47,6 +47,13 @@ final class SymfonyCoreBundle extends AbstractBundle
         ContainerBuilder      $builder,
     ) : void {
 
+        ( new AutoConfigure(
+            $builder->getParameterBag()->get( 'kernel.project_dir' ),
+        ) )
+            ->configPreload()
+            ->configRoutes()
+            ->configServices();
+
         foreach ( [
             'dir.root'          => '%kernel.project_dir%',
             'dir.config'        => '%kernel.project_dir%/config',
@@ -64,15 +71,6 @@ final class SymfonyCoreBundle extends AbstractBundle
         // $container->import( '../config/services.php' );
         // $container->import( '../config/facades.php' );
         // $container->import( '../config/controllers.php' );
-
-        $autoConfigure = new AutoConfigure(
-            $builder->getParameterBag()->get( 'kernel.project_dir' ),
-        );
-
-        $autoConfigure
-            ->configPreload()
-            ->configRoutes()
-            ->configServices();
 
         // Autoconfigure Notes
         // Look for .yaml files in config folder, remove them if adding .php version and vice versa
