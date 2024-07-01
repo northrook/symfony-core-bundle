@@ -19,7 +19,10 @@
   "require": {
     "php": ">=8.2",
     "symfony/http-kernel": "@stable",
-    "symfony/dependency-injection": "^7.0"
+    "symfony/dependency-injection": "@stable",
+    "northrook/core": "dev-main",
+    "northrook/symfony-support": "dev-main",
+    "northrook/support": "dev-main"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"
