@@ -71,7 +71,8 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         $autoConfigure
             ->configPreload()
-            ->configRoutes();
+            ->configRoutes()
+            ->configServices();
 
         // Autoconfigure Notes
         // Look for .yaml files in config folder, remove them if adding .php version and vice versa
@@ -81,6 +82,11 @@ final class SymfonyCoreBundle extends AbstractBundle
 
     public function boot() : void {
         parent::boot();
+
+        if ( PHP_SAPI === 'cli' ) {
+            return;
+        }
+
         new Env(
             $this->container->getParameter( 'kernel.environment' ),
             $this->container->getParameter( 'kernel.debug' ),
