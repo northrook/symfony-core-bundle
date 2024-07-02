@@ -3,16 +3,12 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Symfony\Core\Component\CurrentRequest;
-use Northrook\Symfony\Core\Components\Menu\Menu;
-use Northrook\Symfony\Core\Components\Menu\Navigation;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
-use Northrook\Symfony\Core\Facade\Auth;
-use Northrook\Symfony\Core\Services\DocumentService;
-use Northrook\Symfony\Core\Services\MailerService;
-use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
+
+// use Northrook\Symfony\Core\Components\Menu\Menu;
+// use Northrook\Symfony\Core\Components\Menu\Navigation;
 
 final class AdminController extends CoreController
 {
@@ -20,70 +16,70 @@ final class AdminController extends CoreController
     public const DYNAMIC_TEMPLATE_DIR = 'admin';
 
     public function __construct(
-        protected readonly CurrentRequest              $request,
-        protected readonly DocumentService             $document,
-        protected readonly StylesheetGenerationService $stylesheet,
+        protected readonly CurrentRequest $request,
+        // protected readonly DocumentService             $document,
+        // protected readonly StylesheetGenerationService $stylesheet,
     ) {
-        Auth::denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
-
-        if ( false === $this->request->is( 'hypermedia' ) ) {
-            $this->stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );
-        }
-
-        $this->document->stylesheet( 'dir.cache/styles/styles.css' );
-
-        $this->document->script( 'dir.assets/scripts/core.js' )
-                       ->script( 'dir.assets/scripts/components.js' )
-                       ->script( 'dir.assets/scripts/navigation.js' )
-                       ->script( 'dir.assets/scripts/interactions.js' )
-                       ->script( 'dir.assets/scripts/admin.js' );
-
-
-        $this->document->body(
-            class            : 'core-admin',
-            style            : [ '--sidebar-width' => '120px' ],
-            sidebar_expanded : true,
-        );
+        // Auth::denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
+        //
+        // if ( false === $this->request->is( 'hypermedia' ) ) {
+        //     $this->stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );
+        // }
+        //
+        // $this->document->stylesheet( 'dir.cache/styles/styles.css' );
+        //
+        // $this->document->script( 'dir.assets/scripts/core.js' )
+        //                ->script( 'dir.assets/scripts/components.js' )
+        //                ->script( 'dir.assets/scripts/navigation.js' )
+        //                ->script( 'dir.assets/scripts/interactions.js' )
+        //                ->script( 'dir.assets/scripts/admin.js' );
+        //
+        //
+        // $this->document->body(
+        //     class            : 'core-admin',
+        //     style            : [ '--sidebar-width' => '120px' ],
+        //     sidebar_expanded : true,
+        // );
 
     }
 
-    private function getNavigation() : Navigation {
-
-        $navigation = new Navigation( 'admin', $this->request->route );
-
-        $navigation->add(
-            [
-                'dashboard' => Menu::item( 'Dashboard', 'layout-panel-top:lucide', 'dashboard' )->add(
-                    [
-                        'content'   => Menu::item( 'Content', 'app-window:lucide', 'content' ),
-                        'analytics' => Menu::item( 'Analytics', 'bar-chart-2:lucide', 'analytics' ),
-                    ],
-                ),
-                'website'   => Menu::item( 'Website', 'app-window:lucide', 'website' )->add(
-                    [
-                        Menu::item( 'Pages', 'panel-top:lucide', 'pages' ),
-                        Menu::item( 'Articles', 'newspaper:lucide', 'posts' ),
-                        Menu::item( 'Taxonomies', 'tags:lucide', 'taxonomies' ),
-                        Menu::item( 'Users', 'user:lucide', 'users' ),
-                        Menu::item( 'Users', 'user:lucide', 'users' ),
-                        Menu::item( 'Users', 'user:lucide', 'users' ),
-                        Menu::item( 'Users', 'user:lucide', 'users' ),
-                    ],
-                ),
-                'settings'  => Menu::item( 'Settings', 'settings:lucide', )->add(
-                    [
-                        Menu::item( 'Appearance', 'pencil-ruler:lucide', 'appearance' ),
-                        Menu::item( 'Accounts', 'users:lucide', 'accounts' ),
-                        Menu::item( 'Cache', 'server:lucide', 'accounts' ),
-                    ],
-                ),
-            ],
-        )->add(
-            Menu::item( 'Ad-hoc' ),
-        );
-
-        return $navigation;
-    }
+    // private function getNavigation() : Navigation {
+    //
+    //     $navigation = new Navigation( 'admin', $this->request->route );
+    //
+    //     $navigation->add(
+    //         [
+    //             'dashboard' => Menu::item( 'Dashboard', 'layout-panel-top:lucide', 'dashboard' )->add(
+    //                 [
+    //                     'content'   => Menu::item( 'Content', 'app-window:lucide', 'content' ),
+    //                     'analytics' => Menu::item( 'Analytics', 'bar-chart-2:lucide', 'analytics' ),
+    //                 ],
+    //             ),
+    //             'website'   => Menu::item( 'Website', 'app-window:lucide', 'website' )->add(
+    //                 [
+    //                     Menu::item( 'Pages', 'panel-top:lucide', 'pages' ),
+    //                     Menu::item( 'Articles', 'newspaper:lucide', 'posts' ),
+    //                     Menu::item( 'Taxonomies', 'tags:lucide', 'taxonomies' ),
+    //                     Menu::item( 'Users', 'user:lucide', 'users' ),
+    //                     Menu::item( 'Users', 'user:lucide', 'users' ),
+    //                     Menu::item( 'Users', 'user:lucide', 'users' ),
+    //                     Menu::item( 'Users', 'user:lucide', 'users' ),
+    //                 ],
+    //             ),
+    //             'settings'  => Menu::item( 'Settings', 'settings:lucide', )->add(
+    //                 [
+    //                     Menu::item( 'Appearance', 'pencil-ruler:lucide', 'appearance' ),
+    //                     Menu::item( 'Accounts', 'users:lucide', 'accounts' ),
+    //                     Menu::item( 'Cache', 'server:lucide', 'accounts' ),
+    //                 ],
+    //             ),
+    //         ],
+    //     )->add(
+    //         Menu::item( 'Ad-hoc' ),
+    //     );
+    //
+    //     return $navigation;
+    // }
 
 //     protected function view( string $route, array $parameters = [] ) : Response {
 //
@@ -120,10 +116,13 @@ final class AdminController extends CoreController
 //     }
 
     public function index(
-        ?string       $route,
-        MailerService $mailer,
+        ?string $route,
+        // MailerService $mailer,
         // ?Profiler $profiler
     ) : Response {
+
+        return $this->response( __FILE__ );
+
         // $this->document->title( 'testme' )->description( 'we describe things' );
 
         // $this->document->robots( 'test', 'gooblebot')->robots( 'another', 'all');
@@ -131,7 +130,7 @@ final class AdminController extends CoreController
         // dump( $this->document->getMetaTags() );
         // return $this->view( $route );
 
-        $template = $this->dynamicTemplatePath();
+        // $template = $this->dynamicTemplatePath();
 
         // $this->onLatteRender();
 
@@ -139,14 +138,14 @@ final class AdminController extends CoreController
         // dd( $this->request->headerBag( has : 'hx-request'), $template );
 
         // dd( $this->latte );
-        return $this->response(
-            template   : $this->request->is( 'hypermedia' ) ? $template : 'admin.latte',
-            parameters : [
-                             'template'   => $template,
-                             'route'      => $route,
-                             'navigation' => $this->getNavigation(),
-                         ],
-        );
+        // return $this->response(
+        //     template   : $this->request->is( 'hypermedia' ) ? $template : 'admin.latte',
+        //     parameters : [
+        //                      'template'   => $template,
+        //                      'route'      => $route,
+        //                      'navigation' => $this->getNavigation(),
+        //                  ],
+        // );
     }
 
     public function dashboard() : Response {
@@ -156,7 +155,6 @@ final class AdminController extends CoreController
     }
 
     public function api( string $action ) : Response {
-
         return new JsonResponse(
             [ 'action' => $action, ],
         );

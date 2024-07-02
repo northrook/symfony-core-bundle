@@ -19,22 +19,6 @@ return static function ( ContainerConfigurator $container ) : void {
     $controllers = $container->services();
 
     /**
-     * `Error Page` Exception Listener
-     */
-
-    // $controllers->set( ExceptionListener::class )
-    //             ->tag( 'kernel.event_listener', [ 'priority' => 100 ] )
-    //             ->args(
-    //                 [
-    //                     service( 'core.service.request' ),
-    //                     service( 'core.service.document' ),
-    //                     service( 'core.service.stylesheet' ),
-    //                 ],
-    //             );
-
-    return;
-
-    /**
      * Profiler Alias for `autowiring`
      */
     $container->services()->alias( Profiler::class, 'profiler' );
@@ -46,9 +30,9 @@ return static function ( ContainerConfigurator $container ) : void {
                 ->tag( 'controller.service_arguments' )
                 ->args(
                     [
-                        service( 'core.service.request' ),
-                        service( 'core.service.document' ),
-                        service( 'core.service.stylesheet' ),
+                        service( 'core.component.request' ),
+                        // service( 'core.service.document' ),
+                        // service( 'core.service.stylesheet' ),
                     ],
                 );
 
@@ -59,9 +43,9 @@ return static function ( ContainerConfigurator $container ) : void {
                 ->tag( 'controller.service_arguments' )
                 ->args(
                     [
-                        service( 'core.service.request' ),
-                        service( 'core.service.document' ),
-                        service( 'core.service.stylesheet' ),
+                        service( 'core.component.request' ),
+                        // service( 'core.service.document' ),
+                        // service( 'core.service.stylesheet' ),
                     ],
                 );
 
@@ -72,8 +56,8 @@ return static function ( ContainerConfigurator $container ) : void {
                 ->tag( 'controller.service_arguments' )
                 ->args(
                     [
-                        service( 'core.service.request' ),
-                        service( 'core.service.document' ),
+                        service( 'core.component.request' ),
+                        // service( 'core.service.document' ),
                     ],
                 );
     /**
@@ -83,7 +67,7 @@ return static function ( ContainerConfigurator $container ) : void {
                 ->tag( 'controller.service_arguments' )
                 ->args(
                     [
-                        service( 'core.service.request' ),
+                        service( 'core.component.request' ),
                     ],
                 );
 

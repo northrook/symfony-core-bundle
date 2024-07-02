@@ -2,9 +2,9 @@
 
 declare( strict_types = 1 );
 
-namespace Northrook\Symfony\Core\DependencyInjection\Facade;
+namespace Northrook\Symfony\Core\DependencyInjection;
 
-trait StaticInstance
+trait StaticFacade
 {
 
     /**

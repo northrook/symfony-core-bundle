@@ -13,9 +13,28 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core\DependencyInjection\Compiler;
 
 use Northrook\Symfony\AutoConfigure;
+use Symfony\Component\Yaml\Yaml;
 
 final class ApplicationAutoConfiguration extends AutoConfigure
 {
+    private const ROUTES = [
+        'core.controller.api'      => [
+            'resource' => '@SymfonyCoreBundle/config/routes/api.php',
+            'prefix'   => '/api',
+        ],
+        'core.controller.admin'    => [
+            'resource' => '@SymfonyCoreBundle/config/routes/admin.php',
+            'prefix'   => '/admin',
+        ],
+        'core.controller.security' => [
+            'resource' => '@SymfonyCoreBundle/config/routes/security.php',
+            'prefix'   => '/',
+        ],
+        'core.controller.public'   => [
+            'resource' => '@SymfonyCoreBundle/config/routes/public.php',
+            'prefix'   => '/',
+        ],
+    ];
 
     public function createConfigPreload() : self {
         $this->createConfigFile(
@@ -31,6 +50,12 @@ final class ApplicationAutoConfiguration extends AutoConfigure
                 PHP,
         );
 
+        return $this;
+    }
+
+    public function createConfigControllerRoutes() : self {
+        $this->createConfigFile( 'routes/core.yaml', Yaml::dump( $this::ROUTES ) );
+        
         return $this;
     }
 

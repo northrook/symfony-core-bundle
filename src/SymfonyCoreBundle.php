@@ -25,24 +25,6 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
  */
 final class SymfonyCoreBundle extends AbstractBundle
 {
-    private const ROUTES = [
-        'core.controller.api'      => [
-            'resource' => '@SymfonyCoreBundle/config/routes/api.php',
-            'prefix'   => '/api',
-        ],
-        'core.controller.admin'    => [
-            'resource' => '@SymfonyCoreBundle/config/routes/admin.php',
-            'prefix'   => '/admin',
-        ],
-        'core.controller.security' => [
-            'resource' => '@SymfonyCoreBundle/config/routes/security.php',
-            'prefix'   => '/',
-        ],
-        'core.controller.public'   => [
-            'resource' => '@SymfonyCoreBundle/config/routes/public.php',
-            'prefix'   => '/',
-        ],
-    ];
 
     private function autoConfigure( string $configDir ) : void {
         ( new ApplicationAutoConfiguration( $configDir ) )
@@ -114,7 +96,7 @@ final class SymfonyCoreBundle extends AbstractBundle
         $container->import( '../config/cache.php' );
         $container->import( '../config/pathfinder.php' );
         // $container->import( '../config/services.php' );
-        // $container->import( '../config/facades.php' );
+        $container->import( '../config/facades.php' );
         $container->import( '../config/controllers.php' );
 
         // Autoconfigure Notes
@@ -134,7 +116,7 @@ final class SymfonyCoreBundle extends AbstractBundle
             $this->container->getParameter( 'kernel.environment' ),
             $this->container->getParameter( 'kernel.debug' ),
         );
-        DependencyInjection\Facade\Container::set( $this->container );
+        DependencyInjection\ServiceContainer::set( $this->container );
     }
 
     public function getPath() : string {

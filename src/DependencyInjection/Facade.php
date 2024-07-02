@@ -32,7 +32,7 @@ abstract class Facade
      * @return Service
      */
     protected static function getService( string $className ) : mixed {
-        return Facade\Container::get( $className );
+        return ServiceContainer::get( $className );
     }
 
 

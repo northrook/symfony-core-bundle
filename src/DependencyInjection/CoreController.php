@@ -3,15 +3,9 @@
 namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Exception;
-use Latte\RuntimeException;
-use LogicException;
 use Northrook\Symfony\Core\Component\CurrentRequest;
 use Northrook\Symfony\Core\Facade\Log;
 use Northrook\Symfony\Core\Facade\Path;
-use Northrook\Symfony\Core\Security\ErrorEventException;
-use Northrook\Symfony\Core\Services\DocumentService;
-use Northrook\Symfony\Core\Services\NotificationService;
-use Northrook\Symfony\Latte;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -37,8 +31,20 @@ use Throwable;
  *
  * @internal
  */
-abstract class CoreController extends Facade
+abstract class CoreController
 {
+
+
+    /**
+     * @template Service
+     *
+     * @param class-string<Service>  $className
+     *
+     * @return Service
+     */
+    private static function getService( string $className ) : mixed {
+        return ServiceContainer::get( $className );
+    }
 
     /**
      * Render a `.latte` template to string.
@@ -53,37 +59,10 @@ abstract class CoreController extends Facade
         object | array $parameters = [],
     ) : string {
 
-        $latte = static::getService( Latte\Environment::class );
+        return $template;
 
-        if ( !$latte ) {
-            throw new LogicException( 'Latte is not available.' );
-        }
-
-        // If the document is not passed as a parameter, we will try to get it from the controller
-        if ( !isset( $parameters[ 'document' ] ) && property_exists( $this, 'document' ) ) {
-            $latte->addGlobalVariable(
-                'document',
-                $this->document instanceof DocumentService
-                    ? $this->document->getDocumentVariable()
-                    : $this->document,
-            );
-        }
-
-        try {
-            $content = $latte->render(
-                template   : $template,
-                parameters : $parameters,
-            );
-        }
-        catch ( RuntimeException $e ) {
-            throw new ErrorEventException(
-                message  : $e->getMessage(),
-                previous : $e,
-            );
-        }
-
-        return static::getService( NotificationService::class )
-                     ->injectFlashBagNotifications( $content );
+        // return static::getService( NotificationService::class )
+        //              ->injectFlashBagNotifications( $content );
     }
 
 
