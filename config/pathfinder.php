@@ -22,7 +22,7 @@ return static function ( ContainerConfigurator $container ) : void {
              ->args(
                  [
                      service( 'parameter_bag' ),
-                     service( 'cache.core.pathfinder' ),
+                     service( 'core.cache.pathfinder' ),
                      service( 'logger' )->nullOnInvalid(),
                  ],
              )

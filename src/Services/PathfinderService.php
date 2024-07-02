@@ -5,7 +5,7 @@ namespace Northrook\Symfony\Core\Services;
 use Northrook\Support\Str;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Cache\Adapter\TraceableAdapter;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use function Northrook\Core\Function\normalizePath;
 
@@ -15,7 +15,7 @@ final readonly class PathfinderService
 {
     public function __construct(
         private ParameterBagInterface $parameterBag,
-        private TraceableAdapter      $cache,
+        private AdapterInterface      $cache,
         private ?LoggerInterface      $logger = null,
     ) {}
 
