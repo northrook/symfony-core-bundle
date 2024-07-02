@@ -108,7 +108,7 @@ final class SymfonyCoreBundle extends AbstractBundle
         // $container->import( '../config/cache.php' );
         // $container->import( '../config/services.php' );
         // $container->import( '../config/facades.php' );
-        // $container->import( '../config/controllers.php' );
+        $container->import( '../config/controllers.php' );
 
         // Autoconfigure Notes
         // Look for .yaml files in config folder, remove them if adding .php version and vice versa
