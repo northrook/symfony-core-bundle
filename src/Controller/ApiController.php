@@ -11,6 +11,7 @@ use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -18,6 +19,7 @@ final class ApiController extends CoreController
 {
 
     public function __construct(
+        protected readonly RequestStack          $requestStack,
         protected readonly CurrentRequestService $request,
     ) {}
 

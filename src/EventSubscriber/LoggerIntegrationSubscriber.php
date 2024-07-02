@@ -3,13 +3,13 @@
 namespace Northrook\Symfony\Core\EventSubscriber;
 
 use Northrook\Logger\Log;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Log\Logger;
 
 /**
- * Pass the {@see Logger} instance into {@see Log} for static logging.
+ * Pass the {@see LoggerInterface} instance into {@see Log} for static logging.
  *
- * * {@see Logger} - Symfony's internal logger
+ * * {@see LoggerInterface} - Symfony's internal logger
  * > Part of the $container.
  *
  * * {@see Log} - Logger service by Northrook
@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Log\Logger;
 final readonly class LoggerIntegrationSubscriber implements EventSubscriberInterface
 {
 
-    public function __construct( private ?Logger $logger = null ) {}
+    public function __construct( private ?LoggerInterface $logger = null ) {}
 
     public function initializeLogger() : void {
         Log::setLogger( $this->logger );

@@ -12,7 +12,6 @@ use Northrook\Symfony\Core\Controller\AdminController;
 use Northrook\Symfony\Core\Controller\ApiController;
 use Northrook\Symfony\Core\Controller\PublicController;
 use Northrook\Symfony\Core\Controller\SecurityController;
-use Northrook\Symfony\Core\EventListener\ExceptionListener;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 
 return static function ( ContainerConfigurator $container ) : void {
@@ -22,15 +21,16 @@ return static function ( ContainerConfigurator $container ) : void {
     /**
      * `Error Page` Exception Listener
      */
-    $controllers->set( ExceptionListener::class )
-                ->tag( 'kernel.event_listener', [ 'priority' => 100 ] )
-                ->args(
-                    [
-                        service( 'core.service.request' ),
-                        service( 'core.service.document' ),
-                        service( 'core.service.stylesheet' ),
-                    ],
-                );
+
+    // $controllers->set( ExceptionListener::class )
+    //             ->tag( 'kernel.event_listener', [ 'priority' => 100 ] )
+    //             ->args(
+    //                 [
+    //                     service( 'core.service.request' ),
+    //                     service( 'core.service.document' ),
+    //                     service( 'core.service.stylesheet' ),
+    //                 ],
+    //             );
 
     return;
 

@@ -6,6 +6,7 @@ namespace Northrook\Symfony\Core;
 
 use Northrook\Core\Env;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
+use Northrook\Symfony\Core\EventListener\HttpExceptionListener;
 use Northrook\Symfony\Core\EventSubscriber\LoggerIntegrationSubscriber;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -43,16 +44,19 @@ final class SymfonyCoreBundle extends AbstractBundle
         ],
     ];
 
+    private function autoConfigure( string $configDir ) : void {
+        ( new ApplicationAutoConfiguration( $configDir ) )
+            ->createConfigPreload()
+            ->createConfigRoutes()
+            ->createConfigServices();
+    }
 
     public function build( ContainerBuilder $container ) : void {
 
         // Remove Symfony default .yaml config, create .php config
-        ( new ApplicationAutoConfiguration(
-            $container->getParameter( 'kernel.project_dir' ),
-        ) )
-            ->createConfigPreload()
-            ->createConfigRoutes()
-            ->createConfigServices();
+        if ( PHP_SAPI === 'cli' ) {
+            $this->autoConfigure( $container->getParameter( 'kernel.project_dir' ) . '/config', );
+        }
 
         parent::build( $container );
     }
@@ -77,6 +81,15 @@ final class SymfonyCoreBundle extends AbstractBundle
         ] as $name => $value ) {
             $builder->setParameter( $name, normalizePath( $value ) );
         }
+
+        $services->set( HttpExceptionListener::class )
+                 ->tag( 'kernel.event_listener', [ 'priority' => 100 ] )
+                 ->args(
+                     [
+                         service( 'logger' )->nullOnInvalid(),
+                         // service( 'core.service.request' ),
+                     ],
+                 );
 
         /** # 📝
          * Current Request Service
