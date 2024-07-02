@@ -101,7 +101,7 @@ final class URL extends Facade
 
         if ( str_starts_with( $url, 'http://' ) ) {
             if ( $logInsecureUrl ) {
-                Logger::log(
+                Log::log(
                     $enforceHttps ? 'error' : 'warning',
                     'The URL {url} is not secure. Please use https:// instead.',
                     [ 'url' => $url ],

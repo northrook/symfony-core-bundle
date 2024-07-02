@@ -3,11 +3,11 @@
 namespace Northrook\Symfony\Core\Services;
 
 use Northrook\Support\Str;
-use Northrook\Types\Path;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\TraceableAdapter;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use function Northrook\Core\Function\normalizePath;
 
 // TODO: Support creating missing directories
 
@@ -81,7 +81,7 @@ final readonly class PathfinderService
         }
 
         if ( file_exists( $path ) ) {
-            return Path::normalize( $path );
+            return normalizePath( $path );
         }
 
         $this->logger->Error(
@@ -112,7 +112,7 @@ final readonly class PathfinderService
                         unset( $parameters[ $key ] );
                     }
 
-                    $parameters[ $key ] = Path::normalize( $value );
+                    $parameters[ $key ] = normalizePath( $value );
                 }
 
                 return $parameters;

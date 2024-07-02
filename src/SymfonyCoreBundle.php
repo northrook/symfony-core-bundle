@@ -6,10 +6,13 @@ namespace Northrook\Symfony\Core;
 
 use Northrook\Core\Env;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
+use Northrook\Symfony\Core\EventSubscriber\LoggerIntegrationSubscriber;
+use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 use function Northrook\Core\Function\normalizePath;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 
 /**
@@ -60,6 +63,8 @@ final class SymfonyCoreBundle extends AbstractBundle
         ContainerBuilder      $builder,
     ) : void {
 
+        $services = $container->services();
+
         foreach ( [
             'dir.root'          => '%kernel.project_dir%',
             'dir.config'        => '%kernel.project_dir%/config',
@@ -73,6 +78,33 @@ final class SymfonyCoreBundle extends AbstractBundle
             $builder->setParameter( $name, normalizePath( $value ) );
         }
 
+        /** # 📝
+         * Current Request Service
+         */
+        $services->set( LoggerIntegrationSubscriber::class )
+                 ->args(
+                     [
+                         service( 'logger' )->nullOnInvalid(),
+                     ],
+                 )
+                 ->tag( 'kernel.event_subscriber', [ 'priority' => 100 ] );
+
+        /** # 📥
+         * Current Request Service
+         */
+        $services->set( 'core.service.request', CurrentRequestService::class )
+                 ->args(
+                     [
+                         service( 'request_stack' ),
+                         service( 'logger' )->nullOnInvalid(),
+                     ],
+                 )
+                 ->autowire()
+                 ->public()
+                 ->alias( CurrentRequestService::class, 'core.service.request' );
+
+
+        $container->import( '../config/pathfinder.php' );
         // $container->import( '../config/cache.php' );
         // $container->import( '../config/services.php' );
         // $container->import( '../config/facades.php' );
@@ -95,7 +127,7 @@ final class SymfonyCoreBundle extends AbstractBundle
             $this->container->getParameter( 'kernel.environment' ),
             $this->container->getParameter( 'kernel.debug' ),
         );
-        // DependencyInjection\Facade\Container::set( $this->container );
+        DependencyInjection\Facade\Container::set( $this->container );
     }
 
     public function getPath() : string {

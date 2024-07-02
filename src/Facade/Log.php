@@ -15,7 +15,7 @@ use Northrook\Symfony\Core\DependencyInjection\Facade;
  * @method static void debug( string|\Stringable $message, array $context = [] )
  * @method static void log( $level, string|\Stringable $message, array $context = [] )
  */
-final class Logger extends Facade
+final class Log extends Facade
 {
     protected const SERVICE = \Psr\Log\LoggerInterface::class;
 }

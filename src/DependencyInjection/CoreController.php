@@ -5,7 +5,7 @@ namespace Northrook\Symfony\Core\DependencyInjection;
 use Exception;
 use Latte\RuntimeException;
 use LogicException;
-use Northrook\Symfony\Core\Facade\Logger;
+use Northrook\Symfony\Core\Facade\Log;
 use Northrook\Symfony\Core\Facade\Path;
 use Northrook\Symfony\Core\Security\ErrorEventException;
 use Northrook\Symfony\Core\Services\CurrentRequestService;
@@ -184,7 +184,7 @@ abstract class CoreController extends Facade
                          ->handle( $subRequest, HttpKernelInterface::SUB_REQUEST );
         }
         catch ( Exception $e ) {
-            Logger::error( $e->getMessage() );
+            Log::error( $e->getMessage() );
             return new Response(
                 status : Response::HTTP_INTERNAL_SERVER_ERROR,
             );
@@ -213,7 +213,7 @@ abstract class CoreController extends Facade
         $url = static::getService( RouterInterface::class )
                      ->generate( $route, $parameters );
 
-        Logger::info(
+        Log::info(
             '{controller} is redirecting to {url}',
             [
                 'controller' => $this::class,

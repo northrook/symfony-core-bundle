@@ -20,10 +20,14 @@
     "php": ">=8.2",
     "ext-zend-opcache": "*",
     "symfony/http-kernel": "@stable",
+    "symfony/routing": "@stable",
     "symfony/dependency-injection": "@stable",
     "northrook/core": "dev-main",
+    "northrook/logger": "dev-main",
     "northrook/support": "dev-main",
-    "northrook/symfony-core": "dev-main"
+    "northrook/symfony-core": "dev-main",
+    "northrook/cache": "dev-main",
+    "symfony/serializer": "^7.1"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"
