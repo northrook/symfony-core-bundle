@@ -9,7 +9,6 @@ declare( strict_types = 1 );
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Symfony\Core\Services\PathfinderService;
-use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
 return static function ( ContainerConfigurator $container ) : void {
 
@@ -22,16 +21,11 @@ return static function ( ContainerConfigurator $container ) : void {
              ->args(
                  [
                      service( 'parameter_bag' ),
-                     service( 'core.cache.pathfinder' ),
+                     service( 'core.pathfinderCache' ),
                      service( 'logger' )->nullOnInvalid(),
                  ],
              )
              ->autowire()
              ->public()
              ->alias( PathfinderService::class, 'core.service.pathfinder' );
-
-    // Cache
-    $services->set( 'core.cache.pathfinder', PhpFilesAdapter::class )
-             ->args( [ 'core.pathfinder', 0, '%kernel.cache_dir%/core/pathfinder' ] )
-             ->tag( 'cache.pool' );
 };

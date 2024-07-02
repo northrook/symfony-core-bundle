@@ -71,12 +71,15 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         foreach ( [
             'dir.root'          => '%kernel.project_dir%',
-            'dir.config'        => '%kernel.project_dir%/config',
-            'dir.src'           => '%kernel.project_dir%/src',
-            'dir.templates'     => '%kernel.project_dir%/templates',
-            'dir.assets'        => '%kernel.project_dir%/assets',
-            'dir.public.assets' => '%kernel.project_dir%/public/assets',
-            'dir.public'        => '%kernel.project_dir%/public',
+            'dir.var'           => '%dir.root%/var',
+            'dir.cache'         => '%dir.var%/cache',
+            'dir.manifest'      => '%dir.var%/manifest',
+            'dir.config'        => '%dir.root%/config',
+            'dir.src'           => '%dir.root%/src',
+            'dir.assets'        => '%dir.root%/assets',
+            'dir.public'        => '%dir.root%/public',
+            'dir.templates'     => '%dir.root%/templates',
+            'dir.public.assets' => '%dir.root%/public/assets',
             'dir.core.assets'   => dirname( __DIR__ ) . '/assets',
         ] as $name => $value ) {
             $builder->setParameter( $name, normalizePath( $value ) );
@@ -108,8 +111,8 @@ final class SymfonyCoreBundle extends AbstractBundle
                  ->alias( CurrentRequest::class, 'core.component.request' );
 
 
+        $container->import( '../config/cache.php' );
         $container->import( '../config/pathfinder.php' );
-        // $container->import( '../config/cache.php' );
         // $container->import( '../config/services.php' );
         // $container->import( '../config/facades.php' );
         $container->import( '../config/controllers.php' );

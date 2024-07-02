@@ -1,5 +1,12 @@
 <?php
 
+/*-------------------------------------------------------------------/
+   HTTP Error Handler
+
+/-------------------------------------------------------------------*/
+
+declare( strict_types = 1 );
+
 namespace Northrook\Symfony\Core\EventListener;
 
 use Northrook\Symfony\Core\Component\CurrentRequest;
