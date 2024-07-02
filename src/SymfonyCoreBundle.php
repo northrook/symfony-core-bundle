@@ -5,10 +5,10 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core;
 
 use Northrook\Core\Env;
+use Northrook\Symfony\Core\Component\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
 use Northrook\Symfony\Core\EventListener\HttpExceptionListener;
 use Northrook\Symfony\Core\EventSubscriber\LoggerIntegrationSubscriber;
-use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
@@ -86,8 +86,8 @@ final class SymfonyCoreBundle extends AbstractBundle
                  ->tag( 'kernel.event_listener', [ 'priority' => 100 ] )
                  ->args(
                      [
+                         service( 'core.component.request' ),
                          service( 'logger' )->nullOnInvalid(),
-                         // service( 'core.service.request' ),
                      ],
                  );
 
@@ -95,26 +95,17 @@ final class SymfonyCoreBundle extends AbstractBundle
          * Current Request Service
          */
         $services->set( LoggerIntegrationSubscriber::class )
-                 ->args(
-                     [
-                         service( 'logger' )->nullOnInvalid(),
-                     ],
-                 )
-                 ->tag( 'kernel.event_subscriber', [ 'priority' => 100 ] );
+                 ->args( [ service( 'logger' )->nullOnInvalid() ], )
+                 ->tag( 'kernel.event_subscriber' );
 
         /** # 📥
          * Current Request Service
          */
-        $services->set( 'core.service.request', CurrentRequestService::class )
-                 ->args(
-                     [
-                         service( 'request_stack' ),
-                         service( 'logger' )->nullOnInvalid(),
-                     ],
-                 )
+        $services->set( 'core.component.request', CurrentRequest::class )
+                 ->args( [ service( 'request_stack' ) ], )
                  ->autowire()
                  ->public()
-                 ->alias( CurrentRequestService::class, 'core.service.request' );
+                 ->alias( CurrentRequest::class, 'core.component.request' );
 
 
         $container->import( '../config/pathfinder.php' );

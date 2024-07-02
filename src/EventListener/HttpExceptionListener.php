@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\EventListener;
 
+use Northrook\Symfony\Core\Component\CurrentRequest;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -9,9 +10,8 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 final readonly class HttpExceptionListener
 {
-    private \Throwable $exception;
-
     public function __construct(
+        private CurrentRequest   $request,
         private ?LoggerInterface $logger,
     ) {}
 
@@ -30,12 +30,44 @@ final readonly class HttpExceptionListener
         HttpExceptionInterface $exception,
     ) : void {
 
-        dump( $this->exception );
+        dump( $event, $exception );
 
         $this->logger?->error( 'Manual error for 404' );
         $event->setResponse(
             new Response( 'Not found, sadly.' ),
         );
+
+        return;
+
+
+        // $this->document->stylesheet( 'dir.cache/styles/styles.css' );
+        // $this->document->script(
+        //     'dir.assets/scripts/core.js',
+        //     'dir.assets/scripts/components.js',
+        // );
+        //
+        // $template   = $exception->template ?? 'error.latte';
+        // $parameters = array_merge(
+        //     [
+        //         'message' => $exception->getMessage(),
+        //         'status'  => $exception->getStatusCode(),
+        //         'content' => $exception->content ?? null,
+        //     ], $exception->parameters ?? [],
+        // );
+        //
+        // if ( $parameters[ 'content' ] instanceof Template ) {
+        //     $template = $parameters[ 'content' ];
+        //     unset( $parameters[ 'content' ] );
+        //     $parameters[ 'content' ] = $template->addData( $parameters );
+        // }
+        //
+        // $event->setResponse(
+        //     $this->response(
+        //         $template,
+        //         $parameters,
+        //         $exception->getStatusCode(),
+        //     ),
+        // );
 
     }
 }

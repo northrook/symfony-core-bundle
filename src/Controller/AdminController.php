@@ -2,11 +2,11 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
+use Northrook\Symfony\Core\Component\CurrentRequest;
 use Northrook\Symfony\Core\Components\Menu\Menu;
 use Northrook\Symfony\Core\Components\Menu\Navigation;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
 use Northrook\Symfony\Core\Facade\Auth;
-use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\DocumentService;
 use Northrook\Symfony\Core\Services\MailerService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
@@ -20,7 +20,7 @@ final class AdminController extends CoreController
     public const DYNAMIC_TEMPLATE_DIR = 'admin';
 
     public function __construct(
-        protected readonly CurrentRequestService       $request,
+        protected readonly CurrentRequest              $request,
         protected readonly DocumentService             $document,
         protected readonly StylesheetGenerationService $stylesheet,
     ) {

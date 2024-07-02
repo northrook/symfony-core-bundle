@@ -5,10 +5,10 @@ namespace Northrook\Symfony\Core\DependencyInjection;
 use Exception;
 use Latte\RuntimeException;
 use LogicException;
+use Northrook\Symfony\Core\Component\CurrentRequest;
 use Northrook\Symfony\Core\Facade\Log;
 use Northrook\Symfony\Core\Facade\Path;
 use Northrook\Symfony\Core\Security\ErrorEventException;
-use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\DocumentService;
 use Northrook\Symfony\Core\Services\NotificationService;
 use Northrook\Symfony\Latte;
@@ -33,7 +33,7 @@ use Throwable;
  *
  * @link    https://github.com/northrook Documentation
  *
- * @property CurrentRequestService $request
+ * @property CurrentRequest $request
  *
  * @internal
  */

@@ -4,14 +4,13 @@ namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Core\Type\PathType;
 use Northrook\Favicon\FaviconBundle;
+use Northrook\Symfony\Core\Component\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
 use Northrook\Symfony\Core\Facade\Log;
 use Northrook\Symfony\Core\Facade\Path;
-use Northrook\Symfony\Core\Services\CurrentRequestService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -19,8 +18,7 @@ final class ApiController extends CoreController
 {
 
     public function __construct(
-        protected readonly RequestStack          $requestStack,
-        protected readonly CurrentRequestService $request,
+        protected readonly CurrentRequest $request,
     ) {}
 
     public function stylesheet( string $bundle, StylesheetGenerationService $generator, PathfinderService $pathfinder,
