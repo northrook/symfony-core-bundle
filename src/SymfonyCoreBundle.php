@@ -6,6 +6,7 @@ namespace Northrook\Symfony\Core;
 
 use Northrook\Core\Env;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
+use Northrook\Symfony\Core\DependencyInjection\Compiler\LatteEnvironmentPass;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\PathfinderServicePass;
 use Northrook\Symfony\Core\EventListener\HttpExceptionListener;
 use Northrook\Symfony\Core\EventSubscriber\LoggerIntegrationSubscriber;
@@ -40,6 +41,12 @@ final class SymfonyCoreBundle extends AbstractBundle
             pass : new PathfinderServicePass( $projectDir ),
             type : PassConfig::TYPE_OPTIMIZE,
         );
+
+        // Provide the Pathfinder with directory and path parameters
+        $container->addCompilerPass(
+            pass : new LatteEnvironmentPass( $projectDir ),
+            type : PassConfig::TYPE_OPTIMIZE,
+        );
     }
 
     private function autoConfigure( string $configDir ) : void {
@@ -68,18 +75,19 @@ final class SymfonyCoreBundle extends AbstractBundle
         }
 
         foreach ( [
-            'dir.root'          => '%kernel.project_dir%',
-            'dir.var'           => '%dir.root%/var',
-            'dir.cache'         => '%dir.var%/cache',
-            'dir.cache.latte'   => '%dir.cache%/latte',
-            'dir.manifest'      => '%dir.var%/manifest',
-            'dir.config'        => '%dir.root%/config',
-            'dir.src'           => '%dir.root%/src',
-            'dir.assets'        => '%dir.root%/assets',
-            'dir.public'        => '%dir.root%/public',
-            'dir.templates'     => '%dir.root%/templates',
-            'dir.public.assets' => '%dir.root%/public/assets',
-            'dir.core.assets'   => dirname( __DIR__ ) . '/assets',
+            'dir.root'           => '%kernel.project_dir%',
+            'dir.var'            => '%dir.root%/var',
+            'dir.cache'          => '%dir.var%/cache',
+            'dir.cache.latte'    => '%dir.cache%/latte',
+            'dir.manifest'       => '%dir.var%/manifest',
+            'dir.config'         => '%dir.root%/config',
+            'dir.src'            => '%dir.root%/src',
+            'dir.assets'         => '%dir.root%/assets',
+            'dir.public'         => '%dir.root%/public',
+            'dir.templates'      => '%dir.root%/templates',
+            'dir.core.templates' => dirname( __DIR__ ) . '/templates',
+            'dir.public.assets'  => '%dir.root%/public/assets',
+            'dir.core.assets'    => dirname( __DIR__ ) . '/assets',
         ] as $name => $value ) {
             $builder->setParameter( $name, normalizePath( $value ) );
         }

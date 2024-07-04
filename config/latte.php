@@ -23,7 +23,7 @@ return static function ( ContainerConfigurator $container ) : void {
           ->args(
               [
                   '$cacheDirectory'      => '%dir.cache.latte%', // $cacheDirectory : string
-                  '$templateDirectories' => '%dir.templates%', // $templateDirectories : string[]
+                  '$templateDirectories' => [], // $templateDirectories : string[]
                   '$globalVariables'     => [], // $globalVariables : array
                   '$extensions'          => [], // $extensions      : array
                   '$preprocessors'       => [], // $preprocessors   : array
