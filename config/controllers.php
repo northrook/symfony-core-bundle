@@ -30,7 +30,7 @@ return static function ( ContainerConfigurator $container ) : void {
                 ->tag( 'controller.service_arguments' )
                 ->args(
                     [
-                        service( 'core.component.request' ),
+                        service( 'core.current_request' ),
                         // service( 'core.service.document' ),
                         // service( 'core.service.stylesheet' ),
                     ],
@@ -43,7 +43,7 @@ return static function ( ContainerConfigurator $container ) : void {
                 ->tag( 'controller.service_arguments' )
                 ->args(
                     [
-                        service( 'core.component.request' ),
+                        service( 'core.current_request' ),
                         // service( 'core.service.document' ),
                         // service( 'core.service.stylesheet' ),
                     ],
@@ -56,7 +56,7 @@ return static function ( ContainerConfigurator $container ) : void {
                 ->tag( 'controller.service_arguments' )
                 ->args(
                     [
-                        service( 'core.component.request' ),
+                        service( 'core.current_request' ),
                         // service( 'core.service.document' ),
                     ],
                 );
@@ -67,7 +67,7 @@ return static function ( ContainerConfigurator $container ) : void {
                 ->tag( 'controller.service_arguments' )
                 ->args(
                     [
-                        service( 'core.component.request' ),
+                        service( 'core.current_request' ),
                     ],
                 );
 

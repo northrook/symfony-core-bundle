@@ -9,6 +9,6 @@ final class PathfinderServicePass implements CompilerPassInterface
 {
 
     public function process( ContainerBuilder $container ) : void {
-        // TODO: Implement process() method.
+        dump( $container->getParameterBag()->all() );
     }
 }

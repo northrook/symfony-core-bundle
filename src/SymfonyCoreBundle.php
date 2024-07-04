@@ -6,8 +6,10 @@ namespace Northrook\Symfony\Core;
 
 use Northrook\Core\Env;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
+use Northrook\Symfony\Core\DependencyInjection\Compiler\PathfinderServicePass;
 use Northrook\Symfony\Core\EventListener\HttpExceptionListener;
 use Northrook\Symfony\Core\EventSubscriber\LoggerIntegrationSubscriber;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
@@ -24,15 +26,6 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
  */
 final class SymfonyCoreBundle extends AbstractBundle
 {
-
-    private function autoConfigure( string $configDir ) : void {
-        ( new ApplicationAutoConfiguration( $configDir ) )
-            ->createConfigPreload()
-            ->createConfigRoutes()
-            ->createConfigServices()
-            ->createConfigControllerRoutes();
-    }
-
     public function build( ContainerBuilder $container ) : void {
 
         // Remove Symfony default .yaml config, create .php config
@@ -41,6 +34,17 @@ final class SymfonyCoreBundle extends AbstractBundle
         }
 
         parent::build( $container );
+
+        $container->addCompilerPass( new PathfinderServicePass(), PassConfig::TYPE_OPTIMIZE );
+
+    }
+
+    private function autoConfigure( string $configDir ) : void {
+        ( new ApplicationAutoConfiguration( $configDir ) )
+            ->createConfigPreload()
+            ->createConfigRoutes()
+            ->createConfigServices()
+            ->createConfigControllerRoutes();
     }
 
     public function loadExtension(
@@ -71,7 +75,7 @@ final class SymfonyCoreBundle extends AbstractBundle
                  ->tag( 'kernel.event_listener', [ 'priority' => 100 ] )
                  ->args(
                      [
-                         service( 'core.component.request' ),
+                         service( 'core.current_request' ),
                          service( 'logger' )->nullOnInvalid(),
                      ],
                  );

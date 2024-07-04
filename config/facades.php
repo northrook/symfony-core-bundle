@@ -15,7 +15,6 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 // use Northrook\Symfony\Latte\Environment;
 
 use Northrook\Symfony\Autowire\CurrentRequest;
-use Northrook\Symfony\Core\Services\NotificationService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
@@ -34,16 +33,16 @@ return static function ( ContainerConfigurator $container ) : void {
                  [
                      [
                          RouterInterface::class     => service( 'router' ),
-                         PathfinderService::class   => service( 'core.service.pathfinder' ),
+                         PathfinderService::class   => service( 'core.pathfinder' ),
                          LoggerInterface::class     => service( 'logger' )->nullOnInvalid(),
                          Stopwatch::class           => service( 'debug.stopwatch' )->nullOnInvalid(),
                          // Environment::class                   => service( 'latte.environment' ),
                          // CsrfTokenManagerInterface::class     => service( 'security.csrf.token_manager' ),
                          HttpKernelInterface::class => service( 'http_kernel' ),
-                         NotificationService::class => service( 'core.service.notification' ),
+                         // NotificationService::class => service( 'core.service.notification' ),
 
                          // Dev
-                         CurrentRequest::class      => service( 'core.component.request' ),
+                         CurrentRequest::class      => service( 'core.current_request' ),
                          SerializerInterface::class => service( 'serializer' ),
                          // AuthorizationCheckerInterface::class => service( 'security.authorization_checker' ),
                          // TokenStorageInterface::class         => service( 'security.token_storage' ),
