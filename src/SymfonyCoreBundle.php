@@ -28,15 +28,18 @@ final class SymfonyCoreBundle extends AbstractBundle
 {
     public function build( ContainerBuilder $container ) : void {
 
+        $projectDir = $container->getParameter( 'kernel.project_dir' );
+
         // Remove Symfony default .yaml config, create .php config
-        if ( PHP_SAPI === 'cli' ) {
-            $this->autoConfigure( $container->getParameter( 'kernel.project_dir' ) . '/config', );
-        }
+        $this->autoConfigure( "$projectDir/config" );
 
         parent::build( $container );
 
-        $container->addCompilerPass( new PathfinderServicePass(), PassConfig::TYPE_OPTIMIZE );
-
+        // Provide the Pathfinder with directory and path parameters
+        $container->addCompilerPass(
+            pass : new PathfinderServicePass( $projectDir ),
+            type : PassConfig::TYPE_OPTIMIZE,
+        );
     }
 
     private function autoConfigure( string $configDir ) : void {
