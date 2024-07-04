@@ -26,13 +26,13 @@
     "northrook/logger": "dev-main",
     "northrook/support": "dev-main",
     "northrook/symfony-core": "dev-main",
+    "northrook/latte-bundle": "dev-main",
     "northrook/cache": "dev-main",
     "symfony/serializer": "^7.1",
     "symfony/monolog-bundle": "^3.10",
     "symfony/profiler-pack": "^1.0",
     "symfony/security-bundle": "^7.1",
-    "symfony/yaml": "^7.1",
-    "northrook/latte-bundle": "dev-main"
+    "symfony/yaml": "^7.1"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"

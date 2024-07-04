@@ -58,10 +58,20 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         $services = $container->services();
 
+        foreach (
+            [
+                'core.config.latte.autoRefresh' => false,
+                'core.config.latte.cacheTTL'    => null,
+            ] as $name => $value
+        ) {
+            $builder->setParameter( $name, $value );
+        }
+
         foreach ( [
             'dir.root'          => '%kernel.project_dir%',
             'dir.var'           => '%dir.root%/var',
             'dir.cache'         => '%dir.var%/cache',
+            'dir.cache.latte'   => '%dir.cache%/latte',
             'dir.manifest'      => '%dir.var%/manifest',
             'dir.config'        => '%dir.root%/config',
             'dir.src'           => '%dir.root%/src',
@@ -93,7 +103,7 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         $container->import( '../config/cache.php' );
         $container->import( '../config/autowire.php' );
-        // $container->import( '../config/services.php' );
+        $container->import( '../config/latte.php' );
         $container->import( '../config/facades.php' );
         $container->import( '../config/controllers.php' );
 
