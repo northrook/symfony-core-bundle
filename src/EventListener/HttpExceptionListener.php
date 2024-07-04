@@ -9,7 +9,7 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\EventListener;
 
-use Northrook\Symfony\Core\Component\CurrentRequest;
+use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;

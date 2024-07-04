@@ -14,7 +14,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 // use Northrook\Symfony\Latte\Environment;
 
-use Northrook\Symfony\Core\Component\CurrentRequest;
+use Northrook\Symfony\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\Services\NotificationService;
 use Northrook\Symfony\Core\Services\PathfinderService;
 use Psr\Log\LoggerInterface;

@@ -5,7 +5,6 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core;
 
 use Northrook\Core\Env;
-use Northrook\Symfony\Core\Component\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
 use Northrook\Symfony\Core\EventListener\HttpExceptionListener;
 use Northrook\Symfony\Core\EventSubscriber\LoggerIntegrationSubscriber;
@@ -30,7 +29,8 @@ final class SymfonyCoreBundle extends AbstractBundle
         ( new ApplicationAutoConfiguration( $configDir ) )
             ->createConfigPreload()
             ->createConfigRoutes()
-            ->createConfigServices();
+            ->createConfigServices()
+            ->createConfigControllerRoutes();
     }
 
     public function build( ContainerBuilder $container ) : void {
@@ -83,18 +83,9 @@ final class SymfonyCoreBundle extends AbstractBundle
                  ->args( [ service( 'logger' )->nullOnInvalid() ], )
                  ->tag( 'kernel.event_subscriber' );
 
-        /** # 📥
-         * Current Request Service
-         */
-        $services->set( 'core.component.request', CurrentRequest::class )
-                 ->args( [ service( 'request_stack' ) ], )
-                 ->autowire()
-                 ->public()
-                 ->alias( CurrentRequest::class, 'core.component.request' );
-
 
         $container->import( '../config/cache.php' );
-        $container->import( '../config/pathfinder.php' );
+        $container->import( '../config/autowire.php' );
         // $container->import( '../config/services.php' );
         $container->import( '../config/facades.php' );
         $container->import( '../config/controllers.php' );

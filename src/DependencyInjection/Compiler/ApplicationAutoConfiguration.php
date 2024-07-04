@@ -12,7 +12,7 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\DependencyInjection\Compiler;
 
-use Northrook\Symfony\AutoConfigure;
+use Northrook\Symfony\Configurator\AutoConfigure;
 use Symfony\Component\Yaml\Yaml;
 
 final class ApplicationAutoConfiguration extends AutoConfigure
@@ -36,6 +36,13 @@ final class ApplicationAutoConfiguration extends AutoConfigure
         ],
     ];
 
+    public function createConfigControllerRoutes() : self {
+        $this->createConfigFile( 'routes/core.yaml', Yaml::dump( $this::ROUTES ) );
+
+        return $this;
+    }
+
+
     public function createConfigPreload() : self {
         $this->createConfigFile(
             'preload.php',
@@ -50,12 +57,6 @@ final class ApplicationAutoConfiguration extends AutoConfigure
                 PHP,
         );
 
-        return $this;
-    }
-
-    public function createConfigControllerRoutes() : self {
-        $this->createConfigFile( 'routes/core.yaml', Yaml::dump( $this::ROUTES ) );
-        
         return $this;
     }
 

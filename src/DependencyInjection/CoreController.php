@@ -3,8 +3,7 @@
 namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Exception;
-use Northrook\Symfony\Core\Component\CurrentRequest;
-use Northrook\Symfony\Core\Facade\Log;
+use Northrook\Symfony\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\Facade\Path;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;

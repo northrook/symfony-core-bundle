@@ -4,7 +4,7 @@ namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Core\Type\PathType;
 use Northrook\Favicon\FaviconBundle;
-use Northrook\Symfony\Core\Component\CurrentRequest;
+use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
 use Northrook\Symfony\Core\Facade\Log;
 use Northrook\Symfony\Core\Facade\Path;
