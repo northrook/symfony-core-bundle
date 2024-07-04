@@ -2,71 +2,20 @@
 
 namespace Northrook\Symfony\Core\Facade;
 
-use Northrook\Core\Type\PathType;
+use Northrook\Symfony\Core\Autowire\Pathfinder;
 use Northrook\Symfony\Core\DependencyInjection\Facade;
 use Northrook\Symfony\Core\DependencyInjection\StaticFacade;
-use Northrook\Symfony\Core\Services\PathfinderService;
 
 /**
  * @method static string get( string $path )
- * @method static string getParameter( string $name )
- * @method static array  getParameters()
  */
 final class Path extends Facade
 {
     use StaticFacade;
 
-    protected const SERVICE = PathfinderService::class;
+    protected const SERVICE = Pathfinder::class;
 
-    public static function normalize( string $path ) : string {
-        return PathType::normalize( $path );
+    public static function getDirectories() : array {
+        return Path::getService()->directories;
     }
-
-    /**
-     * @param string | class-string  $path
-     *
-     * @return string %project.dir%/..
-     */
-    public static function root( string $path = '' ) : string {
-        return $path;
-    }
-
-    /**
-     * @param string | class-string  $path
-     *
-     * @return string %project.dir%/public/..
-     */
-    public static function public( string $path = '' ) : string {
-        return $path;
-    }
-
-
-    /**
-     * @param string | class-string  $path
-     *
-     * @return string %project.dir%/src/..
-     */
-    public static function src( string $path = '' ) : string {
-        return $path;
-    }
-
-
-    /**
-     * @param string | class-string  $path
-     *
-     * @return string %project.dir%/assets/..
-     */
-    public static function assets( string $path = '' ) : string {
-        return $path;
-    }
-
-    /**
-     * @param string | class-string  $path
-     *
-     * @return string %project.dir%/templates/..
-     */
-    public static function templates( string $path = '' ) : string {
-        return $path;
-    }
-
 }

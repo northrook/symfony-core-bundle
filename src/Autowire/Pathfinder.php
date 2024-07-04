@@ -15,7 +15,7 @@ final readonly class Pathfinder
 {
 
     public function __construct(
-        private array            $directoryParameters,
+        public array             $directories,
         private AdapterInterface $cache,
         private ?LoggerInterface $logger = null,
     ) {}
@@ -69,7 +69,7 @@ final readonly class Pathfinder
     }
 
     public function getParameterValue( string $key ) : ?string {
-        $value = $this->directoryParameters[ $key ] ?? null;
+        $value = $this->directories[ $key ] ?? null;
         if ( null === $value ) {
             $this->logger->error(
                 message : 'Failed getting container parameter {get}, the parameter does not exist or is assigned {value}. The value {value} has been returned.',

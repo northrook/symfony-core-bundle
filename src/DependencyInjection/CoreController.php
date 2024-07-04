@@ -4,7 +4,6 @@ namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Exception;
 use Northrook\Symfony\Autowire\CurrentRequest;
-use Northrook\Symfony\Core\Facade\Path;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,6 +19,7 @@ use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Throwable;
+use function Northrook\Core\Function\normalizePath;
 
 /**
  * @author  Martin Nielsen <mn@northrook.com>
@@ -262,6 +262,6 @@ abstract class CoreController
         $dir  ??= defined( static::class . '::DYNAMIC_TEMPLATE_DIR' ) ? static::DYNAMIC_TEMPLATE_DIR : '';
         $file = str_replace( '/', '.', $this->request->route ) . '.latte';
 
-        return Path::normalize( $dir . DIRECTORY_SEPARATOR . $file );
+        return normalizePath( $dir . DIRECTORY_SEPARATOR . $file );
     }
 }

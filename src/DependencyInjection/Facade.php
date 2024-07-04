@@ -31,8 +31,8 @@ abstract class Facade
      *
      * @return Service
      */
-    protected static function getService( string $className ) : mixed {
-        return ServiceContainer::get( $className );
+    protected static function getService( ?string $className = null ) : mixed {
+        return ServiceContainer::get( $className ?? static::SERVICE );
     }
 
 

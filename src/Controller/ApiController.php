@@ -2,13 +2,10 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
-use Northrook\Core\Type\PathType;
-use Northrook\Favicon\FaviconBundle;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
+use Northrook\Symfony\Core\Autowire\Pathfinder;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
-use Northrook\Symfony\Core\Facade\Log;
 use Northrook\Symfony\Core\Facade\Path;
-use Northrook\Symfony\Core\Services\PathfinderService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,12 +18,15 @@ final class ApiController extends CoreController
         protected readonly CurrentRequest $request,
     ) {}
 
-    public function stylesheet( string $bundle, StylesheetGenerationService $generator, PathfinderService $pathfinder,
+    public function stylesheet( string $bundle, StylesheetGenerationService $generator, Pathfinder $pathfinder,
     ) : Response {
 
         $generator->includeStylesheets(
             [ 'dir.core.assets/styles', ],
         );
+
+        Path::
+        Path::getDirectories();
 
         $path = new PathType( $pathfinder->get( 'dir.cache/styles/styles.css' ) );
 
@@ -52,7 +52,7 @@ final class ApiController extends CoreController
         );
     }
 
-    public function favicon( string $action, FaviconBundle $generator, PathfinderService $pathfinder ) : Response {
+    public function favicon( string $action, FaviconBundle $generator, Pathfinder $pathfinder ) : Response {
 
         $generator->load( Path::getParameter( 'path.favicon' ) );
         $generator->manifest->title = 'Symfony Playground';

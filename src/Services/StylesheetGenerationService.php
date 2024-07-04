@@ -10,6 +10,8 @@ use Northrook\Stylesheets\ColorPalette;
 use Northrook\Stylesheets\Stylesheet;
 use Northrook\Support\Arr;
 use Northrook\Support\File;
+use Northrook\Symfony\Core\Autowire\CurrentRequest;
+use Northrook\Symfony\Core\Autowire\Pathfinder;
 use Northrook\Symfony\Core\Facade\Path;
 use Northrook\Symfony\Core\Facade\Settings;
 use Northrook\Symfony\Core\Facade\Stopwatch;
@@ -40,9 +42,9 @@ final class StylesheetGenerationService
 
 
     public function __construct(
-        private readonly CurrentRequestService $session,
-        private readonly PathfinderService     $pathfinder,
-        private readonly ?LoggerInterface      $logger = null,
+        private readonly CurrentRequest   $session,
+        private readonly Pathfinder       $pathfinder,
+        private readonly ?LoggerInterface $logger = null,
     ) {
         $this->rootDirectory = Path::get( 'dir.root' );
 

@@ -32,7 +32,7 @@ return static function ( ContainerConfigurator $container ) : void {
     /** # ../
      * Path Service
      *
-     * {@see Pathfinder::$directoryParameters} will be assigned by the {@see PathfinderServicePass}
+     * {@see Pathfinder::$directories} will be assigned by the {@see PathfinderServicePass}
      */
     $services->set( 'core.pathfinder', Pathfinder::class )
              ->args(
