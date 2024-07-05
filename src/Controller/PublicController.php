@@ -4,6 +4,8 @@ namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 final class PublicController extends CoreController
@@ -28,7 +30,9 @@ final class PublicController extends CoreController
     }
 
     public function index(
-        ?string $route,
+        ?string      $route,
+        Request      $request,
+        RequestStack $requestStack,
     ) : Response {
 
         // print_r( Path::getParameter( 'path.favicon' ) );

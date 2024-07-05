@@ -3,7 +3,13 @@
 namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Exception;
-use Northrook\Symfony\Autowire\CurrentRequest;
+use Northrook\Core\Trait\PropertyAccessor;
+use Northrook\Latte\LatteBundle;
+use Northrook\Logger\Log;
+use Northrook\Symfony\Core\ErrorHandler\ErrorEventException;
+use Northrook\Symfony\Core\Facade\Request;
+use Northrook\Symfony\Core\Facade\URL;
+use Stringable;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,7 +18,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
@@ -22,48 +27,33 @@ use Throwable;
 use function Northrook\Core\Function\normalizePath;
 
 /**
+ * @property-read HttpKernelInterface $httpKernel
+ * @property-read LatteBundle         $latte
+ *
  * @author  Martin Nielsen <mn@northrook.com>
  *
  * @link    https://github.com/northrook Documentation
- *
- * @property CurrentRequest $request
  *
  * @internal
  */
 abstract class CoreController
 {
+    use PropertyAccessor;
 
-
-    /**
-     * @template Service
-     *
-     * @param class-string<Service>  $className
-     *
-     * @return Service
-     */
-    private static function getService( string $className ) : mixed {
-        return ServiceContainer::get( $className );
+    private function getHttpKernel() : HttpKernelInterface {
+        return ServiceContainer::get( HttpKernelInterface::class );
     }
 
-    /**
-     * Render a `.latte` template to string.
-     *
-     * @param string        $template
-     * @param object|array  $parameters
-     *
-     * @return string
-     */
-    final protected function render(
-        string         $template,
-        object | array $parameters = [],
-    ) : string {
-
-        return $template;
-
-        // return static::getService( NotificationService::class )
-        //              ->injectFlashBagNotifications( $content );
+    private function getLatteBundle() : LatteBundle {
+        return ServiceContainer::get( LatteBundle::class );
     }
 
+    public function __get( string $property ) {
+        return match ( $property ) {
+            'latte'      => $this->getLatteBundle(),
+            'httpKernel' => $this->getHttpKernel(),
+        };
+    }
 
     /**
      * Return a {@see Response}`view` from a `.latte` template.
@@ -79,13 +69,10 @@ abstract class CoreController
         object | array $parameters = [],
         int            $status = Response::HTTP_OK,
     ) : Response {
-
-        $content = $this->render( $template, $parameters );
-
         return new Response(
-            content : $content,
+            content : $this->getLatteBundle()->renderTemplate( $template, $parameters ),
             status  : $status,
-            headers : [ 'Meta-Storage' => 'local' ],
+            headers : [ 'Meta-Storage' => 'test' ],
         );
     }
 
@@ -132,34 +119,33 @@ abstract class CoreController
     /**
      * Returns a {@see BinaryFileResponse} object with original or customized file name and disposition header.
      */
-    protected function file(
+    final protected function file(
         SplFileInfo | string $file,
         ?string              $fileName = null,
         string               $disposition = ResponseHeaderBag::DISPOSITION_ATTACHMENT,
     ) : BinaryFileResponse {
         $response = new BinaryFileResponse( $file );
-        $filename ??= $response->getFile()->getFilename();
+        $fileName ??= $response->getFile()->getFilename();
 
-        return $response->setContentDisposition( $disposition, $filename );
+        return $response->setContentDisposition( $disposition, $fileName );
     }
 
     /**
      * Forwards the request to another controller.
      *
-     * @param string  $controller  The controller name (a string like "App\Controller\PostController::index" or "App\Controller\PostController" if it is invokable)
+     * @param string|class-string  $controller  The controller name (a string like "App\Controller\PostController::index" or "App\Controller\PostController" if it is invokable)
      */
-    protected function forward(
+    final protected function forward(
         string $controller,
         array  $path = [],
         array  $query = [],
     ) : Response {
-        $request               = $this->request->current;
+        $request               = Request::current();
         $path[ '_controller' ] = $controller;
         $subRequest            = $request->duplicate( $query, null, $path );
 
         try {
-            return static::getService( HttpKernelInterface::class )
-                         ->handle( $subRequest, HttpKernelInterface::SUB_REQUEST );
+            return $this->getHttpKernel()->handle( $subRequest, HttpKernelInterface::SUB_REQUEST );
         }
         catch ( Exception $e ) {
             Log::error( $e->getMessage() );
@@ -186,39 +172,34 @@ abstract class CoreController
      *
      * @param int  $status  The HTTP status code (302 "Found" by default)
      */
-    final protected function redirectToRoute( string $route, array $parameters = [], int $status = 302,
+    final protected function redirectToRoute(
+        string $route,
+        array  $parameters = [],
+        int    $status = 302,
     ) : RedirectResponse {
-        $url = static::getService( RouterInterface::class )
-                     ->generate( $route, $parameters );
 
-        Log::info(
-            '{controller} is redirecting to {url}',
-            [
-                'controller' => $this::class,
-                'url'        => $url,
-            ],
-        );
-
-        return $this->redirect( $url, $status );
+        try {
+            $url = URL::get( $route, $parameters );
+            Log::info( '{controller} is redirecting to {url}', [ 'controller' => $this::class, 'url' => $url ] );
+            return $this->redirect( $url, $status );
+        }
+        catch ( Exception $exception ) {
+            throw new ErrorEventException( previous : $exception );
+        }
     }
 
     /**
-     * @param string       $type  = ['error', 'warning', 'info', 'success'][$any]
-     * @param string       $message
-     * @param null|string  $description
-     * @param null|int     $timeoutMs
-     * @param bool         $log
+     * Adds a simple flash message to the current session.
+     *
+     * @param string                   $type  = ['info', 'success', 'warning', 'error', 'notice'][$any]
+     * @param string|Stringable|array  $message
      *
      * @return void
      */
     public function addFlash(
-        string  $type,
-        string  $message,
-        ?string $description = null,
-        ?int    $timeoutMs = 4500,
-        bool    $log = false,
+        string $type, string | Stringable | array $message,
     ) : void {
-        $this->request->addFlash( $type, $message, $description, $timeoutMs, $log );
+        Request::addFlash( $type, $message );
     }
 
 

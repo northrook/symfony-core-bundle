@@ -27,7 +27,7 @@ abstract class Facade
     /**
      * @template Service
      *
-     * @param class-string<Service>  $className
+     * @param ?class-string<Service>  $className
      *
      * @return Service
      */

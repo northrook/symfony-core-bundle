@@ -17,16 +17,17 @@ use Northrook\Symfony\Core\Services\MailerService;
 use Northrook\Symfony\Core\Services\NotificationService;
 use Northrook\Symfony\Core\Services\SettingsManagementService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Northrook\Symfony\ToastManager;
 
 return static function ( ContainerConfigurator $container ) : void {
 
-    $services   = $container->services();
-    $parameters = $container->parameters();
+    $services = $container->services();
+    
+    $services->set( 'core.toast_manager', ToastManager::class )
+             ->args( [ service( 'request_stack' ) ] );
 
-    //--------------------------------------------------------------------
-    // Core Path Helper
-    //--------------------------------------------------------------------
+
+    return;
 
 
     /** # ☕

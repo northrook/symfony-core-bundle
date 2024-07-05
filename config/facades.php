@@ -14,8 +14,10 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 // use Northrook\Symfony\Latte\Environment;
 
+use Northrook\Latte\LatteBundle;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\Autowire\Pathfinder;
+use Northrook\Symfony\ToastManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -33,16 +35,19 @@ return static function ( ContainerConfigurator $container ) : void {
                  [
                      [
                          RouterInterface::class     => service( 'router' ),
-                         Pathfinder::class          => service( 'core.pathfinder' ),
+                         HttpKernelInterface::class => service( 'http_kernel' ),
                          LoggerInterface::class     => service( 'logger' )->nullOnInvalid(),
                          Stopwatch::class           => service( 'debug.stopwatch' )->nullOnInvalid(),
-                         // Environment::class                   => service( 'latte.environment' ),
                          // CsrfTokenManagerInterface::class     => service( 'security.csrf.token_manager' ),
-                         HttpKernelInterface::class => service( 'http_kernel' ),
                          // NotificationService::class => service( 'core.service.notification' ),
 
-                         // Dev
+                         // Core
                          CurrentRequest::class      => service( 'core.current_request' ),
+                         Pathfinder::class          => service( 'core.pathfinder' ),
+                         LatteBundle::class         => service( 'core.latte_bundle' ),
+                         ToastManager::class        => service( 'core.toast_manager' ),
+
+                         // Dev
                          SerializerInterface::class => service( 'serializer' ),
                          // AuthorizationCheckerInterface::class => service( 'security.authorization_checker' ),
                          // TokenStorageInterface::class         => service( 'security.token_storage' ),

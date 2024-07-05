@@ -8,7 +8,7 @@ use Northrook\Core\Env;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\LatteEnvironmentPass;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\PathfinderServicePass;
-use Northrook\Symfony\Core\EventListener\HttpExceptionListener;
+use Northrook\Symfony\Core\ErrorHandler\HttpExceptionListener;
 use Northrook\Symfony\Core\EventSubscriber\LoggerIntegrationSubscriber;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -111,6 +111,7 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         $container->import( '../config/cache.php' );
         $container->import( '../config/autowire.php' );
+        $container->import( '../config/services.php' );
         $container->import( '../config/latte.php' );
         $container->import( '../config/facades.php' );
         $container->import( '../config/controllers.php' );
@@ -138,37 +139,4 @@ final class SymfonyCoreBundle extends AbstractBundle
     public function getPath() : string {
         return dirname( __DIR__ );
     }
-
-    // private function autoconfigureRoutes() : void {
-    //
-    //     $apiController = new Path( $this->projectDir . '/config/routes/core.yaml' );
-    //     $coreConfig    = [];
-    //
-    //     if ( $apiController->exists ) {
-    //         if ( 'cli' === PHP_SAPI ) {
-    //             echo Console::info( 'northrook.core.api', 'Config exists: ' . $apiController->value );
-    //         }
-    //         return;
-    //     }
-    //
-    //     foreach ( SymfonyCoreBundle::ROUTES as $key => $value ) {
-    //         $coreConfig[] = "$key:\n    resource: '{$value['resource']}'\n    prefix: {$value['prefix']}\n";
-    //     }
-    //
-    //     $status = File::save(
-    //         $this->projectDir . '/config/routes/core.yaml',
-    //         implode( PHP_EOL, $coreConfig ),
-    //     );
-    //
-    //     if ( 'cli' !== PHP_SAPI ) {
-    //         return;
-    //     }
-    //
-    //     if ( !$status ) {
-    //         echo Console::error( 'northrook.core.api:', 'Config file not created: ' . $apiController->value );
-    //     }
-    //     else {
-    //         echo Console::OK( 'northrook.core.api:', 'Config created: ' . $apiController->value );
-    //     }
-    // }
 }

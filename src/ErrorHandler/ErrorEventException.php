@@ -1,9 +1,7 @@
 <?php
 
-namespace Northrook\Symfony\Core\Security;
+namespace Northrook\Symfony\Core\ErrorHandler;
 
-use Northrook\Elements\Render\Template;
-use Northrook\Symfony\Core\EventListener\ExceptionListener;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -16,34 +14,35 @@ use Throwable;
  *
  *
  */
-class ErrorEventException extends RuntimeException implements HttpExceptionInterface
+final class ErrorEventException extends RuntimeException implements HttpExceptionInterface
 {
     private int   $statusCode;
     private array $headers;
 
-    public readonly ?string $content;
-    public readonly string  $template;
-    public readonly array   $parameters;
+    public readonly string $template;
+    public readonly array  $parameters;
+
+    // TODO : When the error.latte template is fleshed out, hint at default parameters
 
     public function __construct(
-        ?string                  $message = null,
-        int                      $status = Response::HTTP_NOT_FOUND,
-        string | Template | null $content = null,
-        string                   $template = null,
-        array                    $parameters = [],
-        array                    $headers = [],
-        int                      $code = 0,
-        ?Throwable               $previous = null,
+        ?string    $message = null,
+        array      $parameters = [
+            'blurb' => null, // Additional context
+            'link'  => null, // Return link, etc
+        ],
+        string     $template = 'error.latte',
+        int        $status = Response::HTTP_NOT_FOUND,
+        array      $headers = [],
+        int        $code = 0,
+        ?Throwable $previous = null,
     ) {
         $this->statusCode = $status;
         $this->headers    = $headers;
 
-        $this->content    = $content ?? $message;
-        $this->template   = $template ?? 'error.latte';
+        $this->template   = $template;
         $this->parameters = array_merge(
             [
-                'message' => $message,
-                'content' => $content,
+                'message' => $message ?? $previous->getMessage() ?? 'Not found',
                 'status'  => $status,
             ], $parameters,
         );
