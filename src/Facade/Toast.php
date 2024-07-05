@@ -3,8 +3,8 @@
 namespace Northrook\Symfony\Core\Facade;
 
 use Northrook\Symfony\Core\DependencyInjection\Facade;
-use Northrook\Symfony\Toast as Notification;
 use Northrook\Symfony\ToastManager;
+use Northrook\Symfony\ToastManager\Notification;
 
 final class Toast extends Facade
 {

@@ -22,7 +22,7 @@ use Northrook\Symfony\ToastManager;
 return static function ( ContainerConfigurator $container ) : void {
 
     $services = $container->services();
-    
+
     $services->set( 'core.toast_manager', ToastManager::class )
              ->args( [ service( 'request_stack' ) ] );
 
