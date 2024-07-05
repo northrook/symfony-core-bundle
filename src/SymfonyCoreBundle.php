@@ -97,6 +97,7 @@ final class SymfonyCoreBundle extends AbstractBundle
                  ->args(
                      [
                          service( 'core.current_request' ),
+                         service( 'core.latte_bundle' ),
                          service( 'logger' )->nullOnInvalid(),
                      ],
                  );

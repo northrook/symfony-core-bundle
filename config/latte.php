@@ -17,8 +17,7 @@ return static function ( ContainerConfigurator $container ) : void {
     $latte->defaults()
           ->autowire()
           ->autoconfigure();
-
-
+    
     $latte->set( 'core.latte_bundle', LatteBundle::class )
           ->args(
               [
