@@ -45,7 +45,7 @@ return static function ( ContainerConfigurator $container ) : void {
                          CurrentRequest::class      => service( 'core.current_request' ),
                          Pathfinder::class          => service( 'core.pathfinder' ),
                          LatteBundle::class         => service( 'core.latte_bundle' ),
-                         ToastManager::class        => service( 'core.toast_manager' ),
+                         ToastManager::class        => service( ToastManager::class ),
 
                          // Dev
                          SerializerInterface::class => service( 'serializer' ),
