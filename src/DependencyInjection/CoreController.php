@@ -24,7 +24,7 @@ use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Throwable;
-use function Northrook\Core\Function\normalizePath;
+use function Northrook\normalizePath;
 
 /**
  * @property-read HttpKernelInterface $httpKernel
@@ -235,7 +235,7 @@ abstract class CoreController
     }
 
     final protected function getUser() : ?UserInterface {
-        return static::getService( TokenStorageInterface::class )->getToken()?->getUser();
+        return ServiceContainer::get( TokenStorageInterface::class )->getToken()?->getUser();
     }
 
     final protected function dynamicTemplatePath( ?string $dir = null ) : string {

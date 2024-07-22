@@ -6,7 +6,7 @@ use Northrook\Support\Str;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use function Northrook\Core\Function\normalizePath;
+use function Northrook\normalizePath;
 
 final readonly class PathfinderServicePass implements CompilerPassInterface
 {

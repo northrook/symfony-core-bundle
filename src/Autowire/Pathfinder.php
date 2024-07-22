@@ -6,7 +6,7 @@ use Northrook\Support\Str;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use function Northrook\Core\Function\normalizePath;
+use function Northrook\normalizePath;
 
 /**
  *
