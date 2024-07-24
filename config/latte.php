@@ -31,15 +31,15 @@ return static function ( ContainerConfigurator $container ) : void {
     $latte->set( 'core.latte_bundle', LatteBundle::class )
           ->args(
               [
-                  '$cacheDirectory'      => '%dir.cache.latte%', // $cacheDirectory : string
-                  '$templateDirectories' => [], // $templateDirectories : string[]
-                  '$globalVariables'     => [], // $globalVariables : array
-                  '$extensions'          => [],
-                  '$preprocessors'       => [], // $preprocessors   : array
-                  '$postprocessors'      => [], // $postprocessors  : array
-                  '$stopwatch'           => service( 'debug.stopwatch' )->nullOnInvalid(),
-                  '$autoRefresh'         => '%core.config.latte.autoRefresh%',
-                  '$cacheTTL'            => '%core.config.latte.cacheTTL%',
+                  '$projectDirectory' => '%dir.root%',
+                  '$cacheDirectory'   => '%dir.cache.latte%',
+                  // '$templateDirectories' => [], // $templateDirectories : string[]
+                  // '$globalVariables'  => [], // $globalVariables : array
+                  // '$extensions'       => [],
+                  // '$preprocessors'    => [], // $preprocessors   : array
+                  // '$postprocessors'   => [], // $postprocessors  : array
+                  '$stopwatch'        => service( 'debug.stopwatch' )->nullOnInvalid(),
+                  '$autoRefresh'      => '%core.config.latte.autoRefresh%',
               ],
           )
           ->call(
