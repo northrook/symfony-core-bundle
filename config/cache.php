@@ -34,6 +34,11 @@ return static function ( ContainerConfigurator $container ) : void {
           )
           ->autowire();
 
+    // Latte Template Cache
+    $cache->set( 'core.latte.cache', PhpFilesAdapter::class )
+          ->args( [ 'core', 0, '%kernel.cache_dir%/latte/cache' ] )
+          ->tag( 'cache.pool' );
+
     // PersistentMemoCache
     $cache->set( 'core.persistentMemoCache', PhpFilesAdapter::class )
           ->args( [ 'core', 0, '%kernel.cache_dir%/persistentMemoCache' ] )
