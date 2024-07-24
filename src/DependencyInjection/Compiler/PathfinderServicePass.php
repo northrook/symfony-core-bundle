@@ -33,10 +33,10 @@ final readonly class PathfinderServicePass implements CompilerPassInterface
 
         $parameters = array_filter(
             array    : $parameterBag->all(),
-            callback : static fn ( $value, $key ) => \is_string( $value ) &&
-                                                     ( \str_starts_with( $key, 'dir' ) ||
-                                                       \str_starts_with( $key, 'path', ) ) &&
-                                                     \str_starts_with( $value, $this->projectDir ),
+            callback : fn ( $value, $key ) => \is_string( $value ) &&
+                                              ( \str_starts_with( $key, 'dir' ) ||
+                                                \str_starts_with( $key, 'path', ) ) &&
+                                              \str_starts_with( $value, $this->projectDir ),
             mode     : ARRAY_FILTER_USE_BOTH,
         );
 

@@ -38,7 +38,7 @@ return static function ( ContainerConfigurator $container ) : void {
              ->args(
                  [
                      [], // $directoryParameters
-                     service( 'core.pathfinderCache' ),
+                     service( 'core.cache.pathfinder' ),
                      service( 'logger' )->nullOnInvalid(),
                  ],
              )

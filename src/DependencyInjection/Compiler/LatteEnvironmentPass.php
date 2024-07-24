@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 final class LatteEnvironmentPass implements CompilerPassInterface
 {
     public function __construct( private string $projectDir ) {}
-    
+
     public function process( ContainerBuilder $container ) : void {
         // Assign the path parameters to the Pathfinder service
         $latteBundle = $container->getDefinition( 'core.latte_bundle' );
@@ -28,10 +28,10 @@ final class LatteEnvironmentPass implements CompilerPassInterface
 
         $parameters = \array_filter(
             array    : $parameterBag->all(),
-            callback : static fn ( $value, $key ) => \is_string( $value ) &&
-                                                     \str_contains( $key, 'dir' ) &&
-                                                     \str_contains( $key, 'templates' ) &&
-                                                     \str_starts_with( $value, $this->projectDir ),
+            callback : fn ( $value, $key ) => \is_string( $value ) &&
+                                              \str_contains( $key, 'dir' ) &&
+                                              \str_contains( $key, 'templates' ) &&
+                                              \str_starts_with( $value, $this->projectDir ),
             mode     : ARRAY_FILTER_USE_BOTH,
         );
 

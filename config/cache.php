@@ -8,45 +8,36 @@ declare( strict_types = 1 );
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Northrook\CacheManager;
+use Northrook\Cache\MemoizationCache;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
 return static function ( ContainerConfigurator $container ) : void {
 
     $cache = $container->services();
 
-    /** # ⚡
-     * Cache Manager
-     */
-    $cache->set( CacheManager::class )
-          ->tag( 'controller.service_arguments' )
-          ->args(
-              [
-                  '%kernel.cache_dir%',
-                  '%dir.manifest%',
-                  [],
-                  service( 'logger' )->nullOnInvalid(),
-              ],
-          )
-          ->call(
-              method    : 'addPool',
-              arguments : [ 'persistentMemoCache', service( 'core.persistentMemoCache' ) ],
-          )
-          ->autowire();
-
     // Latte Template Cache
     $cache->set( 'core.latte.cache', PhpFilesAdapter::class )
           ->args( [ 'core', 0, '%kernel.cache_dir%/latte/cache' ] )
           ->tag( 'cache.pool' );
 
-    // PersistentMemoCache
-    $cache->set( 'core.persistentMemoCache', PhpFilesAdapter::class )
-          ->args( [ 'core', 0, '%kernel.cache_dir%/persistentMemoCache' ] )
+    // MemoizationCache
+    $cache->set( 'core.cache.memoization', PhpFilesAdapter::class )
+          ->args( [ 'core', 0, '%kernel.cache_dir%/memoization' ] )
           ->tag( 'cache.pool' );
-
-
+    
     // Pathfinder
-    $cache->set( 'core.pathfinderCache', PhpFilesAdapter::class )
-          ->args( [ 'core.pathfinder', 0, '%kernel.cache_dir%/pathfinderCache' ] )
+    $cache->set( 'core.cache.pathfinder', PhpFilesAdapter::class )
+          ->args( [ 'core.pathfinder', 0, '%kernel.cache_dir%/pathfinder' ] )
           ->tag( 'cache.pool' );
+
+    /** # ⚡
+     * MemoizationCache
+     */
+    $cache->set( MemoizationCache::class )
+          ->args(
+              [
+                  service( 'core.cache.memoization' )->nullOnInvalid(),
+                  service( 'logger' )->nullOnInvalid(),
+              ],
+          );
 };
