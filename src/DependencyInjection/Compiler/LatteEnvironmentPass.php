@@ -15,8 +15,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 final class LatteEnvironmentPass implements CompilerPassInterface
 {
     public function __construct( private string $projectDir ) {}
-
-
+    
     public function process( ContainerBuilder $container ) : void {
         // Assign the path parameters to the Pathfinder service
         $latteBundle = $container->getDefinition( 'core.latte_bundle' );
@@ -27,15 +26,15 @@ final class LatteEnvironmentPass implements CompilerPassInterface
 
     private function getTemplateDirectories( ParameterBagInterface $parameterBag ) : array {
 
-        $parameters = array_filter(
+        $parameters = \array_filter(
             array    : $parameterBag->all(),
-            callback : fn ( $value, $key ) => is_string( $value )
-                                              && str_contains( $key, 'dir' )
-                                              && str_contains( $key, 'templates' )
-                                              && str_starts_with( $value, $this->projectDir ),
+            callback : static fn ( $value, $key ) => \is_string( $value ) &&
+                                                     \str_contains( $key, 'dir' ) &&
+                                                     \str_contains( $key, 'templates' ) &&
+                                                     \str_starts_with( $value, $this->projectDir ),
             mode     : ARRAY_FILTER_USE_BOTH,
         );
 
-        return array_map( 'Northrook\Core\Function\normalizePath', $parameters );
+        return \array_map( 'Northrook\normalizePath', $parameters );
     }
 }

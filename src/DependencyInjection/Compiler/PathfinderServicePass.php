@@ -2,7 +2,6 @@
 
 namespace Northrook\Symfony\Core\DependencyInjection\Compiler;
 
-use Northrook\Support\Str;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -34,9 +33,10 @@ final readonly class PathfinderServicePass implements CompilerPassInterface
 
         $parameters = array_filter(
             array    : $parameterBag->all(),
-            callback : fn ( $value, $key ) => is_string( $value )
-                                              && Str::contains( $key, [ 'dir', 'path' ] )
-                                              && str_starts_with( $value, $this->projectDir ),
+            callback : static fn ( $value, $key ) => \is_string( $value ) &&
+                                                     ( \str_starts_with( $key, 'dir' ) ||
+                                                       \str_starts_with( $key, 'path', ) ) &&
+                                                     \str_starts_with( $value, $this->projectDir ),
             mode     : ARRAY_FILTER_USE_BOTH,
         );
 
@@ -44,7 +44,7 @@ final readonly class PathfinderServicePass implements CompilerPassInterface
         foreach ( $parameters as $key => $value ) {
 
             // Simple sorting; unsetting 'dir' and 'path' prefixed keys, appending them after all Symfony-defined directories
-            if ( str_starts_with( $key, 'dir' ) || str_starts_with( $key, 'path' ) ) {
+            if ( \str_starts_with( $key, 'dir' ) || \str_starts_with( $key, 'path' ) ) {
                 unset( $parameters[ $key ] );
             }
 
