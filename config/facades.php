@@ -17,7 +17,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Northrook\Latte\LatteBundle;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\Autowire\Pathfinder;
-use Northrook\Symfony\ToastManager;
+use Northrook\Symfony\Service\ToastService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -45,7 +45,7 @@ return static function ( ContainerConfigurator $container ) : void {
                          CurrentRequest::class      => service( 'core.current_request' ),
                          Pathfinder::class          => service( 'core.pathfinder' ),
                          LatteBundle::class         => service( 'core.latte_bundle' ),
-                         ToastManager::class        => service( ToastManager::class ),
+                         ToastService::class        => service( ToastService::class ),
 
                          // Dev
                          SerializerInterface::class => service( 'serializer' ),
