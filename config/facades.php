@@ -17,7 +17,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Northrook\Latte\LatteBundle;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\Autowire\Pathfinder;
-use Northrook\Symfony\Service\ToastService;
+use Northrook\Symfony\Service\Toasts\ToastService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
