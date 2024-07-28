@@ -17,16 +17,12 @@ use Northrook\Symfony\Core\Services\MailerService;
 use Northrook\Symfony\Core\Services\NotificationService;
 use Northrook\Symfony\Core\Services\SettingsManagementService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
-use Northrook\Symfony\ToastManager;
 
 return static function ( ContainerConfigurator $container ) : void {
 
     $services = $container->services();
 
     $services->defaults()->autowire();
-
-    $services->set( ToastManager::class )
-             ->args( [ service( 'request_stack' ) ] );
 
 
     return;

@@ -1,0 +1,83 @@
+{layout '_document.latte'}
+{block body}
+    <body class="p-y:m p-x:s">
+
+    {*    <h1 class="color:--primary">*}
+{*        Public*}
+{*    </h1>*}
+{*    <p>Origin route: <code>{$get->request->attributes->get('_route')}</code></p>*}
+{*    <p>Requested controller: <code>{$get->request->attributes->get('_controller')}</code></p>*}
+{*    <hr>*}
+{*    <a href="/admin">Go to Admin</a>*}
+{*    <hr>*}
+{*    <a href="/login">Login as User via Public Auth</a>*}
+{*    <hr>*}
+{*    <a href="/admin/login">Login as Member via Admin Auth</a>*}
+{*    <hr>*}
+
+    <div class="flex gap:1.5rem p:.5rem">
+
+        <button class="primary ripple">
+            Primary
+        </button>
+
+        <button class="secondary">
+            Secondary
+        </button>
+
+        <button class="outline">
+            Outline
+        </button>
+
+        <button>
+            Button
+        </button>
+
+        <button id="submit" type="submit">
+                <span>
+                    Log in
+                </span>
+        </button>
+    </div>
+
+    <div class="flex gap:1.5rem p:.5rem">
+
+        <card class="ripple">
+            <figure>
+                <img src="https://picsum.photos/seed/banana/240/160" alt="Lorem Ipsum">
+                <figcaption>Lorem Ipsum</figcaption>
+            </figure>
+            <div class="flow:.25em">
+                <h3 class="font-size:1.2rem">Lorem Ipsum</h3>
+                <p>Lorem Ipsum dolor sit amet consectetur</p>
+            </div>
+            <a href="#">Read more</a>
+        </card>
+
+        <card class="ripple">
+            <figure>
+                <img src="https://picsum.photos/seed/juice/240/160" alt="Lorem Ipsum">
+                <figcaption>Lorem Ipsum</figcaption>
+            </figure>
+            <div class="flow:.25em">
+                <h3 class="font-size:1.2rem">Lorem Ipsum</h3>
+                <p>Lorem Ipsum dolor sit amet consectetur</p>
+            </div>
+            <a href="#">Read more</a>
+        </card>
+
+        <card class="ripple">
+            <figure>
+                <img src="https://picsum.photos/seed/athlon/240/160" alt="Lorem Ipsum">
+                <figcaption>Lorem Ipsum</figcaption>
+            </figure>
+            <div class="flow:.25em">
+                <h3 class="font-size:1.2rem">Lorem Ipsum</h3>
+                <p>Lorem Ipsum dolor sit amet consectetur</p>
+            </div>
+            <a href="#">Read more</a>
+        </card>
+
+    </div>
+    </body>
+{/block}

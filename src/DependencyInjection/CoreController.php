@@ -70,7 +70,7 @@ abstract class CoreController
         int            $status = Response::HTTP_OK,
     ) : Response {
         return new Response(
-            content : $this->getLatteBundle()->renderTemplate( $template, $parameters ),
+            content : $this->getLatteBundle()->render( $template, $parameters ),
             status  : $status,
             headers : [ 'Meta-Storage' => 'test' ],
         );
@@ -100,7 +100,7 @@ abstract class CoreController
     ) : JsonResponse {
 
         if ( null === $serializer &&
-             property_exists( $this, 'serializer' ) &&
+             \property_exists( $this, 'serializer' ) &&
              $this->serializer instanceof SerializerInterface
         ) {
             $serializer = $this->serializer;

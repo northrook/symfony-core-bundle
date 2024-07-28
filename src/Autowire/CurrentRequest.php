@@ -59,15 +59,15 @@ final readonly class CurrentRequest
      */
     public function __get( string $property ) : string | bool {
         return match ( $property ) {
-            'route'        => $this->route(),
-            'routeName'    => $this->routeName(),
-            'routeRoot'    => $this->routeRoot(),
-            'pathInfo'     => $this->current->getPathInfo(),
-            'method'       => $this->current->getMethod(),
-            'type'         => $this->type(),
-            'isHypermedia' => $this->type( 'hypermedia' ),
-            'isJson'       => $this->type( 'json' ),
-            'isHtml'       => $this->type( 'html' ),
+            'route'     => $this->route(),
+            'routeName' => $this->routeName(),
+            'routeRoot' => $this->routeRoot(),
+            'pathInfo'  => $this->current->getPathInfo(),
+            'method'    => $this->current->getMethod(),
+            'type'      => $this->type(),
+            'isHtmx'    => $this->type( 'htmx' ),
+            'isJson'    => $this->type( 'json' ),
+            'isHtml'    => $this->type( 'html' ),
         };
     }
 

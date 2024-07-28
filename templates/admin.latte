@@ -1,0 +1,57 @@
+{layout '_document.latte'}
+
+{block 'body'}
+
+    <header id="admin-header">
+
+        <!-- Toggle Sidebar -->
+        <button id="toggle-sidebar" icon="toggle-sidebar"/>
+
+        <!-- Global Search -->
+        <div id="admin-global-search">
+            {include 'admin/ui/search.latte'}
+        </div>
+
+
+        <!-- Right Button Group -->
+        <div class="group">
+
+            <!-- Modal : Help and Info - documentation, guides, keyboard shortcuts etc -->
+            <button icon="help"/>
+
+            <!-- Aside : Notifications -->
+            <button icon="asterisk"/>
+
+            <!-- User Avatar & Dropdown -->
+            <button icon="arrow-down-circle"/>
+            <!-- Dropdown
+
+            User
+              [Username, Email, Profile Link] Persistent on Admin/Public if ROLE_EDITOR?
+              --
+              Public <=> Admin
+              --
+              Settings
+              Theme Toggle
+              Logout
+
+            -->
+
+        </div>
+    </header>
+
+    <sidebar id="admin-sidebar" resize="vertical">
+        <nav id="admin-sidebar-nav" hx-boost="true" hx-swap="innerHTML" hx-target="main">
+            {$navigation|noescape}
+        </nav>
+        <div class="resize vertical end"></div>
+    </sidebar>
+
+
+    <main id="content">
+        {include $template}
+    </main>
+
+    <!-- Editor Actions -->
+
+{/block}
