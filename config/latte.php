@@ -9,7 +9,6 @@ declare( strict_types = 1 );
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Latte\CacheExtension;
-use Northrook\Latte\LatteBundle;
 
 return static function ( ContainerConfigurator $container ) : void {
 
@@ -27,25 +26,4 @@ return static function ( ContainerConfigurator $container ) : void {
                   service( 'logger' )->nullOnInvalid(),
               ],
           );
-
-    $latte->set( 'core.latte_bundle', LatteBundle::class )
-          ->args(
-              [
-                  '$projectDirectory' => '%dir.root%',
-                  '$cacheDirectory'   => '%dir.cache.latte%',
-                  // '$templateDirectories' => [], // $templateDirectories : string[]
-                  // '$globalVariables'  => [], // $globalVariables : array
-                  // '$extensions'       => [],
-                  // '$preprocessors'    => [], // $preprocessors   : array
-                  // '$postprocessors'   => [], // $postprocessors  : array
-                  '$stopwatch'        => service( 'debug.stopwatch' )->nullOnInvalid(),
-                  '$autoRefresh'      => '%core.config.latte.autoRefresh%',
-              ],
-          )
-          ->call(
-              'addExtension', [
-              service( 'core.latte_extension.cache' ),
-          ],
-          )
-          ->alias( LatteBundle::class, 'core.latte_bundle' );
 };

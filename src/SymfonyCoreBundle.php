@@ -114,7 +114,7 @@ final class SymfonyCoreBundle extends AbstractBundle
         $container->import( '../config/cache.php' );
         $container->import( '../config/autowire.php' );
         $container->import( '../config/services.php' );
-        // $container->import( '../config/latte.php' );
+        $container->import( '../config/latte.php' );
         $container->import( '../config/facades.php' );
         $container->import( '../config/controllers.php' );
 
