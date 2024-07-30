@@ -5,6 +5,7 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core;
 
 use Northrook\Core\Env;
+use Northrook\Latte;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\LatteEnvironmentPass;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\PathfinderServicePass;
@@ -97,7 +98,7 @@ final class SymfonyCoreBundle extends AbstractBundle
                  ->args(
                      [
                          service( 'core.current_request' ),
-                         service( 'core.latte_bundle' ),
+                         service( Latte::class ),
                          service( 'logger' )->nullOnInvalid(),
                      ],
                  );

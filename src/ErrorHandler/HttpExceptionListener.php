@@ -9,7 +9,7 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\ErrorHandler;
 
-use Northrook\Latte\LatteBundle;
+use Northrook\Latte;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +20,7 @@ final readonly class HttpExceptionListener
 {
     public function __construct(
         private CurrentRequest   $request,
-        private LatteBundle      $latte,
+        private Latte            $latte,
         private ?LoggerInterface $logger,
     ) {}
 

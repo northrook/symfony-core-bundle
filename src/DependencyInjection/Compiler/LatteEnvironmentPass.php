@@ -8,6 +8,7 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\DependencyInjection\Compiler;
 
+use Northrook\Latte;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -18,7 +19,7 @@ final class LatteEnvironmentPass implements CompilerPassInterface
 
     public function process( ContainerBuilder $container ) : void {
         // Assign the path parameters to the Pathfinder service
-        $latteBundle = $container->getDefinition( 'core.latte_bundle' );
+        $latteBundle = $container->getDefinition( Latte::class );
         foreach ( $this->getTemplateDirectories( $container->getParameterBag() ) as $key => $dir ) {
             $latteBundle->addMethodCall( 'addTemplateDirectory', [ $dir, $key ], );
         }
