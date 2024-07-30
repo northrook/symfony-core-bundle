@@ -33,7 +33,8 @@
     "symfony/profiler-pack": "^1.0",
     "symfony/security-bundle": "^7.1",
     "symfony/yaml": "^7.1",
-    "northrook/symfony-toasts": "dev-main"
+    "northrook/symfony-toasts": "dev-main",
+    "northrook/symfony-latte-bundle": "dev-main"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"

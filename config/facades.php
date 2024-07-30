@@ -14,7 +14,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 // use Northrook\Symfony\Latte\Environment;
 
-use Northrook\Latte\LatteBundle;
+use Northrook\Latte;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\Autowire\Pathfinder;
 use Northrook\Symfony\Service\Toasts\ToastService;
@@ -44,7 +44,7 @@ return static function ( ContainerConfigurator $container ) : void {
                          // Core
                          CurrentRequest::class      => service( 'core.current_request' ),
                          Pathfinder::class          => service( 'core.pathfinder' ),
-                         LatteBundle::class         => service( 'core.latte_bundle' ),
+                         Latte::class               => service( Latte::class ),
                          ToastService::class        => service( ToastService::class ),
 
                          // Dev
