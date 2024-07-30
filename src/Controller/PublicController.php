@@ -35,7 +35,8 @@ final class PublicController extends CoreController
         RequestStack $requestStack,
     ) : Response {
 
-        // print_r( Path::getParameter( 'path.favicon' ) );
+        dd( $this );
+        // print_r( Path::getParameter( `path.favicon` ) );
 
         return $this->response(
             template   : 'public.latte',

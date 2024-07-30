@@ -4,6 +4,7 @@ namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Exception;
 use Northrook\Core\Trait\PropertyAccessor;
+use Northrook\Latte;
 use Northrook\Latte\LatteBundle;
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\ErrorHandler\ErrorEventException;
@@ -44,8 +45,8 @@ abstract class CoreController
         return ServiceContainer::get( HttpKernelInterface::class );
     }
 
-    private function getLatteBundle() : LatteBundle {
-        return ServiceContainer::get( LatteBundle::class );
+    private function getLatteBundle() : Latte {
+        return ServiceContainer::get( Latte::class );
     }
 
     public function __get( string $property ) {
