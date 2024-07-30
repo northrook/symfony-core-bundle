@@ -35,7 +35,8 @@
     "symfony/yaml": "^7.1",
     "northrook/symfony-toasts": "dev-main",
     "northrook/symfony-latte-bundle": "dev-main",
-    "northrook/latte-symfony-cache": "dev-main"
+    "northrook/latte-symfony-cache": "dev-main",
+    "northrook/latte-components": "dev-main"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"

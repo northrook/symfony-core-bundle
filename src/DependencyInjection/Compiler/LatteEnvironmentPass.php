@@ -12,7 +12,6 @@ use Northrook\Latte;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 final class LatteEnvironmentPass implements CompilerPassInterface
 {
@@ -24,9 +23,12 @@ final class LatteEnvironmentPass implements CompilerPassInterface
         foreach ( $this->getTemplateDirectories( $container->getParameterBag() ) as $key => $dir ) {
             $latteBundle->addMethodCall( 'addTemplateDirectory', [ $dir, $key ], );
         }
+        $latteBundle->addMethodCall(
+            'setLoader', [ $container->getDefinition( Latte\Compiler\Loader::class ) ],
+        );
 
         $latteBundle->addMethodCall(
-            'addExtension', [ service( 'core.latte_extension.cache' ) ],
+            'addExtension', [ $container->getDefinition( 'core.latte_extension.cache' ) ],
         );
     }
 
