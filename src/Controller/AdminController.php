@@ -115,13 +115,7 @@ final class AdminController extends CoreController
 //
 //     }
 
-    public function index(
-        ?string $route,
-        // MailerService $mailer,
-        // ?Profiler $profiler
-    ) : Response {
-
-        return $this->response( __FILE__ );
+    public function index( ?string $route ) : Response {
 
         // $this->document->title( 'testme' )->description( 'we describe things' );
 
@@ -130,22 +124,16 @@ final class AdminController extends CoreController
         // dump( $this->document->getMetaTags() );
         // return $this->view( $route );
 
-        // $template = $this->dynamicTemplatePath();
+        $template = $this->dynamicTemplatePath();
 
-        // $this->onLatteRender();
-
-        // dump( Settings::public() );
-        // dd( $this->request->headerBag( has : 'hx-request'), $template );
-
-        // dd( $this->latte );
-        // return $this->response(
-        //     template   : $this->request->is( 'hypermedia' ) ? $template : 'admin.latte',
-        //     parameters : [
-        //                      'template'   => $template,
-        //                      'route'      => $route,
-        //                      'navigation' => $this->getNavigation(),
-        //                  ],
-        // );
+        return $this->response(
+            template   : $this->request->is( 'hypermedia' ) ? $template : 'admin.latte',
+            parameters : [
+                             'template'   => $template,
+                             'route'      => $route,
+                             'navigation' => $this->getNavigation(),
+                         ],
+        );
     }
 
     public function dashboard() : Response {

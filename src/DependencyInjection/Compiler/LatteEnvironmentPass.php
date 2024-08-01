@@ -9,9 +9,14 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core\DependencyInjection\Compiler;
 
 use Northrook\Latte;
+use Northrook\Latte\Compiler\ComponentExtension;
+use Northrook\Latte\Extension\ElementExtension;
+use Northrook\Latte\Extension\FormatterExtension;
+use Northrook\Latte\Extension\RenderExtension;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Twig\Extension\OptimizerExtension;
 
 final class LatteEnvironmentPass implements CompilerPassInterface
 {
@@ -23,12 +28,20 @@ final class LatteEnvironmentPass implements CompilerPassInterface
         foreach ( $this->getTemplateDirectories( $container->getParameterBag() ) as $key => $dir ) {
             $latteBundle->addMethodCall( 'addTemplateDirectory', [ $dir, $key ], );
         }
+
         $latteBundle->addMethodCall(
-            'setLoader', [ $container->getDefinition( Latte\Compiler\Loader::class ) ],
+            'addExtension', [
+            // $container->getDefinition( IconManager::class ),
+            $container->getDefinition( ComponentExtension::class ),
+            $container->getDefinition( ElementExtension::class ),
+            $container->getDefinition( RenderExtension::class ),
+            $container->getDefinition( FormatterExtension::class ),
+            $container->getDefinition( OptimizerExtension::class ),
+        ],
         );
 
         $latteBundle->addMethodCall(
-            'addExtension', [ $container->getDefinition( 'core.latte_extension.cache' ) ],
+            'addPostprocessor', [ static fn ( string $html ) => \strtolower( $html ), ],
         );
     }
 
