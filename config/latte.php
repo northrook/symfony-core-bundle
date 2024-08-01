@@ -12,8 +12,8 @@ use Northrook\Latte\CacheExtension;
 use Northrook\Latte\Compiler\ComponentExtension;
 use Northrook\Latte\Extension\ElementExtension;
 use Northrook\Latte\Extension\FormatterExtension;
+use Northrook\Latte\Extension\OptimizerExtension;
 use Northrook\Latte\Extension\RenderExtension;
-use Twig\Extension\OptimizerExtension;
 
 return static function ( ContainerConfigurator $container ) : void {
 

@@ -12,11 +12,12 @@ use Northrook\Latte;
 use Northrook\Latte\Compiler\ComponentExtension;
 use Northrook\Latte\Extension\ElementExtension;
 use Northrook\Latte\Extension\FormatterExtension;
+use Northrook\Latte\Extension\OptimizerExtension;
 use Northrook\Latte\Extension\RenderExtension;
+use Northrook\Latte\Runtime\ComponentAssetHandler;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Twig\Extension\OptimizerExtension;
 
 final class LatteEnvironmentPass implements CompilerPassInterface
 {
@@ -41,7 +42,13 @@ final class LatteEnvironmentPass implements CompilerPassInterface
         );
 
         $latteBundle->addMethodCall(
-            'addPostprocessor', [ static fn ( string $html ) => \strtolower( $html ), ],
+            'addPostprocessor', [
+            [
+                $container->getDefinition( ComponentAssetHandler::class ),
+                'handleDocumentInjection',
+            ],
+
+        ],
         );
     }
 
