@@ -6,10 +6,11 @@ use Exception;
 use Northrook\Core\Trait\PropertyAccessor;
 use Northrook\Latte;
 use Northrook\Logger\Log;
+use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\ErrorHandler\ErrorEventException;
 use Northrook\Symfony\Core\Facade\Request;
 use Northrook\Symfony\Core\Facade\URL;
-use Northrook\Symfony\Service\Toasts\ToastService;
+use Northrook\Symfony\Service\Toasts\Message;
 use Stringable;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -26,6 +27,7 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Throwable;
 use function Northrook\normalizePath;
+use function Northrook\toString;
 
 /**
  * @property-read HttpKernelInterface $httpKernel
@@ -40,6 +42,9 @@ use function Northrook\normalizePath;
 abstract class CoreController
 {
     use PropertyAccessor;
+
+    protected readonly CurrentRequest $request;
+
 
     private function getHttpKernel() : HttpKernelInterface {
         return ServiceContainer::get( HttpKernelInterface::class );
@@ -71,10 +76,32 @@ abstract class CoreController
         int            $status = Response::HTTP_OK,
     ) : Response {
 
-        dump( ToastService::getFlashBagContents() );
+        $prepend = '';
+        $content = $this->getLatteBundle()->render( $template, $parameters );
+
+        foreach ( $this->request->flashBag()->all() as $type => $flash ) {
+            foreach ( $flash as $toast ) {
+                if ( $toast instanceof Message ) {
+                    $prepend .= new Latte\Component\Notification(
+                        $toast->type,
+                        $toast->message,
+                        $toast->description,
+                        $toast->timeout,
+                    );
+                }
+                else {
+                    $prepend .= new Latte\Component\Notification(
+                                  $type,
+                                  toString( $toast ),
+                        timeout : $type !== 'danger' ? 15 : null,
+                    );
+                }
+            }
+        }
+
 
         return new Response(
-            content : $this->getLatteBundle()->render( $template, $parameters ),
+            content : $prepend . $content,
             status  : $status,
             headers : [ 'Meta-Storage' => 'test' ],
         );
