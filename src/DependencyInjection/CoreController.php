@@ -6,10 +6,10 @@ use Exception;
 use Northrook\Core\Trait\PropertyAccessor;
 use Northrook\Latte;
 use Northrook\Logger\Log;
-use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\ErrorHandler\ErrorEventException;
 use Northrook\Symfony\Core\Facade\Request;
 use Northrook\Symfony\Core\Facade\URL;
+use Northrook\Symfony\Service\Toasts\ToastService;
 use Stringable;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -41,13 +41,6 @@ abstract class CoreController
 {
     use PropertyAccessor;
 
-
-    protected readonly CurrentRequest $request;
-
-    final public function setCurrentRequest( CurrentRequest $currentRequest ) : void {
-        $this->request ??= $currentRequest;
-    }
-
     private function getHttpKernel() : HttpKernelInterface {
         return ServiceContainer::get( HttpKernelInterface::class );
     }
@@ -78,8 +71,8 @@ abstract class CoreController
         int            $status = Response::HTTP_OK,
     ) : Response {
 
-        dump( $this->request->flashBag() );
-        
+        dump( ToastService::getFlashBagContents() );
+
         return new Response(
             content : $this->getLatteBundle()->render( $template, $parameters ),
             status  : $status,
