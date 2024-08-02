@@ -4,6 +4,7 @@ namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
+use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,10 +17,15 @@ final class AdminController extends CoreController
     public const DYNAMIC_TEMPLATE_DIR = 'admin';
 
     public function __construct(
-        protected readonly CurrentRequest $request,
-        // protected readonly DocumentService             $document,
+        protected readonly CurrentRequest  $request,
+        protected readonly DocumentService $document,
         // protected readonly StylesheetGenerationService $stylesheet,
     ) {
+        $this->document->body(
+            class            : 'core-admin',
+            style            : [ '--sidebar-width' => '120px' ],
+            sidebar_expanded : true,
+        );
         // Auth::denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
         //
         // if ( false === $this->request->is( 'hypermedia' ) ) {
@@ -35,11 +41,6 @@ final class AdminController extends CoreController
         //                ->script( 'dir.assets/scripts/admin.js' );
         //
         //
-        // $this->document->body(
-        //     class            : 'core-admin',
-        //     style            : [ '--sidebar-width' => '120px' ],
-        //     sidebar_expanded : true,
-        // );
 
     }
 

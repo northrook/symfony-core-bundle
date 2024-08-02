@@ -47,7 +47,6 @@ final class LatteEnvironmentPass implements CompilerPassInterface
                 $container->getDefinition( ComponentAssetHandler::class ),
                 'handleDocumentInjection',
             ],
-
         ],
         );
     }

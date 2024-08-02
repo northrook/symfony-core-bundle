@@ -5,8 +5,8 @@ namespace Northrook\Symfony\Core\DependencyInjection;
 use Exception;
 use Northrook\Core\Trait\PropertyAccessor;
 use Northrook\Latte;
-use Northrook\Latte\LatteBundle;
 use Northrook\Logger\Log;
+use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\ErrorHandler\ErrorEventException;
 use Northrook\Symfony\Core\Facade\Request;
 use Northrook\Symfony\Core\Facade\URL;
@@ -41,6 +41,13 @@ abstract class CoreController
 {
     use PropertyAccessor;
 
+
+    protected readonly CurrentRequest $request;
+
+    final public function setCurrentRequest( CurrentRequest $currentRequest ) : void {
+        $this->request ??= $currentRequest;
+    }
+
     private function getHttpKernel() : HttpKernelInterface {
         return ServiceContainer::get( HttpKernelInterface::class );
     }
@@ -70,6 +77,9 @@ abstract class CoreController
         object | array $parameters = [],
         int            $status = Response::HTTP_OK,
     ) : Response {
+
+        dump( $this->request->flashBag() );
+        
         return new Response(
             content : $this->getLatteBundle()->render( $template, $parameters ),
             status  : $status,
