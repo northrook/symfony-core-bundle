@@ -15,8 +15,12 @@ final class PublicController extends CoreController
     public function __construct(
         protected readonly CurrentRequest  $request,
         protected readonly DocumentService $document,
-        // protected readonly StylesheetGenerationService $stylesheet,
     ) {
+        $this->document->body(
+            class            : 'core-admin',
+            style            : [ '--sidebar-width' => '120px' ],
+            sidebar_expanded : true,
+        );
         // if ( false === $this->request->type()-> ) {
         //     $this->stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );
         // }

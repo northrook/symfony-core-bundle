@@ -19,7 +19,6 @@ final class AdminController extends CoreController
     public function __construct(
         protected readonly CurrentRequest  $request,
         protected readonly DocumentService $document,
-        // protected readonly StylesheetGenerationService $stylesheet,
     ) {
         $this->document->body(
             class            : 'core-admin',

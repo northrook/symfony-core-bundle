@@ -10,24 +10,40 @@ use Northrook\AssetGenerator\Asset;
 use Northrook\IconManager;
 use Northrook\Latte\Runtime\ComponentAssetHandler;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use function Northrook\normalizePath;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 
 return static function ( ContainerConfigurator $container ) : void {
 
-    $services = $container->services();
+    $container->parameters()
+              ->set(
+                  'path.public.stylesheet',
+                  normalizePath( '%dir.public.assets%/stylesheet.css' ),
+              )
+              ->set(
+                  'path.admin.stylesheet',
+                  normalizePath( '%dir.public.assets%/admin/stylesheet.css' ),
+              );
 
-    $services->set( Asset::class )
-             ->args(
-                 [
-                     param( 'dir.root' ),
-                     param( 'dir.var' ),
-                     param( 'dir.public' ),
-                     param( 'dir.public.assets' ),
-                 ],
-             );
+    $container->services()
 
-    $services->set( ComponentAssetHandler::class )
-             ->args( [ param( 'dir.core.templates' ) . DIRECTORY_SEPARATOR . 'components' ] );
+        // northrook/assets
+              ->set( Asset::class )
+              ->args(
+                  [
+                      param( 'dir.root' ),
+                      param( 'dir.var' ),
+                      param( 'dir.public' ),
+                      param( 'dir.public.assets' ),
+                  ],
+              )
 
-    $services->set( IconManager::class );
+        // northrook/components
+              ->set( ComponentAssetHandler::class )
+              ->args(
+                  [ param( 'dir.core.templates' ) . DIRECTORY_SEPARATOR . 'components' ],
+              )
+
+        // northrook/icon-manager
+              ->set( IconManager::class );
 };

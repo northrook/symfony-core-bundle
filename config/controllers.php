@@ -8,10 +8,12 @@ declare( strict_types = 1 );
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\Controller\AdminController;
 use Northrook\Symfony\Core\Controller\ApiController;
 use Northrook\Symfony\Core\Controller\PublicController;
 use Northrook\Symfony\Core\Controller\SecurityController;
+use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 
 return static function ( ContainerConfigurator $container ) : void {
@@ -30,8 +32,8 @@ return static function ( ContainerConfigurator $container ) : void {
                 ->tag( 'controller.service_arguments' )
                 ->args(
                     [
-                        service( 'core.current_request' ),
-                        // service( 'core.service.document' ),
+                        service( CurrentRequest::class ),
+                        service( DocumentService::class ),
                         // service( 'core.service.stylesheet' ),
                     ],
                 );
@@ -43,8 +45,8 @@ return static function ( ContainerConfigurator $container ) : void {
                 ->tag( 'controller.service_arguments' )
                 ->args(
                     [
-                        service( 'core.current_request' ),
-                        // service( 'core.service.document' ),
+                        service( CurrentRequest::class ),
+                        service( DocumentService::class ),
                         // service( 'core.service.stylesheet' ),
                     ],
                 );
