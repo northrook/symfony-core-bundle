@@ -1,15 +1,14 @@
 {layout '_document.latte'}
 
 {block 'body'}
-
     <header id="admin-header">
+        <button id="toggle-sidebar" icon="toggle-sidebar"/>
 
         <!-- Toggle Sidebar -->
-        <button id="toggle-sidebar" icon="toggle-sidebar"/>
 
         <!-- Global Search -->
         <div id="admin-global-search">
-            {include 'admin/ui/search.latte'}
+            {include 'admin/ui/topbar.search.latte'}
         </div>
 
 
@@ -42,14 +41,14 @@
 
     <sidebar id="admin-sidebar" resize="vertical">
         <nav id="admin-sidebar-nav" hx-boost="true" hx-swap="innerHTML" hx-target="main">
-            {$navigation|noescape}
+            {*            {$navigation|noescape}*}
         </nav>
         <div class="resize vertical end"></div>
     </sidebar>
 
 
     <main id="content">
-        {include $template}
+        {*        {include $template}*}
     </main>
 
     <!-- Editor Actions -->

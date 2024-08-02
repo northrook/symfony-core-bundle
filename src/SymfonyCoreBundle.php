@@ -111,6 +111,7 @@ final class SymfonyCoreBundle extends AbstractBundle
                  ->tag( 'kernel.event_subscriber' );
 
 
+        $container->import( '../config/assets.php' );
         $container->import( '../config/cache.php' );
         $container->import( '../config/autowire.php' );
         $container->import( '../config/services.php' );
