@@ -42,8 +42,8 @@ return static function ( ContainerConfigurator $container ) : void {
                          // NotificationService::class => service( 'core.service.notification' ),
 
                          // Core
-                         CurrentRequest::class      => service( 'core.current_request' ),
-                         Pathfinder::class          => service( 'core.pathfinder' ),
+                         CurrentRequest::class      => service( CurrentRequest::class ),
+                         Pathfinder::class          => service( Pathfinder::class ),
                          Latte::class               => service( Latte::class ),
                          ToastService::class        => service( ToastService::class ),
 

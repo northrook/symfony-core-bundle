@@ -19,15 +19,14 @@ return static function ( ContainerConfigurator $container ) : void {
     $services
         ->defaults()
         ->autowire()
-        ->autoconfigure();
+        ->autoconfigure()
+        ->public();
 
     /** # ://
      * Current Request Service
      */
-    $services->set( 'core.current_request', CurrentRequest::class )
-             ->args( [ service( 'request_stack' ) ] )
-             ->public()
-             ->alias( CurrentRequest::class, 'core.current_request' );
+    $services->set( CurrentRequest::class )
+             ->args( [ service( 'request_stack' ) ] );
 
     /** # ../
      * Path Service
@@ -41,6 +40,5 @@ return static function ( ContainerConfigurator $container ) : void {
                      service( 'core.cache.pathfinder' ),
                      service( 'logger' )->nullOnInvalid(),
                  ],
-             )
-             ->public();
+             );
 };

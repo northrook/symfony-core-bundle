@@ -18,12 +18,14 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
 
 return static function ( ContainerConfigurator $container ) : void {
 
-    $controllers = $container->services();
-
     /**
      * Profiler Alias for `autowiring`
      */
     $container->services()->alias( Profiler::class, 'profiler' );
+
+    $controllers = $container->services()
+                             ->defaults()
+                             ->autoconfigure();
 
     /**
      * Core `Public` Controller
@@ -34,7 +36,6 @@ return static function ( ContainerConfigurator $container ) : void {
                     [
                         service( CurrentRequest::class ),
                         service( DocumentService::class ),
-                        // service( 'core.service.stylesheet' ),
                     ],
                 );
 
@@ -47,7 +48,6 @@ return static function ( ContainerConfigurator $container ) : void {
                     [
                         service( CurrentRequest::class ),
                         service( DocumentService::class ),
-                        // service( 'core.service.stylesheet' ),
                     ],
                 );
 
@@ -58,8 +58,7 @@ return static function ( ContainerConfigurator $container ) : void {
                 ->tag( 'controller.service_arguments' )
                 ->args(
                     [
-                        service( 'core.current_request' ),
-                        // service( 'core.service.document' ),
+                        service( CurrentRequest::class ),
                     ],
                 );
     /**
@@ -69,7 +68,7 @@ return static function ( ContainerConfigurator $container ) : void {
                 ->tag( 'controller.service_arguments' )
                 ->args(
                     [
-                        service( 'core.current_request' ),
+                        service( CurrentRequest::class ),
                     ],
                 );
 

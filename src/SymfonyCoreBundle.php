@@ -6,6 +6,7 @@ namespace Northrook\Symfony\Core;
 
 use Northrook\Core\Env;
 use Northrook\Latte;
+use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\LatteEnvironmentPass;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\PathfinderServicePass;
@@ -97,7 +98,7 @@ final class SymfonyCoreBundle extends AbstractBundle
                  ->tag( 'kernel.event_listener', [ 'priority' => 100 ] )
                  ->args(
                      [
-                         service( 'core.current_request' ),
+                         service( CurrentRequest::class ),
                          service( Latte::class ),
                          service( 'logger' )->nullOnInvalid(),
                      ],

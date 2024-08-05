@@ -7,7 +7,6 @@
 declare( strict_types = 1 );
 
 use Northrook\AssetGenerator\Asset;
-use Northrook\CSS\Stylesheet;
 use Northrook\IconManager;
 use Northrook\Latte\Runtime\ComponentAssetHandler;
 use Northrook\Symfony\Core\Autowire\Pathfinder;
@@ -40,23 +39,10 @@ return static function ( ContainerConfigurator $container ) : void {
               ->tag( 'controller.service_arguments' )
               ->args(
                   [
-                      service( Stylesheet::class ),
                       service( Pathfinder::class ),
-                  ],
-              )
-
-        // northrook/stylesheets
-              ->set( Stylesheet::class )
-              ->tag( 'controller.service_arguments' )
-              ->args(
-                  [
-                      param( 'path.default.stylesheet' ),
-                      [],
-                      [],
                       service( 'logger' )->nullOnInvalid(),
                   ],
               )
-              ->autowire()
 
         // northrook/assets
               ->set( Asset::class )
