@@ -7,6 +7,7 @@
 declare( strict_types = 1 );
 
 use Northrook\AssetGenerator\Asset;
+use Northrook\CSS\Stylesheet;
 use Northrook\IconManager;
 use Northrook\Latte\Runtime\ComponentAssetHandler;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -17,6 +18,10 @@ return static function ( ContainerConfigurator $container ) : void {
 
     $container->parameters()
               ->set(
+                  'path.default.stylesheet',
+                  normalizePath( '%dir.assets%/build/stylesheet.css' ),
+              )
+              ->set(
                   'path.public.stylesheet',
                   normalizePath( '%dir.public.assets%/stylesheet.css' ),
               )
@@ -26,6 +31,12 @@ return static function ( ContainerConfigurator $container ) : void {
               );
 
     $container->services()
+        
+        // northrook/stylesheets
+              ->set( Stylesheet::class )
+              ->tag( 'controller.service_arguments' )
+              ->args( [ param( 'path.default.stylesheet' ) ] )
+              ->autowire()
 
         // northrook/assets
               ->set( Asset::class )

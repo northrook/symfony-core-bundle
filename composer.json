@@ -36,7 +36,9 @@
     "symfony/security-bundle": "^7.1",
     "symfony/yaml": "^7.1",
     "northrook/symfony-toasts": "dev-main",
-    "northrook/symfony-document": "dev-main"
+    "northrook/symfony-document": "dev-main",
+    "northrook/stylesheets": "dev-main",
+    "northrook/design-system": "dev-main"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"

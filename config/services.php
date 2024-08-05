@@ -19,13 +19,12 @@ use Northrook\Symfony\Core\Services\SettingsManagementService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 
 return static function ( ContainerConfigurator $container ) : void {
+    
+    return;
 
     $services = $container->services();
 
     $services->defaults()->autowire();
-
-
-    return;
 
 
     /** # ☕
