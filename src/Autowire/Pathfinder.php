@@ -2,11 +2,11 @@
 
 namespace Northrook\Symfony\Core\Autowire;
 
-use Northrook\Support\Str;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use function Northrook\normalizePath;
+use function Northrook\stringContains;
 
 /**
  *
@@ -33,15 +33,14 @@ final readonly class Pathfinder
             callback : fn ( ItemInterface $item ) => $this->resolveParameterPath( $path, $item ),
         );
     }
-
-
+    
     private function resolveParameterPath( $path, ItemInterface $cache ) : ?string {
 
-        $separator = Str::contains( $path, [ '/', '\\' ], true, true );
+        $separator = stringContains( $path, [ '/', '\\' ], true, true );
 
         // If we have a separator, check if the first substring is a parameter
         if ( $separator ) {
-            [ $root, $path ] = explode( $separator[ 0 ], $path, 2 );
+            [ $root, $path ] = explode( $separator, $path, 2 );
             $resolvedValue = $this->getParameterValue( $root ) . "/$path";
         }
         // Otherwise, just get the parameter value
@@ -65,7 +64,7 @@ final readonly class Pathfinder
             ],
         );
 
-        return null;
+        return $resolvedValue;
     }
 
     public function getParameterValue( string $key ) : ?string {
