@@ -34,7 +34,7 @@ return static function ( ContainerConfigurator $container ) : void {
      *
      * {@see Pathfinder::$directories} will be assigned by the {@see PathfinderServicePass}
      */
-    $services->set( 'core.pathfinder', Pathfinder::class )
+    $services->set( Pathfinder::class )
              ->args(
                  [
                      [], // $directoryParameters
@@ -42,6 +42,5 @@ return static function ( ContainerConfigurator $container ) : void {
                      service( 'logger' )->nullOnInvalid(),
                  ],
              )
-             ->public()
-             ->alias( Pathfinder::class, 'core.pathfinder' );
+             ->public();
 };

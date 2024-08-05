@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
  * @property-read string $route
  * @property-read string $method
  * @property-read string $type
- * @property-read bool   $isHypermedia
+ * @property-read bool   $isHtmx
  * @property-read bool   $isJson
  * @property-read bool   $isHtml
  */
@@ -149,7 +149,10 @@ final readonly class CurrentRequest
      */
     private function type( ?string $is = null ) : bool | string {
 
-        $this->requestType ??= $this->headerBag( get : 'hx-request' ) ?? $this->headerBag( get : 'content-type' );
+        $this->requestType ??=
+            $this->headerBag( get : 'hx-request' )
+            ?? $this->headerBag( get : 'content-type' )
+               ?? 'text/html; charset=utf-8';
 
         return $is ? $is === $this->requestType : $this->requestType;
     }

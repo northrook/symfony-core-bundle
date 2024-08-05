@@ -10,6 +10,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Favicon\FaviconBundle;
 use Northrook\Symfony\Components\LatteComponentPreprocessor;
+use Northrook\Symfony\Core\Autowire\Pathfinder;
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
 use Northrook\Symfony\Core\Services\DocumentService;
 use Northrook\Symfony\Core\Services\FormService;
@@ -19,7 +20,7 @@ use Northrook\Symfony\Core\Services\SettingsManagementService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 
 return static function ( ContainerConfigurator $container ) : void {
-    
+
     return;
 
     $services = $container->services();
@@ -78,7 +79,7 @@ return static function ( ContainerConfigurator $container ) : void {
              ->args(
                  [
                      service( 'core.service.request' ),
-                     service( 'core.service.pathfinder' ),
+                     service( Pathfinder::class ),
                      service( 'logger' )->nullOnInvalid(),
                      service( 'debug.stopwatch' )->nullOnInvalid(),
                  ],

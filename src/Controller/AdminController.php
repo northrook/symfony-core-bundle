@@ -127,11 +127,11 @@ final class AdminController extends CoreController
         $template = $this->dynamicTemplatePath();
 
         return $this->response(
-            template   : $this->request->is( 'hypermedia' ) ? $template : 'admin.latte',
+            template   : $this->request->isHtmx ? $template : 'admin.latte',
             parameters : [
-                             'template'   => $template,
-                             'route'      => $route,
-                             'navigation' => $this->getNavigation(),
+                             'template' => $template,
+                             'route'    => $route,
+                             // 'navigation' => $this->getNavigation(),
                          ],
         );
     }

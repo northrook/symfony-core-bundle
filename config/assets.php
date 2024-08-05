@@ -10,9 +10,12 @@ use Northrook\AssetGenerator\Asset;
 use Northrook\CSS\Stylesheet;
 use Northrook\IconManager;
 use Northrook\Latte\Runtime\ComponentAssetHandler;
+use Northrook\Symfony\Core\Autowire\Pathfinder;
+use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Northrook\normalizePath;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 return static function ( ContainerConfigurator $container ) : void {
 
@@ -31,11 +34,28 @@ return static function ( ContainerConfigurator $container ) : void {
               );
 
     $container->services()
-        
+
+        // app/stylesheetGenerator
+              ->set( StylesheetGenerator::class )
+              ->tag( 'controller.service_arguments' )
+              ->args(
+                  [
+                      service( Stylesheet::class ),
+                      service( Pathfinder::class ),
+                  ],
+              )
+
         // northrook/stylesheets
               ->set( Stylesheet::class )
               ->tag( 'controller.service_arguments' )
-              ->args( [ param( 'path.default.stylesheet' ) ] )
+              ->args(
+                  [
+                      param( 'path.default.stylesheet' ),
+                      [],
+                      [],
+                      service( 'logger' )->nullOnInvalid(),
+                  ],
+              )
               ->autowire()
 
         // northrook/assets

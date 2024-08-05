@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\DependencyInjection\Compiler;
 
+use Northrook\Symfony\Core\Autowire\Pathfinder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -14,8 +15,11 @@ final readonly class PathfinderServicePass implements CompilerPassInterface
 
     public function process( ContainerBuilder $container ) : void {
         // Assign the path parameters to the Pathfinder service
-        $container->getDefinition( 'core.pathfinder' )
-                  ->replaceArgument( 0, $this->getPathEntries( $container->getParameterBag() ) );
+        $container->getDefinition( Pathfinder::class )
+                  ->replaceArgument(
+                      0,
+                      $this->getPathEntries( $container->getParameterBag() ),
+                  );
     }
 
     /**
