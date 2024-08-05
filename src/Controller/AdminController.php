@@ -4,6 +4,7 @@ namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
+use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -115,7 +116,10 @@ final class AdminController extends CoreController
 //
 //     }
 
-    public function index( ?string $route ) : Response {
+    public function index(
+        ?string             $route,
+        StylesheetGenerator $generator,
+    ) : Response {
 
         // $this->document->title( 'testme' )->description( 'we describe things' );
 
