@@ -98,8 +98,7 @@ abstract class CoreController
                 }
             }
         }
-
-
+        
         return new Response(
             content : $prepend . $content,
             status  : $status,
