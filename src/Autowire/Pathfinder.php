@@ -43,8 +43,9 @@ final readonly class Pathfinder
             // Auto-clear empty items
             if ( $clear || !$cacheValue ) {
                 $this->logger?->notice(
-                    'We are either asked to clear {clear}, or the value is empty {empty}.',
-                    [ 'clear' => $clear, 'empty' => !(bool) $cacheValue ],
+                    "The Pathfinder cache {key} has been cleared" .
+                    ( $clear ? ' on request.' : ', as the cached value is empty.' ),
+                    [ 'key' => $this->key( $path ) ],
                 );
                 $cacheHit = false;
             }

@@ -1,0 +1,17 @@
+body.core-admin[sidebar-expanded="false"] > sidebar {
+    left       : calc(var(--sidebar-width) * -1);
+    visibility : hidden;
+}
+
+body.core-admin[sidebar-expanded="true"] > main {
+    left : var(--sidebar-width);
+}
+
+body.core-admin {
+    --header-height      : 50px;
+    --sidebar-width      : 140px;
+    --sidebar-compact    : 2.5rem;
+    --sidebar-transition : 200ms ease;
+    /*outline              : 3px solid #ff147285;*/
+    /*outline-offset       : -3px;*/
+}
