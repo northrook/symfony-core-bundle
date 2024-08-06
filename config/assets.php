@@ -10,6 +10,7 @@ use Northrook\AssetGenerator\Asset;
 use Northrook\IconManager;
 use Northrook\Latte\Runtime\ComponentAssetHandler;
 use Northrook\Symfony\Core\Autowire\Pathfinder;
+use Northrook\Symfony\Core\Service\DesignSystemService;
 use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Northrook\normalizePath;
@@ -20,26 +21,32 @@ return static function ( ContainerConfigurator $container ) : void {
 
     $container->parameters()
               ->set(
-                  'path.default.stylesheet',
-                  normalizePath( '%dir.assets%/build/stylesheet.css' ),
-              )
-              ->set(
                   'path.public.stylesheet',
-                  normalizePath( '%dir.public.assets%/stylesheet.css' ),
+                  normalizePath( '%dir.assets%/stylesheet.css' ),
               )
               ->set(
                   'path.admin.stylesheet',
-                  normalizePath( '%dir.public.assets%/admin/stylesheet.css' ),
+                  normalizePath( '%dir.assets%/admin.css' ),
               );
 
     $container->services()
 
-        // app/stylesheetGenerator
+        // service/designSystem
+              ->set( DesignSystemService::class )
+              ->tag( 'controller.service_arguments' )
+              ->args(
+                  [
+                      service( 'logger' )->nullOnInvalid(),
+                  ],
+              )
+
+        // service/stylesheetGenerator
               ->set( StylesheetGenerator::class )
               ->tag( 'controller.service_arguments' )
               ->args(
                   [
                       service( Pathfinder::class ),
+                      service( DesignSystemService::class ),
                       service( 'logger' )->nullOnInvalid(),
                   ],
               )
