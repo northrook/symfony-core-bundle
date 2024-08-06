@@ -18,33 +18,31 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  *
  * @author  Martin Nielsen <mn@northrook.com>
  */
-final class DeferredCacheEvent implements EventSubscriberInterface
+final readonly class DeferredCacheEvent implements EventSubscriberInterface
 {
     private array $cacheAdapters;
 
     public function __construct(
-        private readonly ?LoggerInterface $logger = null,
+        private ?LoggerInterface          $logger = null,
         AdapterInterface                  ...$cacheAdapters
     ) {
         $this->cacheAdapters = $cacheAdapters;
     }
 
-    public function enqueueAdapter( AdapterInterface $adapter ) : void {
-        $this->cacheAdapters[] = $adapter;
-    }
-
     public function persistDeferredCacheItems() : void {
-        foreach ( $this->cacheAdapters as $adapter ) {
-            dump( $adapter );
-            $adapter->commit();
+        foreach ( $this->cacheAdapters as $name => $adapter ) {
+            if ( $adapter->commit() ) {
+                $this->logger?->info(
+                    "Commited deferred cache items on {event}.",
+                    [ 'event' => 'kernel.terminate' ],
+                );
+            }
         }
-        $this->logger?->info( "Successfully commited cache items." );
     }
 
     public static function getSubscribedEvents() : array {
         return [
-            'kernel.finish_request' => 'persistDeferredCacheItems',
-            // 'kernel.terminate' => 'persistDeferredCacheItems',
+            'kernel.terminate' => 'persistDeferredCacheItems',
         ];
     }
 }
