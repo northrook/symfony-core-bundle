@@ -2,9 +2,9 @@
 
 namespace Northrook\Symfony\Core\Autowire;
 
+use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 use function Northrook\normalizePath;
 use function Northrook\stringContains;
 
@@ -24,17 +24,54 @@ final readonly class Pathfinder
      * Return a parameter path, with prepend options.
      *
      * @param string  $path
+     * @param bool    $clear
      *
      * @return null|string
      */
-    public function get( string $path ) : ?string {
-        return $this->cache->get(
-            key      : $this->key( $path ),
-            callback : fn ( ItemInterface $item ) => $this->resolveParameterPath( $path, $item ),
-        );
+    public function get( string $path, bool $clear = false ) : ?string {
+
+        try {
+            $cache = $this->cache->getItem( $this->key( $path ) );
+
+            // Auto-clear empty items
+            if ( $clear || ( $cache->isHit() && !$cache->get() ) ) {
+                $this->cache->deleteItem( $this->key( $path ) );
+            }
+
+        }
+        catch ( InvalidArgumentException $exception ) {
+            $this->logger?->error(
+                'The Cache Adapter was provided an invalid key.',
+                [ 'path' => $path, 'exception' => $exception ],
+            );
+            return null;
+        }
+
+        if ( $cache->isHit() ) {
+            return $cache->get();
+        }
+
+        $resolvedPath = $this->resolveParameterPath( $path );
+
+        // Ensure the resolved path actually exists
+        if ( \file_exists( $resolvedPath ) ) {
+            $cache->set( $resolvedPath )
+                  ->expiresAfter( 3600 );
+        }
+        else {
+            $this->logger->notice(
+                'Unable to resolve path {path}, the file or directory does not exist. The value was return raw, and not cached',
+                [
+                    'cacheKey' => $cache->getKey(),
+                    'path'     => $resolvedPath,
+                ],
+            );
+
+        }
+        return $resolvedPath;
     }
-    
-    private function resolveParameterPath( $path, ItemInterface $cache ) : ?string {
+
+    private function resolveParameterPath( $path ) : ?string {
 
         $separator = stringContains( $path, [ '/', '\\' ], true, true );
 
@@ -49,22 +86,7 @@ final readonly class Pathfinder
         }
 
         // Normalise the resolved value, assuming it is a path
-        $resolvedValue = normalizePath( $resolvedValue );
-
-        // Ensure the resolved path actually exists
-        if ( file_exists( $resolvedValue ) ) {
-            return $resolvedValue;
-        }
-
-        $this->logger->error(
-            'Unable to resolve path {path}, the file or directory does not exist. The value was return raw, and not cached',
-            [
-                'cacheKey' => $cache->getKey(),
-                'path'     => $resolvedValue,
-            ],
-        );
-
-        return $resolvedValue;
+        return normalizePath( $resolvedValue );
     }
 
     public function getParameterValue( string $key ) : ?string {
