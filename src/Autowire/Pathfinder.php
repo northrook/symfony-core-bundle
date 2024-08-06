@@ -42,9 +42,9 @@ final readonly class Pathfinder
 
             // Auto-clear empty items
             if ( $clear || !$cacheValue ) {
-                dump(
-                    'We are either asked to clear (' . json_encode( $clear ) . '), or the value is empty (' .
-                    ( $cacheValue ? 'it is not' : 'it is empty' ) . ').',
+                $this->logger?->notice(
+                    'We are either asked to clear {clear}, or the value is empty {empty}.',
+                    [ 'clear' => $clear, 'empty' => (bool) $cacheValue ],
                 );
                 $cacheHit = false;
             }

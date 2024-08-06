@@ -35,7 +35,7 @@ final readonly class PathfinderServicePass implements CompilerPassInterface
      */
     private function getPathEntries( ParameterBagInterface $parameterBag ) : array {
 
-        $parameters = array_filter(
+        $parameters = \array_filter(
             array    : $parameterBag->all(),
             callback : fn ( $value, $key ) => \is_string( $value ) &&
                                               ( \str_starts_with( $key, 'dir' ) ||
