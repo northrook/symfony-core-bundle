@@ -44,7 +44,7 @@ final readonly class Pathfinder
             if ( $clear || !$cacheValue ) {
                 $this->logger?->notice(
                     'We are either asked to clear {clear}, or the value is empty {empty}.',
-                    [ 'clear' => $clear, 'empty' => (bool) $cacheValue ],
+                    [ 'clear' => $clear, 'empty' => !(bool) $cacheValue ],
                 );
                 $cacheHit = false;
             }
