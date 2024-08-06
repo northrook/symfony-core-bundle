@@ -44,7 +44,7 @@ final readonly class Pathfinder
             if ( $clear || !$cacheValue ) {
                 dump(
                     'We are either asked to clear (' . json_encode( $clear ) . '), or the value is empty (' .
-                    $cacheValue ? 'it is not' : 'it is empty' . ').',
+                    ( $cacheValue ? 'it is not' : 'it is empty' ) . ').',
                 );
                 $cacheHit = false;
             }
