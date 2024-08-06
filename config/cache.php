@@ -49,9 +49,9 @@ return static function ( ContainerConfigurator $container ) : void {
           ->args(
               [
                   service( 'logger' )->nullOnInvalid(),
-                  '$latte'       => service( 'core.cache.latte' ),
-                  '$memoization' => service( 'core.cache.memoization' ),
-                  '$pathfinder'  => service( 'core.cache.pathfinder' ),
+                  [ 'latte', service( 'core.cache.latte' ) ],
+                  [ 'memoization', service( 'core.cache.memoization' ) ],
+                  [ 'pathfinder', service( 'core.cache.pathfinder' ) ],
               ],
           )
           ->tag( 'kernel.event_subscriber' );
