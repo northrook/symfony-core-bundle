@@ -121,6 +121,10 @@ final class AdminController extends CoreController
         StylesheetGenerator $generator,
     ) : Response {
 
+        $generator->admin->save();
+
+        dump( $generator );
+
         // $this->document->title( 'testme' )->description( 'we describe things' );
 
         // $this->document->robots( 'test', 'gooblebot')->robots( 'another', 'all');

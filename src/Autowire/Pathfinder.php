@@ -25,17 +25,31 @@ final readonly class Pathfinder
      *
      * @param string  $path
      * @param bool    $clear
+     * @param bool    $cached
      *
      * @return null|string
      */
-    public function get( string $path, bool $clear = false ) : ?string {
+    public function get( string $path, bool $clear = false, bool $cached = true ) : ?string {
+
+        if ( !$cached ) {
+            return $this->resolveParameterPath( $path );
+        }
 
         try {
-            $cache = $this->cache->getItem( $this->key( $path ) );
+            $cache      = $this->cache->getItem( $this->key( $path ) );
+            $cacheHit   = $cache->isHit();
+            $cacheValue = $cacheHit ? $cache->get() : null;
 
             // Auto-clear empty items
-            if ( $clear || ( $cache->isHit() && !$cache->get() ) ) {
-                $this->cache->deleteItem( $this->key( $path ) );
+            if ( $clear || !$cacheValue ) {
+                dump(
+                    'We are either asked to clear (' . json_encode( $clear ) . '), or the value is empty (' .
+                    $cacheValue ? 'it is not' : 'it is empty' . ').',
+                );
+                $cacheHit = false;
+            }
+            else {
+                return $cacheValue;
             }
 
         }
@@ -44,31 +58,29 @@ final readonly class Pathfinder
                 'The Cache Adapter was provided an invalid key.',
                 [ 'path' => $path, 'exception' => $exception ],
             );
-            return null;
+            $cache = false;
         }
 
-        if ( $cache->isHit() ) {
-            return $cache->get();
-        }
-
-        $resolvedPath = $this->resolveParameterPath( $path );
+        $cacheValue = $this->resolveParameterPath( $path );
 
         // Ensure the resolved path actually exists
-        if ( \file_exists( $resolvedPath ) ) {
-            $cache->set( $resolvedPath )
-                  ->expiresAfter( 3600 );
+        if ( \file_exists( $cacheValue ) ) {
+            $this->cache->saveDeferred(
+                $cache->expiresAfter( 5 )
+                      ->set( $cacheValue ),
+            );
         }
         else {
             $this->logger->notice(
                 'Unable to resolve path {path}, the file or directory does not exist. The value was return raw, and not cached',
                 [
                     'cacheKey' => $cache->getKey(),
-                    'path'     => $resolvedPath,
+                    'path'     => $cacheValue,
                 ],
             );
 
         }
-        return $resolvedPath;
+        return $cacheValue;
     }
 
     private function resolveParameterPath( $path ) : ?string {
