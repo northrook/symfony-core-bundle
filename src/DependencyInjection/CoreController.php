@@ -4,6 +4,7 @@ namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Exception;
 use Northrook\Latte;
+use Northrook\Latte\Runtime\ComponentAssetHandler;
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\ErrorHandler\ErrorEventException;
@@ -57,6 +58,7 @@ abstract class CoreController
     ) : Response {
 
         $engine ??= ServiceContainer::get( Latte::class ) ?? null;
+        // $components = ServiceContainer::get( )
 
         if ( !$engine ) {
             throw new \LogicException(
@@ -73,6 +75,9 @@ abstract class CoreController
         );
 
         $notifications = $this->handleFlashBag();
+
+        $content = ComponentAssetHandler::handleDocumentInjection( $content );
+
 
         return new Response(
             content : $notifications . $content,
