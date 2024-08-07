@@ -6,7 +6,6 @@ use Northrook\AssetManager;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 final readonly class AssetManagerPass implements CompilerPassInterface
 {
@@ -18,7 +17,7 @@ final readonly class AssetManagerPass implements CompilerPassInterface
         $container->getDefinition( DocumentService::class )
                   ->replaceArgument(
                       0,
-                      service( AssetManager::class ),
+                      $container->getDefinition( AssetManager::class ),
                   );
     }
 }

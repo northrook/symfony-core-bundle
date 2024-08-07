@@ -13,11 +13,9 @@
     <!-- Remaining Meta Tags -->
     <meta n:foreach="$document->meta() as $metaTags" n:attr="$metaTags">
 
-    {foreach $document->assets() as $asset}
-        {$asset|noescape}
-    {/foreach}
+    {foreach $document->assets() as $asset}{$asset|noescape}{/foreach}
 </head>
-<body n:attr="$document->bodyAttributes()}">
+<body n:attr="$document->bodyAttributes()">
 {block 'body'}
     Welcome!
 {/block}
