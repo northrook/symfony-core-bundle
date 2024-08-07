@@ -16,6 +16,11 @@ return static function ( ContainerConfigurator $container ) : void {
 
     $cache = $container->services();
 
+    // Asset Cache
+    $cache->set( 'core.cache.assets', PhpFilesAdapter::class )
+          ->args( [ 'core', 0, '%kernel.cache_dir%/assets' ] )
+          ->tag( 'cache.pool' );
+
     // Latte Template Cache
     $cache->set( 'core.cache.latte', PhpFilesAdapter::class )
           ->args( [ 'core', 0, '%kernel.cache_dir%/latte/cache' ] )

@@ -2,9 +2,11 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
+use Northrook\Asset\Stylesheet;
 use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
+use Northrook\Symfony\Core\Facade\Path;
 use Northrook\Symfony\Core\Facade\Toast;
 use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use Northrook\Symfony\Service\Document\DocumentService;
@@ -27,12 +29,17 @@ final class AdminController extends CoreController
         $this->document
             ->set(
                 'Admin',
+                'This is an example admin template.',
             )->body(
                 class            : 'core-admin',
                 style            : [ '--sidebar-width' => '120px' ],
                 sidebar_expanded : true,
+            )->theme(
+                '#ff0000',
+                'light',
+            )->asset->inline(
+                new Stylesheet( Path::get( 'path.admin.stylesheet' ) ),
             );
-
 
         // Auth::denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
         //

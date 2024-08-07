@@ -7,6 +7,7 @@
 declare( strict_types = 1 );
 
 use Northrook\AssetGenerator\Asset;
+use Northrook\AssetManager;
 use Northrook\IconManager;
 use Northrook\Latte\Runtime\ComponentAssetHandler;
 use Northrook\Symfony\Core\Autowire\Pathfinder;
@@ -20,6 +21,10 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 return static function ( ContainerConfigurator $container ) : void {
 
     $container->parameters()
+              ->set(
+                  'dir.asset.storage',
+                  normalizePath( '%dir.var%/assets' ),
+              )
               ->set(
                   'path.public.stylesheet',
                   normalizePath( '%dir.assets%/stylesheet.css' ),
@@ -52,13 +57,14 @@ return static function ( ContainerConfigurator $container ) : void {
               )
 
         // northrook/assets
-              ->set( Asset::class )
+              ->set( AssetManager::class )
               ->args(
                   [
                       param( 'dir.root' ),
-                      param( 'dir.var' ),
+                      param( 'dir.asset.storage' ),
                       param( 'dir.public' ),
                       param( 'dir.public.assets' ),
+                      service( 'core.cache.assets' ),
                   ],
               )
 

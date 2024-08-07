@@ -8,6 +8,7 @@ use Northrook\Core\Env;
 use Northrook\Latte;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
+use Northrook\Symfony\Core\DependencyInjection\Compiler\AssetManagerPass;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\LatteEnvironmentPass;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\PathfinderServicePass;
 use Northrook\Symfony\Core\ErrorHandler\HttpExceptionListener;
@@ -37,6 +38,12 @@ final class SymfonyCoreBundle extends AbstractBundle
         $this->autoConfigure( "$projectDir/config" );
 
         parent::build( $container );
+
+        // Provide the Pathfinder with directory and path parameters
+        $container->addCompilerPass(
+            pass : new AssetManagerPass( $projectDir ),
+            type : PassConfig::TYPE_OPTIMIZE,
+        );
 
         // Provide the Pathfinder with directory and path parameters
         $container->addCompilerPass(
