@@ -69,7 +69,9 @@ final class StylesheetGenerator
             $this->logger,
         );
 
-        $admin->reset()->baseline()->dynamicRules();
+        $admin->addReset()
+              ->addBaseline()
+              ->addDynamicRules();
 
         return $this->stylesheets[ 'admin' ] = $admin;
     }
