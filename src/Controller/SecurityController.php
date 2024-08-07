@@ -46,8 +46,7 @@ final class SecurityController extends CoreController
         $this->document->title( 'Northrook' );
 
         $blurb = 'Log in to access the admin interface.';
-
-
+        
         return $this->response(
             template   : 'security/login.latte',
             parameters : [

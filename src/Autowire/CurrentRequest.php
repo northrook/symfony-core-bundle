@@ -4,19 +4,22 @@ namespace Northrook\Symfony\Core\Autowire;
 
 use Northrook\Core\Trait\PropertyAccessor;
 use Symfony\Component\HttpFoundation as Http;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
- * @property-read string $routeName
- * @property-read string $routeRoot
- * @property-read string $pathInfo
- * @property-read string $route
- * @property-read string $method
- * @property-read string $type
- * @property-read bool   $isHtmx
- * @property-read bool   $isJson
- * @property-read bool   $isHtml
+ * @property-read Http\Request $current
+ * @property-read string       $routeName
+ * @property-read string       $routeRoot
+ * @property-read string       $pathInfo
+ * @property-read string       $route
+ * @property-read string       $method
+ * @property-read string       $type
+ * @property-read bool         $isHtmx
+ * @property-read bool         $isJson
+ * @property-read bool         $isHtml
  */
 final readonly class CurrentRequest
 {
@@ -29,23 +32,21 @@ final readonly class CurrentRequest
     private string $route;
     private string $method;
 
-    public Http\Request $current;
-
     /**
      * Assigns the current {@see Http\Request} from the {@see Http\RequestStack}, to {@see CurrentRequest::$current}.
      *
      * If no {@see request} is found, one will be created from {@see $GLOBALS}, and pushed onto the empty {@see stack}
      *
-     * @param Http\RequestStack  $stack
+     * @param Http\RequestStack    $stack
+     * @param HttpKernelInterface  $kernel
      */
     public function __construct(
-        public Http\RequestStack $stack,
+        public Http\RequestStack    $stack,
+        private HttpKernelInterface $kernel,
     ) {
         if ( !$this->stack->getCurrentRequest() ) {
             $this->stack->push( Http\Request::createFromGlobals() );
         }
-
-        $this->current = $this->stack->getCurrentRequest();
     }
 
     /**
@@ -59,16 +60,26 @@ final readonly class CurrentRequest
      */
     public function __get( string $property ) : string | bool {
         return match ( $property ) {
+            'current'   => $this->currentRequest(),
             'route'     => $this->route(),
             'routeName' => $this->routeName(),
             'routeRoot' => $this->routeRoot(),
-            'pathInfo'  => $this->current->getPathInfo(),
-            'method'    => $this->current->getMethod(),
+            'pathInfo'  => $this->currentRequest()->getPathInfo(),
+            'method'    => $this->currentRequest()->getMethod(),
             'type'      => $this->type(),
             'isHtmx'    => $this->type( 'htmx' ),
             'isJson'    => $this->type( 'json' ),
             'isHtml'    => $this->type( 'html' ),
         };
+    }
+
+    /**
+     * Public access via magic {@see CurrentRequest::$current};
+     *
+     * @return Request
+     */
+    private function currentRequest() : Http\Request {
+        return $this->stack->getCurrentRequest();
     }
 
     /**
@@ -80,10 +91,10 @@ final readonly class CurrentRequest
     public function headerBag( ?string $get = null, ?string $has = null ) : Http\HeaderBag | string | bool | null {
 
         if ( !$get && !$has ) {
-            return $this->current->headers;
+            return $this->currentRequest()->headers;
         }
 
-        return $get ? $this->current->headers->get( $get ) : $this->current->headers->has( $has );
+        return $get ? $this->currentRequest()->headers->get( $get ) : $this->currentRequest()->headers->has( $has );
     }
 
     /**
@@ -93,7 +104,7 @@ final readonly class CurrentRequest
      */
     public function session( ?string $get = null ) : mixed {
         try {
-            return $get ? $this->current->getSession()->get( $get ) : $this->current->getSession();
+            return $get ? $this->currentRequest()->getSession()->get( $get ) : $this->currentRequest()->getSession();
         }
         catch ( Http\Exception\SessionNotFoundException $exception ) {
             throw new Http\Exception\LogicException(
@@ -109,11 +120,11 @@ final readonly class CurrentRequest
      * @return Http\ParameterBag|array|string|int|bool|float|null
      */
     public function parameter( ?string $get = null ) : Http\ParameterBag | array | string | int | bool | float | null {
-        return $get ? $this->current->get( $get ) : $this->current->attributes;
+        return $get ? $this->currentRequest()->get( $get ) : $this->currentRequest()->attributes;
     }
 
     public function attributes( ?string $get = null ) : Http\ParameterBag | array | string | int | bool | float | null {
-        return $get ? $this->current->attributes->get( $get ) : $this->current->attributes;
+        return $get ? $this->currentRequest()->attributes->get( $get ) : $this->currentRequest()->attributes;
     }
 
     /**
@@ -122,7 +133,7 @@ final readonly class CurrentRequest
      * @return Http\InputBag|string|int|float|bool|null
      */
     public function query( ?string $get = null ) : Http\InputBag | string | int | float | bool | null {
-        return $get ? $this->current->query->get( $get ) : $this->current->query;
+        return $get ? $this->currentRequest()->query->get( $get ) : $this->currentRequest()->query;
     }
 
     /**
@@ -131,11 +142,15 @@ final readonly class CurrentRequest
      * @return Http\InputBag|string|int|float|bool|null
      */
     public function cookies( ?string $get = null ) : Http\InputBag | string | int | float | bool | null {
-        return $get ? $this->current->cookies->get( $get ) : $this->current->cookies;
+        return $get ? $this->currentRequest()->cookies->get( $get ) : $this->currentRequest()->cookies;
     }
 
     public function flashBag() : FlashBagInterface {
         return $this->session()->getFlashBag();
+    }
+
+    public function httpKernel() : HttpKernelInterface {
+        return $this->kernel;
     }
 
     /**
@@ -163,7 +178,7 @@ final readonly class CurrentRequest
      * @return string
      */
     private function route() : string {
-        return $this->route ??= $this->current->attributes->get( 'route' ) ?? '';
+        return $this->route ??= $this->currentRequest()->attributes->get( 'route' ) ?? '';
     }
 
     /**
@@ -172,7 +187,7 @@ final readonly class CurrentRequest
      * @return string
      */
     private function routeName() : string {
-        return $this->routeName ??= $this->current->get( '_route' ) ?? '';
+        return $this->routeName ??= $this->currentRequest()->get( '_route' ) ?? '';
     }
 
     /**

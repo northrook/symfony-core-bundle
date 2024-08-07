@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
+use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
 use Northrook\Symfony\Core\Facade\Toast;
@@ -21,12 +22,18 @@ final class AdminController extends CoreController
     public function __construct(
         protected readonly CurrentRequest  $request,
         protected readonly DocumentService $document,
+        protected readonly Authentication  $auth,
     ) {
-        $this->document->body(
-            class            : 'core-admin',
-            style            : [ '--sidebar-width' => '120px' ],
-            sidebar_expanded : true,
-        );
+        $this->document
+            ->set(
+                'Admin',
+            )->body(
+                class            : 'core-admin',
+                style            : [ '--sidebar-width' => '120px' ],
+                sidebar_expanded : true,
+            );
+
+
         // Auth::denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
         //
         // if ( false === $this->request->is( 'hypermedia' ) ) {
@@ -82,40 +89,6 @@ final class AdminController extends CoreController
     //
     //     return $navigation;
     // }
-
-//     protected function view( string $route, array $parameters = [] ) : Response {
-//
-//         $template = $this->dynamicTemplatePath();
-//         if ( $this->request->headers( 'hx-request' ) ) {
-//             // dd( $this->request);
-//             $content = $this->render( $template, $parameters );
-//
-//             $head = <<<HEAD
-// <head core="merge">
-//     <title>Bananas</title>
-//     <meta name="description" content="This describes $route">
-//     <link id="demo-stylesheet" remove>
-//     <link rel="stylesheet" href="/css/site1.css">
-//     <script src="/js/script1.js"></script>
-//     <script src="/js/script2.js"></script>
-// </head>
-// HEAD;
-//
-//             return new Response(
-//                 $head . $content,
-//             );
-//         }
-//
-//         // dump( $template );
-//         return $this->response(
-//             'admin.latte',
-//             [
-//                 'template'   => $template,
-//                 'navigation' => $this->getNavigation(),
-//             ],
-//         );
-//
-//     }
 
     public function index(
         ?string             $route,

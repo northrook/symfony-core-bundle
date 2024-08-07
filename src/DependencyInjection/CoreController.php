@@ -3,13 +3,13 @@
 namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Exception;
-use Northrook\Core\Trait\PropertyAccessor;
 use Northrook\Latte;
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\ErrorHandler\ErrorEventException;
 use Northrook\Symfony\Core\Facade\Request;
 use Northrook\Symfony\Core\Facade\URL;
+use Northrook\Symfony\Service\Document\DocumentService;
 use Northrook\Symfony\Service\Toasts\Message;
 use Stringable;
 use Symfony\Component\Finder\SplFileInfo;
@@ -20,10 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Csrf\CsrfToken;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Throwable;
 use function Northrook\normalizePath;
@@ -31,7 +28,6 @@ use function Northrook\toString;
 
 /**
  * @property-read HttpKernelInterface $httpKernel
- * @property-read LatteBundle         $latte
  *
  * @author  Martin Nielsen <mn@northrook.com>
  *
@@ -41,25 +37,9 @@ use function Northrook\toString;
  */
 abstract class CoreController
 {
-    use PropertyAccessor;
 
     protected readonly CurrentRequest $request;
-
-
-    private function getHttpKernel() : HttpKernelInterface {
-        return ServiceContainer::get( HttpKernelInterface::class );
-    }
-
-    private function getLatteBundle() : Latte {
-        return ServiceContainer::get( Latte::class );
-    }
-
-    public function __get( string $property ) {
-        return match ( $property ) {
-            'latte'      => $this->getLatteBundle(),
-            'httpKernel' => $this->getHttpKernel(),
-        };
-    }
+    protected readonly Latte          $latte;
 
     /**
      * Return a {@see Response}`view` from a `.latte` template.
@@ -74,15 +54,41 @@ abstract class CoreController
         string         $template,
         object | array $parameters = [],
         int            $status = Response::HTTP_OK,
+        ?Latte         $latte = null,
     ) : Response {
 
-        $prepend = '';
-        $content = $this->getLatteBundle()->render( $template, $parameters );
+        $latte ??= $this->latte ?? null;
+
+        if ( !$latte ) {
+            throw new \LogicException(
+                "The Latte templating engine is required to use the Response method. 
+                Please inject '" . Latte::class . "' into to the '__construct' method.
+                Alternatively, you can also inject it directly into the controller method, 
+                and pass it as the fourth argument to this Response method.",
+            );
+        }
+
+        $content = $latte->render(
+            $template,
+            $this->templateParameters( $parameters ),
+        );
+
+        $notifications = $this->handleFlashBag();
+
+        return new Response(
+            content : $notifications . $content,
+            status  : $status,
+            headers : [ 'Meta-Storage' => 'test' ],
+        );
+    }
+
+    private function handleFlashBag() : string {
+        $notifications = '';
 
         foreach ( $this->request->flashBag()->all() as $type => $flash ) {
             foreach ( $flash as $toast ) {
                 if ( $toast instanceof Message ) {
-                    $prepend .= new Latte\Component\Notification(
+                    $notifications .= new Latte\Component\Notification(
                         $toast->type,
                         $toast->message,
                         $toast->description,
@@ -90,7 +96,7 @@ abstract class CoreController
                     );
                 }
                 else {
-                    $prepend .= new Latte\Component\Notification(
+                    $notifications .= new Latte\Component\Notification(
                                   $type,
                                   toString( $toast ),
                         timeout : $type !== 'danger' ? 15 : null,
@@ -98,12 +104,28 @@ abstract class CoreController
                 }
             }
         }
-        
-        return new Response(
-            content : $prepend . $content,
-            status  : $status,
-            headers : [ 'Meta-Storage' => 'test' ],
-        );
+
+        return $notifications;
+    }
+
+    private function templateParameters( object | array $parameters ) : object | array {
+
+        if ( \is_object( $parameters ) ) {
+            return $parameters;
+        }
+
+        if ( \property_exists( $this, 'document' )
+             && $this->document instanceof DocumentService ) {
+            if ( isset( $parameters[ 'document' ] ) ) {
+                throw new \InvalidArgumentException(
+                    "The 'document' parameter is reserved for this controller.",
+                );
+            }
+
+            $parameters = [ 'document' => $this->document->getDocumentParameters(), ... $parameters ];
+        }
+
+        return $parameters;
     }
 
     /**
@@ -170,12 +192,13 @@ abstract class CoreController
         array  $path = [],
         array  $query = [],
     ) : Response {
-        $request               = Request::current();
+        $request               = $this->request->current;
         $path[ '_controller' ] = $controller;
         $subRequest            = $request->duplicate( $query, null, $path );
 
         try {
-            return $this->getHttpKernel()->handle( $subRequest, HttpKernelInterface::SUB_REQUEST );
+            return $this->request->httpKernel()
+                                 ->handle( $subRequest, HttpKernelInterface::SUB_REQUEST );
         }
         catch ( Exception $e ) {
             Log::error( $e->getMessage() );
@@ -232,14 +255,14 @@ abstract class CoreController
         Request::addFlash( $type, $message );
     }
 
-
     /**
      * Returns a NotFoundHttpException.
      *
      * This will result in a 404 response code. Usage example:
      *
+     * ```
      * throw $this->createNotFoundException( `Page not found!` );
-     *
+     *  ```
      *
      * @param string      $message
      * @param ?Throwable  $previous
@@ -254,19 +277,21 @@ abstract class CoreController
     }
 
     /**
-     * Generate a {@see CsrfToken} for the given tokenId.
+     * Returns an AccessDeniedException.
      *
-     * @param string  $tokenId
+     * This will result in a 403 response code. Usage example:
      *
-     * @return CsrfToken
+     *  ```
+     * throw $this->createAccessDeniedException('Access Denied!');
+     *  ```
      */
-    final protected function getToken( string $tokenId ) : CsrfToken {
-        return static::getService( CsrfTokenManagerInterface::class )->getToken( $tokenId );
+    final protected function createAccessDeniedException(
+        string      $message = 'Access Denied',
+        ?\Throwable $previous = null,
+    ) : AccessDeniedException {
+        return new AccessDeniedException( $message, $previous );
     }
 
-    final protected function getUser() : ?UserInterface {
-        return ServiceContainer::get( TokenStorageInterface::class )->getToken()?->getUser();
-    }
 
     final protected function dynamicTemplatePath( ?string $dir = null ) : string {
 

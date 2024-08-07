@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\Autowire;
 
+use Northrook\Symfony\Core\EventSubscriber\DeferredCacheEvent;
 use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
@@ -64,11 +65,15 @@ final readonly class Pathfinder
 
         // Ensure the resolved path actually exists
         if ( \file_exists( $value ) ) {
+            /**
+             * The cache is written on [kernel.terminate] by {@see DeferredCacheEvent}.
+             */
             $this->cache->saveDeferred( $cache->set( $value ) );
         }
         else {
-            $this->logger->notice(
-                'Unable to resolve path {path}, the file or directory does not exist. The value was return raw, and not cached',
+            $this->logger?->notice(
+                'Unable to resolve path {path}, the file or directory does not exist. 
+                The value was return raw, and not cached',
                 [
                     'cacheKey' => $cache->getKey(),
                     'path'     => $value,
@@ -85,7 +90,7 @@ final readonly class Pathfinder
 
         // If we have a separator, check if the first substring is a parameter
         if ( $separator ) {
-            [ $root, $path ] = explode( $separator, $path, 2 );
+            [ $root, $path ] = \explode( $separator, $path, 2 );
             $resolvedValue = $this->getParameterValue( $root ) . "/$path";
         }
         // Otherwise, just get the parameter value
@@ -101,7 +106,9 @@ final readonly class Pathfinder
         $value = $this->directories[ $key ] ?? null;
         if ( null === $value ) {
             $this->logger->error(
-                message : 'Failed getting container parameter {get}, the parameter does not exist or is assigned {value}. The value {value} has been returned.',
+                message : 'Failed getting container parameter {get}, 
+                the parameter does not exist or is assigned {value}. 
+                The value {value} has been returned.',
                 context : [ 'get' => $key, 'value' => 'null', ],
             );
         }
@@ -111,8 +118,10 @@ final readonly class Pathfinder
     private function key(
         string $path,
     ) : string {
-        return str_replace(
-            [ '@', '{', '(', ')', '}', ':', '\\', '/' ], [ '%', '[', '[', ']', ']', '.', '_', '_' ], $path,
+        return \str_replace(
+            [ '@', '{', '(', ')', '}', ':', '\\', '/' ],
+            [ '%', '[', '[', ']', ']', '.', '_', '_' ],
+            $path,
         );
     }
 }

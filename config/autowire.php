@@ -6,6 +6,7 @@
 
 declare( strict_types = 1 );
 
+use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\Autowire\Pathfinder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -25,8 +26,25 @@ return static function ( ContainerConfigurator $container ) : void {
     /** # ://
      * Current Request Service
      */
+    $services->set( Authentication::class )
+             ->args(
+                 [
+                     service( 'security.authorization_checker' ),
+                     service( 'security.token_storage' ),
+                     service( 'security.csrf.token_manager' ),
+                 ],
+             );
+
+    /** # ://
+     * Current Request Service
+     */
     $services->set( CurrentRequest::class )
-             ->args( [ service( 'request_stack' ) ] );
+             ->args(
+                 [
+                     service( 'request_stack' ),
+                     service( 'http_kernel' ),
+                 ],
+             );
 
     /** # ../
      * Path Service
