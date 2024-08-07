@@ -39,7 +39,6 @@ abstract class CoreController
 {
 
     protected readonly CurrentRequest $request;
-    protected readonly Latte          $latte;
 
     /**
      * Return a {@see Response}`view` from a `.latte` template.
@@ -54,21 +53,21 @@ abstract class CoreController
         string         $template,
         object | array $parameters = [],
         int            $status = Response::HTTP_OK,
-        ?Latte         $latte = null,
+        ?Latte         $engine = null,
     ) : Response {
 
-        $latte ??= $this->latte ?? null;
+        $engine ??= ServiceContainer::get( Latte::class ) ?? null;
 
-        if ( !$latte ) {
+        if ( !$engine ) {
             throw new \LogicException(
-                "The Latte templating engine is required to use the Response method. 
+                "A templating engine is required to use the Response method. 
                 Please inject '" . Latte::class . "' into to the '__construct' method.
-                Alternatively, you can also inject it directly into the controller method, 
+                Alternatively, you can inject it directly into the controller method, 
                 and pass it as the fourth argument to this Response method.",
             );
         }
 
-        $content = $latte->render(
+        $content = $engine->render(
             $template,
             $this->templateParameters( $parameters ),
         );
@@ -114,14 +113,19 @@ abstract class CoreController
             return $parameters;
         }
 
-        if ( \property_exists( $this, 'document' )
-             && $this->document instanceof DocumentService ) {
-            if ( isset( $parameters[ 'document' ] ) ) {
+        if ( isset( $parameters[ 'document' ] ) ) {
+            if ( $parameters[ 'document' ] instanceof DocumentService ) {
+                return $parameters;
+            }
+            else {
                 throw new \InvalidArgumentException(
                     "The 'document' parameter is reserved for this controller.",
                 );
             }
+        }
 
+        if ( \property_exists( $this, 'document' )
+             && $this->document instanceof DocumentService ) {
             $parameters = [ 'document' => $this->document->getDocumentParameters(), ... $parameters ];
         }
 
