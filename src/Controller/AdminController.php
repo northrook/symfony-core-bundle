@@ -37,7 +37,7 @@ final class AdminController extends CoreController
                 '#ff0000',
                 'light',
             )->asset->inline(
-                new Stylesheet( Path::get( 'path.admin.stylesheet' ) ),
+                new Stylesheet( Path::get( 'dir.var/styles/admin.css' ) ), false,
             );
 
         // Auth::denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
