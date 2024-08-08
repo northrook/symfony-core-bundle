@@ -37,7 +37,15 @@ final class DesignSystemService
         $admin = new DesignSystem();
 
         $admin->colorPalette
-            ->addPalette( 'baseline', [ 222, 9 ] )
+            ->addPalette(
+                name   : 'baseline',
+                from   : [ 222, 9 ],
+                method : [
+                             2, 5, 8,
+                             12, 60, 55,
+                             92, 95, 98,
+                         ],
+            )
             ->addPalette( 'primary', [ 222, 100, 50 ] )
             ->systemPalettes();
 
