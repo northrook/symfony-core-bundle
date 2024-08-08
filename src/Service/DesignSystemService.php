@@ -42,7 +42,7 @@ final class DesignSystemService
                 from   : [ 222, 9 ],
                 method : [
                              2, 5, 8,
-                             12, 60, 55,
+                             12, 60, 75,
                              92, 95, 98,
                          ],
             )
