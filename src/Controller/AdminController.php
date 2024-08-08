@@ -30,14 +30,14 @@ final class AdminController extends CoreController
                 'Admin',
                 'This is an example admin template.',
             )->body(
-                class            : 'core-admin',
+                id               : 'admin',
                 style            : [ '--sidebar-width' => '120px' ],
                 sidebar_expanded : true,
             )->theme(
                 '#ff0000',
                 'light',
             )->asset->inline(
-                new Stylesheet( Path::get( 'dir.var/styles/admin.css' ) ), false,
+                new Stylesheet( Path::get( 'path.admin.stylesheet' ) ), false,
             );
 
         // Auth::denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
