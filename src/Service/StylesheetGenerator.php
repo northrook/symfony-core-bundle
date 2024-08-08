@@ -59,7 +59,7 @@ final class StylesheetGenerator
         }
 
         $admin = new Stylesheet(
-            $this->pathfinder->get( 'dir.var.stylesheet' ),
+            $this->pathfinder->get( 'path.admin.stylesheet' ),
             [
                 $this->designSystem->admin()->colorPalette->generateStyles(),
                 $this->pathfinder->get( 'dir.core.assets/admin/styles' ),
