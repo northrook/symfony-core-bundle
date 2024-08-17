@@ -4,8 +4,8 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\Facade;
 
+use Northrook\Settings;
 use Northrook\Symfony\Core\DependencyInjection\Facade;
-use Northrook\Symfony\Core\Settings\Setting;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 

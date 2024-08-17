@@ -6,9 +6,10 @@ namespace Northrook\Symfony\Core;
 
 use Northrook\Env;
 use Northrook\Latte;
+use Northrook\Settings;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
-use Northrook\Symfony\Core\DependencyInjection\Compiler\AssetManagerPass;
+use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationSettingsPass;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\LatteEnvironmentPass;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\PathfinderServicePass;
 use Northrook\Symfony\Core\ErrorHandler\HttpExceptionListener;
@@ -41,7 +42,7 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         // Provide the Pathfinder with directory and path parameters
         $container->addCompilerPass(
-            pass : new AssetManagerPass( $projectDir ),
+            pass : new ApplicationSettingsPass( $projectDir ),
             type : PassConfig::TYPE_OPTIMIZE,
         );
 
@@ -71,6 +72,18 @@ final class SymfonyCoreBundle extends AbstractBundle
         ContainerConfigurator $container,
         ContainerBuilder      $builder,
     ) : void {
+
+        $container->services()
+                  ->set( Settings::class )
+                  ->args(
+                      [
+                          [],
+                          false,
+                          null,
+                          $builder->getParameter( 'kernel.environment' ) !== 'prod',
+                          service( 'logger' )->nullOnInvalid(),
+                      ],
+                  );
 
         $services = $container->services();
 
@@ -136,14 +149,11 @@ final class SymfonyCoreBundle extends AbstractBundle
     public function boot() : void {
         parent::boot();
 
-        if ( PHP_SAPI === 'cli' ) {
-            return;
-        }
-
         new Env(
             $this->container->getParameter( 'kernel.environment' ),
             $this->container->getParameter( 'kernel.debug' ),
         );
+
         DependencyInjection\ServiceContainer::set( $this->container );
     }
 

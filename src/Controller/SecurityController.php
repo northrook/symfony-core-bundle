@@ -4,7 +4,6 @@ namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
-use Northrook\Symfony\Core\Facade\Settings;
 use Northrook\Symfony\Core\Services\FormService;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpFoundation\JsonResponse;

@@ -38,7 +38,8 @@
     "northrook/symfony-document": "dev-main",
     "northrook/stylesheets": "dev-main",
     "northrook/design-system": "dev-main",
-    "northrook/memo": "dev-main"
+    "northrook/memo": "dev-main",
+    "northrook/settings": "dev-main"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"
