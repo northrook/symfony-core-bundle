@@ -2,7 +2,7 @@
 
 namespace Northrook\Symfony\Core\Autowire;
 
-use Northrook\Core\Trait\PropertyAccessor;
+use Northrook\Trait\PropertyAccessor;
 use Symfony\Component\HttpFoundation as Http;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;

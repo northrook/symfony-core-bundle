@@ -1,10 +1,12 @@
 <?php
 
+declare( strict_types = 1 );
+
 namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Exception;
+use JetBrains\PhpStorm\Deprecated;
 use Northrook\Latte;
-use Northrook\Latte\Runtime\ComponentAssetHandler;
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\ErrorHandler\ErrorEventException;
@@ -38,52 +40,73 @@ use function Northrook\toString;
  */
 abstract class CoreController
 {
-
     protected readonly CurrentRequest $request;
+
+    public bool $isPublic = false;
 
     /**
      * Return a {@see Response}`view` from a `.latte` template.
      *
-     * @param string        $template
+     * @param string        $content
      * @param object|array  $parameters
      * @param int           $status
      *
      * @return Response
      */
     final protected function response(
-        string         $template,
+        string         $content,
         object | array $parameters = [],
         int            $status = Response::HTTP_OK,
         ?Latte         $engine = null,
     ) : Response {
 
-        $engine ??= ServiceContainer::get( Latte::class ) ?? null;
-        // $components = ServiceContainer::get( )
-
-        if ( !$engine ) {
-            throw new \LogicException(
-                "A templating engine is required to use the Response method. 
+        if ( \str_ends_with( $content, '.latte' ) ) {
+            if ( !$engine ??= ServiceContainer::get( Latte::class ) ?? null ) {
+                throw new \LogicException(
+                    "A templating engine is required to use the Response method. 
                 Please inject '" . Latte::class . "' into to the '__construct' method.
                 Alternatively, you can inject it directly into the controller method, 
                 and pass it as the fourth argument to this Response method.",
-            );
+                );
+            }
+
+            $content = $engine->render( $content, $parameters );
         }
 
-        $content = $engine->render(
-            $template,
-            $this->templateParameters( $parameters ),
-        );
-
-        $notifications = $this->handleFlashBag();
-
-        $content = ComponentAssetHandler::handleDocumentInjection( $content );
-
-
         return new Response(
-            content : $notifications . $content,
-            status  : $status,
-            headers : [ 'Meta-Storage' => 'test' ],
+            content : $this->responseContent( $content ),
+            status  : $this->responseStatus( $status ),
+            headers : $this->responseHeaders(),
         );
+    }
+
+    private function responseContent( ?string $content ) : string {
+        // $notifications = $this->handleFlashBag();
+        // $content = ComponentAssetHandler::handleDocumentInjection( $content );
+        if ( \property_exists( $this, 'document' )
+             &&
+             $this->document instanceof DocumentService ) {
+            return $this->document->renderDocumentHtml( $content );
+        }
+
+        return $content;
+    }
+
+
+    // protected function renderView( ?string $content ) : string {
+    //
+    // }
+
+    private function responseStatus( int $assume ) : int {
+        return Response::HTTP_OK;
+    }
+
+    private function responseHeaders() : array {
+        $headers = [];
+        if ( !$this->isPublic ) {
+            $headers[ 'X-Robots-Tag' ] = 'noindex, nofollow';
+        }
+        return $headers;
     }
 
     private function handleFlashBag() : string {
@@ -112,6 +135,7 @@ abstract class CoreController
         return $notifications;
     }
 
+    #[Deprecated]
     private function templateParameters( object | array $parameters ) : object | array {
 
         if ( \is_object( $parameters ) ) {

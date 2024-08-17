@@ -6,7 +6,6 @@
 
 declare( strict_types = 1 );
 
-use Northrook\AssetGenerator\Asset;
 use Northrook\AssetManager;
 use Northrook\IconManager;
 use Northrook\Latte\Runtime\ComponentAssetHandler;

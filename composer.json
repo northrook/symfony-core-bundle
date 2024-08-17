@@ -25,7 +25,6 @@
     "northrook/core": "dev-main",
     "northrook/logger": "dev-main",
     "northrook/support": "dev-main",
-    "northrook/cache": "dev-main",
     "northrook/symfony-core": "dev-main",
     "northrook/latte-components": "dev-main",
     "northrook/latte-bundle": "dev-main",
@@ -38,7 +37,8 @@
     "northrook/symfony-toasts": "dev-main",
     "northrook/symfony-document": "dev-main",
     "northrook/stylesheets": "dev-main",
-    "northrook/design-system": "dev-main"
+    "northrook/design-system": "dev-main",
+    "northrook/memo": "dev-main"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest"

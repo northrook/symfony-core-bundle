@@ -1,5 +1,6 @@
 <?php
 
+
 namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
@@ -36,7 +37,7 @@ final class PublicController extends CoreController
         ?string $route,
     ) : Response {
         return $this->response(
-            template   : 'public.latte',
+            content    : 'public.latte',
             parameters : [ 'route' => $route ],
         );
     }

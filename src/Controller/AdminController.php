@@ -2,7 +2,6 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
-use Northrook\Asset\Stylesheet;
 use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
@@ -36,8 +35,8 @@ final class AdminController extends CoreController
             )->theme(
                 '#ff0000',
                 'light',
-            )->asset->inline(
-                new Stylesheet( Path::get( 'path.admin.stylesheet' ) ), false,
+            )->asset(
+                Path::get( 'path.admin.stylesheet' ),
             );
 
         // Auth::denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
@@ -119,7 +118,7 @@ final class AdminController extends CoreController
         $template = $this->dynamicTemplatePath();
 
         return $this->response(
-            template   : $this->request->isHtmx ? $template : 'admin.latte',
+            content    : $this->request->isHtmx ? $template : 'admin.latte',
             parameters : [
                              'template' => $template,
                              'route'    => $route,

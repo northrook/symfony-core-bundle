@@ -1,5 +1,7 @@
 <?php
 
+declare( strict_types = 1 );
+
 namespace Northrook\Symfony\Core\DependencyInjection\Compiler;
 
 use Northrook\Symfony\Core\Autowire\Pathfinder;
@@ -39,7 +41,7 @@ final readonly class PathfinderServicePass implements CompilerPassInterface
             array    : $parameterBag->all(),
             callback : fn ( $value, $key ) => \is_string( $value ) &&
                                               ( \str_starts_with( $key, 'dir' ) ||
-                                                \str_starts_with( $key, 'path', ) ) &&
+                                                \str_starts_with( $key, 'path' ) ) &&
                                               \str_starts_with( $value, $this->projectDir ),
             mode     : ARRAY_FILTER_USE_BOTH,
         );

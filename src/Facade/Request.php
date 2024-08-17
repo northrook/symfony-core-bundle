@@ -1,5 +1,7 @@
 <?php
 
+declare( strict_types = 1 );
+
 namespace Northrook\Symfony\Core\Facade;
 
 use LogicException;
@@ -18,8 +20,6 @@ use Throwable;
 
 final class Request extends Facade
 {
-
-
     /**
      * Request represents an HTTP request.
      *

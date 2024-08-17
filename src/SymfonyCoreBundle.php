@@ -4,7 +4,7 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core;
 
-use Northrook\Core\Env;
+use Northrook\Env;
 use Northrook\Latte;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
@@ -115,7 +115,7 @@ final class SymfonyCoreBundle extends AbstractBundle
          * Current Request Service
          */
         $services->set( LoggerIntegrationSubscriber::class )
-                 ->args( [ service( 'logger' )->nullOnInvalid() ], )
+                 ->args( [ service( 'logger' )->nullOnInvalid() ] )
                  ->tag( 'kernel.event_subscriber' );
 
 

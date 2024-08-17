@@ -1,5 +1,7 @@
 <?php
 
+declare( strict_types = 1 );
+
 namespace Northrook\Symfony\Core\Facade;
 
 use Northrook\Symfony\Core\DependencyInjection\Facade;

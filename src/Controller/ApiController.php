@@ -6,7 +6,6 @@ use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\Autowire\Pathfinder;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
 use Northrook\Symfony\Core\Facade\Path;
-use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,7 +17,10 @@ final class ApiController extends CoreController
         protected readonly CurrentRequest $request,
     ) {}
 
-    public function stylesheet( string $bundle, StylesheetGenerationService $generator, Pathfinder $pathfinder,
+    public function stylesheet(
+        string                      $bundle,
+        StylesheetGenerationService $generator,
+        Pathfinder                  $pathfinder,
     ) : Response {
 
         $generator->includeStylesheets(

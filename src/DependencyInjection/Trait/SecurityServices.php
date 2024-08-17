@@ -1,7 +1,8 @@
 <?php
 
-namespace Northrook\Symfony\Core\DependencyInjection\Trait;
+declare( strict_types = 1 );
 
+namespace Northrook\Symfony\Core\DependencyInjection\Trait;
 
 use JetBrains\PhpStorm\Deprecated;
 use LogicException;

@@ -1,5 +1,7 @@
 <?php
 
+declare( strict_types = 1 );
+
 namespace Northrook\Symfony\Core\DependencyInjection\Compiler;
 
 use Northrook\AssetManager;
@@ -9,7 +11,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final readonly class AssetManagerPass implements CompilerPassInterface
 {
-
     public function __construct() {}
 
     public function process( ContainerBuilder $container ) : void {

@@ -26,11 +26,7 @@ class FormService
         $this->errors = new Errors();
     }
 
-    public function set(
-        string $id,
-
-    ) : self {
-        
+    public function set( string $id ) : self {
         $this->id = $id;
 
         return $this;

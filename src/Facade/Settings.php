@@ -1,5 +1,7 @@
 <?php
 
+declare( strict_types = 1 );
+
 namespace Northrook\Symfony\Core\Facade;
 
 use JetBrains\PhpStorm\ExpectedValues;

@@ -1,7 +1,8 @@
 <?php
 
-namespace Northrook\Symfony\Core\DependencyInjection;
+declare( strict_types = 1 );
 
+namespace Northrook\Symfony\Core\DependencyInjection;
 
 abstract class Facade
 {

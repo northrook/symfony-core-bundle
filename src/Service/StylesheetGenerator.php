@@ -4,9 +4,9 @@ declare ( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\Service;
 
-use Northrook\Core\Trait\PropertyAccessor;
 use Northrook\CSS\Stylesheet;
 use Northrook\Symfony\Core\Autowire\Pathfinder;
+use Northrook\Trait\PropertyAccessor;
 use Psr\Log\LoggerInterface;
 
 /**

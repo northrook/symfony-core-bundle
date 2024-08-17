@@ -16,7 +16,6 @@ use Northrook\Symfony\Core\Services\DocumentService;
 use Northrook\Symfony\Core\Services\FormService;
 use Northrook\Symfony\Core\Services\MailerService;
 use Northrook\Symfony\Core\Services\NotificationService;
-use Northrook\Symfony\Core\Services\SettingsManagementService;
 use Northrook\Symfony\Core\Services\StylesheetGenerationService;
 
 return static function ( ContainerConfigurator $container ) : void {
@@ -39,11 +38,6 @@ return static function ( ContainerConfigurator $container ) : void {
      */
     $services->set( FaviconBundle::class );
 
-
-    /**
-     * Settings
-     */
-    $services->set( 'core.service.settings', SettingsManagementService::class );
 
     //--------------------------------------------------------------------
     // Services

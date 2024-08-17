@@ -10,10 +10,8 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 
 final class ServiceContainer
 {
-
     private static ContainerInterface $instance;
-
-    private static ?ServiceLocator $serviceLocator = null;
+    private static ?ServiceLocator    $serviceLocator = null;
 
     /**
      * Assign a container instance to the static container.
