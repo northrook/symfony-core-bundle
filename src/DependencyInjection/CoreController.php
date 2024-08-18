@@ -7,6 +7,7 @@ namespace Northrook\Symfony\Core\DependencyInjection;
 use Exception;
 use JetBrains\PhpStorm\Deprecated;
 use Northrook\Latte;
+use Northrook\Latte\Runtime\ComponentAssetHandler;
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\ErrorHandler\ErrorEventException;
@@ -81,15 +82,15 @@ abstract class CoreController
     }
 
     private function responseContent( ?string $content ) : string {
-        // $notifications = $this->handleFlashBag();
-        // $content = ComponentAssetHandler::handleDocumentInjection( $content );
+        $notifications = $this->handleFlashBag();
         if ( \property_exists( $this, 'document' )
              &&
              $this->document instanceof DocumentService ) {
-            return $this->document->renderDocumentHtml( $content );
+            dump( ComponentAssetHandler::getAssets() );
+            return $this->document->renderDocumentHtml( $content, $notifications );
         }
 
-        return $content;
+        return $notifications . $content;
     }
 
 

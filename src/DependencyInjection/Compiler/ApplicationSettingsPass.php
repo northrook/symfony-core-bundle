@@ -23,17 +23,15 @@ final readonly class ApplicationSettingsPass implements CompilerPassInterface
     }
 
     private function getCoreSettings( ParameterBagInterface $parameters ) : array {
-
-        $params = $parameters->all();
-
-        unset(
-            $params[ 'kernel.bundles' ],
-            $params[ 'kernel.bundles_metadata' ],
-            $params[ 'data_collector.templates' ],
-            $params[ 'event_dispatcher.event_aliases' ],
-        );
-
-        dump( $params );
+        
+        // $params = $parameters->all();
+        // unset(
+        //     $params[ 'kernel.bundles' ],
+        //     $params[ 'kernel.bundles_metadata' ],
+        //     $params[ 'data_collector.templates' ],
+        //     $params[ 'event_dispatcher.event_aliases' ],
+        // );
+        // dump( $params );
 
         $dirRoot  = $parameters->get( 'kernel.project_dir' );
         $dirCache = $parameters->get( 'kernel.cache_dir' );

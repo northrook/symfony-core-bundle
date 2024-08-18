@@ -6,6 +6,7 @@ use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
 use Northrook\Symfony\Core\Facade\Path;
+use Northrook\Symfony\Core\Facade\Toast;
 use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -105,7 +106,7 @@ final class AdminController extends CoreController
         if ( $generator->admin->save(
             force : true,
         ) ) {
-            // Toast::info( 'Admin Stylesheet updated.' );
+            Toast::info( 'Admin Stylesheet updated.' );
         };
 
         // $this->document->title( 'testme' )->description( 'we describe things' );
