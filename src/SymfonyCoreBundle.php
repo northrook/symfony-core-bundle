@@ -11,7 +11,6 @@ use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationSettingsPass;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\LatteEnvironmentPass;
-use Northrook\Symfony\Core\DependencyInjection\Compiler\PathfinderServicePass;
 use Northrook\Symfony\Core\ErrorHandler\HttpExceptionListener;
 use Northrook\Symfony\Core\EventSubscriber\LoggerIntegrationSubscriber;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
@@ -54,12 +53,6 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         // Provide the Pathfinder with directory and path parameters
         $container->addCompilerPass(
-            pass : new PathfinderServicePass( $projectDir ),
-            type : PassConfig::TYPE_OPTIMIZE,
-        );
-
-        // Provide the Pathfinder with directory and path parameters
-        $container->addCompilerPass(
             pass : new LatteEnvironmentPass( $projectDir ),
             type : PassConfig::TYPE_OPTIMIZE,
         );
@@ -73,19 +66,7 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         // Settings and Env
         $container->import( '../config/application.php' );
-
-        // $container->services()
-        //           ->set( Settings::class )
-        //           ->args(
-        //               [
-        //                   [],
-        //                   false,
-        //                   null,
-        //                   $builder->getParameter( 'kernel.environment' ) !== 'prod',
-        //                   service( 'logger' )->nullOnInvalid(),
-        //               ],
-        //           );
-
+        
         $services = $container->services();
 
         foreach (
