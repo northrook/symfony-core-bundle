@@ -52,10 +52,23 @@ final class PublicController extends CoreController
             Toast::info( 'Public Stylesheet updated.' );
         };
 
+        $this->document->set(
+            title : \ucfirst( $route ),
+        );
+
+
         return $this->response(
-            content    : 'welcome.latte',
+            content    : $this->template( $route ),
             parameters : [ 'route' => $route ],
         );
     }
+
+    private function template( ?string $route ) : string {
+        return match ( $route ) {
+                   'demo'  => 'demo',
+                   default => 'welcome',
+               } . '.latte';
+    }
+
 
 }
