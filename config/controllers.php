@@ -37,6 +37,7 @@ return static function ( ContainerConfigurator $container ) : void {
                     [
                         service( CurrentRequest::class ),
                         service( DocumentService::class ),
+                        service( Authentication::class ),
                     ],
                 );
 
