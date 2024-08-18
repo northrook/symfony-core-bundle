@@ -37,7 +37,7 @@ final class PublicController extends CoreController
         ?string $route,
     ) : Response {
         return $this->response(
-            content    : 'public.latte',
+            content    : 'welcome.latte',
             parameters : [ 'route' => $route ],
         );
     }

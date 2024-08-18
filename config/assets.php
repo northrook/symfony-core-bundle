@@ -9,7 +9,6 @@ declare( strict_types = 1 );
 use Northrook\AssetManager;
 use Northrook\IconManager;
 use Northrook\Latte\Runtime\ComponentAssetHandler;
-use Northrook\Symfony\Core\Autowire\Pathfinder;
 use Northrook\Symfony\Core\Service\DesignSystemService;
 use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -43,13 +42,15 @@ return static function ( ContainerConfigurator $container ) : void {
                       service( 'logger' )->nullOnInvalid(),
                   ],
               )
-
-        // service/stylesheetGenerator
+        /** # {}
+         * Stylesheet Service
+         *
+         * `service/stylesheetGenerator`
+         */
               ->set( StylesheetGenerator::class )
               ->tag( 'controller.service_arguments' )
               ->args(
                   [
-                      service( Pathfinder::class ),
                       service( DesignSystemService::class ),
                       service( 'logger' )->nullOnInvalid(),
                   ],

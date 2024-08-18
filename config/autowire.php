@@ -8,7 +8,6 @@ declare( strict_types = 1 );
 
 use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
-use Northrook\Symfony\Core\Autowire\Pathfinder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
@@ -43,20 +42,6 @@ return static function ( ContainerConfigurator $container ) : void {
                  [
                      service( 'request_stack' ),
                      service( 'http_kernel' ),
-                 ],
-             );
-
-    /** # ../
-     * Path Service
-     *
-     * {@see Pathfinder::$directories} will be assigned by the {@see PathfinderServicePass}
-     */
-    $services->set( Pathfinder::class )
-             ->args(
-                 [
-                     [], // $directoryParameters
-                     service( 'core.cache.pathfinder' ),
-                     service( 'logger' )->nullOnInvalid(),
                  ],
              );
 };

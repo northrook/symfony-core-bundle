@@ -20,7 +20,6 @@ return static function ( ContainerConfigurator $container ) : void {
 
     $container->services()
               ->defaults()
-              ->autowire()
               ->public()
 
         // Env
@@ -29,6 +28,7 @@ return static function ( ContainerConfigurator $container ) : void {
 
         // Settings
               ->set( Settings::class )
+              ->autowire()
               ->args(
                   [
                       [],

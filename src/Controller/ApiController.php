@@ -2,10 +2,10 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
+use Northrook\Get;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
-use Northrook\Symfony\Core\Autowire\Pathfinder;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
-use Northrook\Symfony\Core\Facade\Path;
+use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,19 +18,15 @@ final class ApiController extends CoreController
     ) {}
 
     public function stylesheet(
-        string                      $bundle,
-        StylesheetGenerationService $generator,
-        Pathfinder                  $pathfinder,
+        string              $bundle,
+        StylesheetGenerator $generator,
     ) : Response {
 
         $generator->includeStylesheets(
             [ 'dir.core.assets/styles', ],
         );
 
-        Path::
-        Path::getDirectories();
-
-        $path = new PathType( $pathfinder->get( 'dir.cache/styles/styles.css' ) );
+        $path = Get::path( 'dir.cache/styles/styles.css', true );
 
         if ( !$path->exists ) {
 
@@ -54,20 +50,22 @@ final class ApiController extends CoreController
         );
     }
 
-    public function favicon( string $action, FaviconBundle $generator, Pathfinder $pathfinder ) : Response {
+    public function favicon(
+        string $action, FaviconBundle $generator,
+    ) : Response {
 
-        $generator->load( Path::getParameter( 'path.favicon' ) );
+        $generator->load( Get::path( 'path.favicon' ) );
         $generator->manifest->title = 'Symfony Playground';
 
         if ( 'generate' === $action ) {
-            $generator->save( $pathfinder->get( 'dir.public' ) );
+            $generator->save( Get::path( 'dir.public' ) );
             $data = $generator->notices();
             Log::info( 'Favicon generated', [ 'data' => $data ] );
             return new JsonResponse( $data, Response::HTTP_CREATED );
         }
 
         if ( 'purge' === $action ) {
-            $data = $generator->purge( $pathfinder->get( 'dir.public' ) );
+            $data = $generator->purge( Get::path( 'dir.public' ) );
             Log::info( 'Favicon purged', [ 'data' => $data ] );
             return new JsonResponse( $data, Response::HTTP_OK );
         }

@@ -5,7 +5,7 @@ declare ( strict_types = 1 );
 namespace Northrook\Symfony\Core\Service;
 
 use Northrook\CSS\Stylesheet;
-use Northrook\Symfony\Core\Autowire\Pathfinder;
+use Northrook\Get;
 use Northrook\Trait\PropertyAccessor;
 use Psr\Log\LoggerInterface;
 
@@ -23,11 +23,10 @@ final class StylesheetGenerator
     private array $stylesheets = [];
 
     /**
-     * @param Pathfinder        $pathfinder
-     * @param ?LoggerInterface  $logger
+     * @param DesignSystemService  $designSystem
+     * @param ?LoggerInterface     $logger
      */
     public function __construct(
-        private readonly Pathfinder          $pathfinder,
         private readonly DesignSystemService $designSystem,
         private readonly ?LoggerInterface    $logger,
     ) {}
@@ -44,7 +43,7 @@ final class StylesheetGenerator
         array  $sourceDirectories = [],
         array  $templateDirectories = [],
     ) : Stylesheet {
-        $path = $this->pathfinder->get( $savePath );
+        $path = Get::path( $savePath );
         return $this->stylesheets[ $path ] ??= new Stylesheet(
             $path,
             $sourceDirectories,
@@ -59,11 +58,11 @@ final class StylesheetGenerator
         }
 
         $admin = new Stylesheet(
-            $this->pathfinder->get( 'path.admin.stylesheet' ),
+            Get::path( 'path.admin.stylesheet' ),
             [
                 $this->designSystem->admin()->colorPalette->generateStyles(),
-                $this->pathfinder->get( 'dir.core.assets/admin/styles' ),
-                $this->pathfinder->get( 'dir.assets/admin/styles' ),
+                Get::path( 'dir.core.assets/admin/styles' ),
+                Get::path( 'dir.assets/admin/styles' ),
             ],
             [], // templates
             $this->logger,
@@ -83,8 +82,8 @@ final class StylesheetGenerator
         }
 
         $public = new Stylesheet(
-            $this->pathfinder->get( 'path.public.stylesheet' ),
-            [ $this->pathfinder->get( 'dir.assets/public/styles' ) ],
+            Get::path( 'path.public.stylesheet' ),
+            [ Get::path( 'dir.assets/public/styles' ) ],
             [], // templates
             $this->logger,
         );

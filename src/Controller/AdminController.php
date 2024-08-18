@@ -2,10 +2,10 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
+use Northrook\Get;
 use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
-use Northrook\Symfony\Core\Facade\Path;
 use Northrook\Symfony\Core\Facade\Toast;
 use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use Northrook\Symfony\Service\Document\DocumentService;
@@ -37,7 +37,7 @@ final class AdminController extends CoreController
                 '#ff0000',
                 'light',
             )->asset(
-                Path::get( 'path.admin.stylesheet' ),
+                Get::path( 'path.admin.stylesheet' ),
             );
 
         // Auth::denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );

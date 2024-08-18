@@ -23,7 +23,7 @@ final readonly class ApplicationSettingsPass implements CompilerPassInterface
     }
 
     private function getCoreSettings( ParameterBagInterface $parameters ) : array {
-        
+
         // $params = $parameters->all();
         // unset(
         //     $params[ 'kernel.bundles' ],
@@ -85,6 +85,13 @@ final readonly class ApplicationSettingsPass implements CompilerPassInterface
             'mailer.from' => $_ENV[ 'MAILER_DSN' ] ?? null,
             'mailer.name' => $_ENV[ 'MAILER_FROM' ] ?? null,
             'mailer.lang' => $_ENV[ 'MAILER_NAME' ] ?? null,
+        ];
+
+        $settings += [
+            'formatter.document.title.characters.min' => '32',
+            'formatter.document.title.characters.max' => '128',
+            'formatter.document.title.template'       => '{title} {separator} {sitename}',
+            'formatter.document.title.separator'      => '-',
         ];
 
         return $settings;

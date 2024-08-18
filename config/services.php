@@ -10,7 +10,6 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Favicon\FaviconBundle;
 use Northrook\Symfony\Components\LatteComponentPreprocessor;
-use Northrook\Symfony\Core\Autowire\Pathfinder;
 use Northrook\Symfony\Core\DependencyInjection\CoreDependencies;
 use Northrook\Symfony\Core\Services\DocumentService;
 use Northrook\Symfony\Core\Services\FormService;
@@ -64,23 +63,7 @@ return static function ( ContainerConfigurator $container ) : void {
              ->args( [ service( 'core.service.request' ) ] )
              ->autowire()
              ->alias( DocumentService::class, 'core.service.document' );
-
-    /** # {}
-     * Stylesheet Service
-     */
-    $services->set( 'core.service.stylesheet', StylesheetGenerationService::class )
-             ->tag( 'controller.service_arguments' )
-             ->args(
-                 [
-                     service( 'core.service.request' ),
-                     service( Pathfinder::class ),
-                     service( 'logger' )->nullOnInvalid(),
-                     service( 'debug.stopwatch' )->nullOnInvalid(),
-                 ],
-             )
-             ->autowire()
-             ->public()
-             ->alias( StylesheetGenerationService::class, 'core.service.stylesheet' );
+    
     /** # 📩
      * Form Service
      */
