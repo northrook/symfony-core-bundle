@@ -6,7 +6,6 @@ namespace Northrook\Symfony\Core;
 
 use Northrook\Env;
 use Northrook\Latte;
-use Northrook\Settings;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationSettingsPass;
@@ -72,18 +71,20 @@ final class SymfonyCoreBundle extends AbstractBundle
         ContainerConfigurator $container,
         ContainerBuilder      $builder,
     ) : void {
+        
+        $container->import( '../config/settings.php' );
 
-        $container->services()
-                  ->set( Settings::class )
-                  ->args(
-                      [
-                          [],
-                          false,
-                          null,
-                          $builder->getParameter( 'kernel.environment' ) !== 'prod',
-                          service( 'logger' )->nullOnInvalid(),
-                      ],
-                  );
+        // $container->services()
+        //           ->set( Settings::class )
+        //           ->args(
+        //               [
+        //                   [],
+        //                   false,
+        //                   null,
+        //                   $builder->getParameter( 'kernel.environment' ) !== 'prod',
+        //                   service( 'logger' )->nullOnInvalid(),
+        //               ],
+        //           );
 
         $services = $container->services();
 
