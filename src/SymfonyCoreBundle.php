@@ -6,6 +6,7 @@ namespace Northrook\Symfony\Core;
 
 use Northrook\Env;
 use Northrook\Latte;
+use Northrook\Settings;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationSettingsPass;
@@ -17,6 +18,7 @@ use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
+use function Northrook\isCLI;
 use function Northrook\normalizePath;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
@@ -30,6 +32,11 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
  */
 final class SymfonyCoreBundle extends AbstractBundle
 {
+
+    public function getPath() : string {
+        return \dirname( __DIR__ );
+    }
+
     public function build( ContainerBuilder $container ) : void {
 
         $projectDir = $container->getParameter( 'kernel.project_dir' );
@@ -39,7 +46,7 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         parent::build( $container );
 
-        // Provide the Pathfinder with directory and path parameters
+        // Provide the Application Settings and Env core parameters
         $container->addCompilerPass(
             pass : new ApplicationSettingsPass( $projectDir ),
             type : PassConfig::TYPE_OPTIMIZE,
@@ -58,21 +65,14 @@ final class SymfonyCoreBundle extends AbstractBundle
         );
     }
 
-    private function autoConfigure( string $configDir ) : void {
-        ( new ApplicationAutoConfiguration( $configDir ) )
-            ->createConfigPreload()
-            ->createConfigRoutes()
-            ->createConfigServices()
-            ->createConfigControllerRoutes();
-    }
-
     public function loadExtension(
         array                 $config,
         ContainerConfigurator $container,
         ContainerBuilder      $builder,
     ) : void {
-        
-        $container->import( '../config/settings.php' );
+
+        // Settings and Env
+        $container->import( '../config/application.php' );
 
         // $container->services()
         //           ->set( Settings::class )
@@ -150,15 +150,25 @@ final class SymfonyCoreBundle extends AbstractBundle
     public function boot() : void {
         parent::boot();
 
-        new Env(
-            $this->container->getParameter( 'kernel.environment' ),
-            $this->container->getParameter( 'kernel.debug' ),
-        );
+        // Initialize the Env instance
+        $this->container->get( Env::class );
+
+        // Initialize the Settings instance.
+        $this->container->get( Settings::class );
+
+        if ( isCLI() ) {
+            return;
+        }
 
         DependencyInjection\ServiceContainer::set( $this->container );
     }
 
-    public function getPath() : string {
-        return dirname( __DIR__ );
+    private function autoConfigure( string $configDir ) : void {
+        ( new ApplicationAutoConfiguration( $configDir ) )
+            ->createConfigPreload()
+            ->createConfigRoutes()
+            ->createConfigServices()
+            ->createConfigControllerRoutes();
     }
+
 }
