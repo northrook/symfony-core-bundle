@@ -150,15 +150,15 @@ final class SymfonyCoreBundle extends AbstractBundle
     public function boot() : void {
         parent::boot();
 
+        if ( isCLI() ) {
+            return;
+        }
+
         // Initialize the Env instance
         $this->container->get( Env::class );
 
         // Initialize the Settings instance.
         $this->container->get( Settings::class );
-
-        if ( isCLI() ) {
-            return;
-        }
 
         DependencyInjection\ServiceContainer::set( $this->container );
     }

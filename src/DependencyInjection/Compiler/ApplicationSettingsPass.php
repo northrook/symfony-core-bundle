@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use function Northrook\normalizePath;
+use function Northrook\normalizeUrl;
 
 final readonly class ApplicationSettingsPass implements CompilerPassInterface
 {
@@ -22,6 +23,17 @@ final readonly class ApplicationSettingsPass implements CompilerPassInterface
     }
 
     private function getCoreSettings( ParameterBagInterface $parameters ) : array {
+
+        $params = $parameters->all();
+
+        unset(
+            $params[ 'kernel.bundles' ],
+            $params[ 'kernel.bundles_metadata' ],
+            $params[ 'data_collector.templates' ],
+            $params[ 'event_dispatcher.event_aliases' ],
+        );
+
+        dump( $params );
 
         $dirRoot  = $parameters->get( 'kernel.project_dir' );
         $dirCache = $parameters->get( 'kernel.cache_dir' );
@@ -55,17 +67,19 @@ final readonly class ApplicationSettingsPass implements CompilerPassInterface
             $settings[ $name ] = normalizePath( $path );
         }
 
+        $settings = [ ... $settings, ... $this->getPathEntries( $parameters->all() ) ];
+
         $settings += [
             'site.public'            => false,
             'site.name'              => 'Symfony',
-            'site.url'               => $parameters->get( 'kernel.url' ),
+            'site.url'               => $this->resolveUrl(),
             'site.locale'            => $parameters->get( 'kernel.default_locale' ),
             'site.locales_available' => $parameters->get( 'kernel.enabled_locales' ),
             'site.charset'           => \strtolower( $parameters->get( 'kernel.charset' ) ),
         ];
 
         $settings += [
-            'admin.url' => $parameters->get( 'kernel.url' ) . '/admin',
+            'admin.url' => $this->resolveUrl( '/admin' ),
         ];
 
         $settings += [
@@ -74,9 +88,14 @@ final readonly class ApplicationSettingsPass implements CompilerPassInterface
             'mailer.name' => $_ENV[ 'MAILER_FROM' ] ?? null,
             'mailer.lang' => $_ENV[ 'MAILER_NAME' ] ?? null,
         ];
-        echo \count( $settings ) . ' generated';
 
         return $settings;
+    }
+
+    private function resolveUrl( ?string $append = null ) : ?string {
+        $homeUrl = $_SERVER[ 'SYMFONY_APPLICATION_DEFAULT_ROUTE_URL' ] ?? null;
+
+        return $homeUrl ? normalizeUrl( $homeUrl . $append ) : null;
     }
 
     /**
