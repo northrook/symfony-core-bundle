@@ -10,7 +10,7 @@
     <ui:breadcrumbs class="demo-crumbs" />
 </nav>
 <main id="main" class="site-main page-offset-bottom">
-    <article id="post-17953" class="post-17953 post type-post status-publish format-standard has-post-thumbnail hentry category-digital category-marketing tag-blog tag-creative tag-portfolio tag-theme tag-wordpress">
+    <article id="post-17953" class="blog-post" status="published">
         <header class="hero">
             <h1>
                 Demo Article
@@ -22,7 +22,7 @@
                 A <a href="#" target="_blank" rel="noreferrer noopener">CSS</a>
                 <dfn>pseudo-class</dfn> is a keyword added to a selector that specifies a special>
                 state of the selected element(s). For example,
-                <a href="#" target="_blank" rel="noreferrer noopener"><code>:hover</code></a> can be
+                <a href="#" target="_blank" rel="noreferrer noopener"><code lang="css">:hover</code></a> can be
                 used to change a button’s color when the user’s pointer hovers over it.
             </p>
             <p>
@@ -36,10 +36,10 @@
                 <img decoding="async" src="https://colabrio.ams3.cdn.digitaloceanspaces.com/ohio.clbthemes.com/oh__img5.jpg" alt="" class="wp-image-20557">
             </figure>
             <p>
-                Other pseudo-elements and pseudo-class selectors, <code>:not()</code> can be chained
+                Other pseudo-elements and pseudo-class selectors, <code lang="css">:not()</code> can be chained
                 with other pseudo-classes and pseudo-elements. For example, the following will add a
-                “New!” word to list items that do not have a <code>.old</code> class name, using the
-                <a href="#" target="_blank" rel="noreferrer noopener"><code>::after</code></a>.
+                “New!” word to list items that do not have a <code lang="css">.old</code> class name, using the
+                <a href="#" target="_blank" rel="noreferrer noopener"><code lang="css">::after</code></a>.
             </p>
         </section>
         <section>
@@ -47,17 +47,17 @@
                 Trivia &amp; Notes
             </h2>
             <p>
-                The <code>:not()</code> selector is chainable with more <code>:not()</code>
+                The <code lang="css">:not()</code> selector is chainable with more <code>:not()</code>
                 selectors. For example, <a href="#" target="_blank"
                                            rel="noreferrer noopener">the following</a> will match
-                all <code>article</code>s except the one with an ID <code>#featured</code>, and then
-                will filter out the articles with a class name <code>.tutorial</code>:
+                all <code>article</code>s except the one with an ID <code lang="css">#featured</code>, and then
+                will filter out the articles with a class name <code lang="css">.tutorial</code>:
             </p>
-            <pre class="wp-block-preformatted">
-                                    article:not(#featured):not(.tutorial) {
-                                        /* style the articles that match */
-                                    }
-                                </pre>
+            <code:block lang="css">
+                article:not(#featured):not(.tutorial) {
+                /* style the articles that match */
+                }
+            </code:block>
             <p>Just like other pseudo-elements and pseudo-class selectors, <code>:not()</code> can
                 be chained with other pseudo-classes and pseudo-elements. For example, the following
                 will add a “New!” word to list items that do not have a <code>.old</code> class
@@ -65,12 +65,12 @@
                 <a href="#" target="_blank" rel="noreferrer noopener"><code>::after</code></a>
                 pseudo-element:
             </p>
-            <pre class="wp-block-preformatted">
-                                    li:not(.old)::after {
-                                        content: "New!";
-                                        color: deepPink;
-                                    }
-                                </pre>
+            <code:block lang="css">
+                li:not(.old)::after {
+                content: "New!";
+                color: deepPink;
+                }
+            </code:block>
             <p>
                 You can see a live demo in the Live Demo section below.
             </p>
