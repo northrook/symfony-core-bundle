@@ -7,7 +7,6 @@ namespace Northrook\Symfony\Core\DependencyInjection;
 use Exception;
 use JetBrains\PhpStorm\Deprecated;
 use Northrook\Latte;
-use Northrook\Latte\Runtime\ComponentAssetHandler;
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\ErrorHandler\ErrorEventException;
@@ -86,7 +85,7 @@ abstract class CoreController
         if ( \property_exists( $this, 'document' )
              &&
              $this->document instanceof DocumentService ) {
-            dump( ComponentAssetHandler::getAssets() );
+            // dump( ComponentAssetHandler::getAssets() );
             return $this->document->renderDocumentHtml( $content, $notifications );
         }
 
