@@ -9,7 +9,7 @@ declare( strict_types = 1 );
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Latte\CacheExtension;
-use Northrook\Latte\Compiler\ComponentExtension;
+use Northrook\Latte\Extension\ComponentExtension;
 use Northrook\Latte\Extension\ElementExtension;
 use Northrook\Latte\Extension\FormatterExtension;
 use Northrook\Latte\Extension\OptimizerExtension;

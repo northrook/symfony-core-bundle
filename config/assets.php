@@ -8,7 +8,7 @@ declare( strict_types = 1 );
 
 use Northrook\AssetManager;
 use Northrook\IconManager;
-use Northrook\Latte\Runtime\ComponentAssetHandler;
+use Northrook\Runtime\ComponentAssetHandler;
 use Northrook\Symfony\Core\Service\DesignSystemService;
 use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
