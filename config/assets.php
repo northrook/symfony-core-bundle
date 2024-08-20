@@ -6,15 +6,14 @@
 
 declare( strict_types = 1 );
 
+namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+
 use Northrook\AssetManager;
 use Northrook\IconManager;
 use Northrook\Runtime\ComponentAssetHandler;
 use Northrook\Symfony\Core\Service\DesignSystemService;
 use Northrook\Symfony\Core\Service\StylesheetGenerator;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function Northrook\normalizePath;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 return static function ( ContainerConfigurator $container ) : void {
 

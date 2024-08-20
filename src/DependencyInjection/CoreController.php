@@ -5,7 +5,6 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Exception;
-use JetBrains\PhpStorm\Deprecated;
 use Northrook\Latte;
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
@@ -85,7 +84,6 @@ abstract class CoreController
         if ( \property_exists( $this, 'document' )
              &&
              $this->document instanceof DocumentService ) {
-            // dump( ComponentAssetHandler::getAssets() );
             return $this->document->renderDocumentHtml( $content, $notifications );
         }
 
@@ -133,32 +131,6 @@ abstract class CoreController
         }
 
         return $notifications;
-    }
-
-    #[Deprecated]
-    private function templateParameters( object | array $parameters ) : object | array {
-
-        if ( \is_object( $parameters ) ) {
-            return $parameters;
-        }
-
-        if ( isset( $parameters[ 'document' ] ) ) {
-            if ( $parameters[ 'document' ] instanceof DocumentService ) {
-                return $parameters;
-            }
-            else {
-                throw new \InvalidArgumentException(
-                    "The 'document' parameter is reserved for this controller.",
-                );
-            }
-        }
-
-        if ( \property_exists( $this, 'document' )
-             && $this->document instanceof DocumentService ) {
-            $parameters = [ 'document' => $this->document->getDocumentParameters(), ... $parameters ];
-        }
-
-        return $parameters;
     }
 
     /**
@@ -328,8 +300,8 @@ abstract class CoreController
 
     final protected function dynamicTemplatePath( ?string $dir = null ) : string {
 
-        $dir  ??= defined( static::class . '::DYNAMIC_TEMPLATE_DIR' ) ? static::DYNAMIC_TEMPLATE_DIR : '';
-        $file = str_replace( '/', '.', $this->request->route ) . '.latte';
+        $dir  ??= \defined( static::class . '::DYNAMIC_TEMPLATE_DIR' ) ? static::DYNAMIC_TEMPLATE_DIR : '';
+        $file = \str_replace( '/', '.', $this->request->route ) . '.latte';
 
         return normalizePath( $dir . DIRECTORY_SEPARATOR . $file );
     }
