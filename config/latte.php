@@ -9,11 +9,11 @@ declare( strict_types = 1 );
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Latte\CacheExtension;
-use Northrook\Latte\Extension\ComponentExtension;
 use Northrook\Latte\Extension\ElementExtension;
 use Northrook\Latte\Extension\FormatterExtension;
 use Northrook\Latte\Extension\OptimizerExtension;
 use Northrook\Latte\Extension\RenderExtension;
+use Northrook\UI\Latte\ComponentExtension;
 
 return static function ( ContainerConfigurator $container ) : void {
 

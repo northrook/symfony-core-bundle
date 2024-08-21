@@ -9,11 +9,11 @@ declare( strict_types = 1 );
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\AssetManager;
-use Northrook\IconManager;
-use Northrook\Runtime\ComponentAssetHandler;
 use Northrook\Symfony\Core\Service\DesignSystemService;
 use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use function Northrook\normalizePath;
+
+// use Northrook\UI\AssetHandler;
 
 return static function ( ContainerConfigurator $container ) : void {
 
@@ -65,14 +65,14 @@ return static function ( ContainerConfigurator $container ) : void {
                       param( 'dir.public.assets' ),
                       service( 'core.cache.assets' ),
                   ],
-              )
+              );
 
-        // northrook/components
-              ->set( ComponentAssetHandler::class )
-              ->args(
-                  [ param( 'dir.core.templates' ) . DIRECTORY_SEPARATOR . 'components' ],
-              )
+    // northrook/components
+    //       ->set( AssetHandler::class )
+    //       ->args(
+    //           [ param( 'dir.public.assets' ), ],
+    //       );
 
-        // northrook/icon-manager
-              ->set( IconManager::class );
+    // northrook/icon-manager
+    //       ->set( IconManager::class );
 };

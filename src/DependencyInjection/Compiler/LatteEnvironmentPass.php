@@ -9,12 +9,11 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core\DependencyInjection\Compiler;
 
 use Northrook\Latte;
-use Northrook\Latte\Extension\ComponentExtension;
 use Northrook\Latte\Extension\ElementExtension;
 use Northrook\Latte\Extension\FormatterExtension;
 use Northrook\Latte\Extension\OptimizerExtension;
 use Northrook\Latte\Extension\RenderExtension;
-use Northrook\Runtime\ComponentAssetHandler;
+use Northrook\UI\Latte\ComponentExtension;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -38,15 +37,6 @@ final class LatteEnvironmentPass implements CompilerPassInterface
             $container->getDefinition( RenderExtension::class ),
             $container->getDefinition( FormatterExtension::class ),
             $container->getDefinition( OptimizerExtension::class ),
-        ],
-        );
-
-        $latteBundle->addMethodCall(
-            'addPostprocessor', [
-            [
-                $container->getDefinition( ComponentAssetHandler::class ),
-                'handleDocumentInjection',
-            ],
         ],
         );
     }

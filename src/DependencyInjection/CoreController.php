@@ -5,6 +5,7 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Exception;
+use Northrook\Get;
 use Northrook\Latte;
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
@@ -13,6 +14,8 @@ use Northrook\Symfony\Core\Facade\Request;
 use Northrook\Symfony\Core\Facade\URL;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Northrook\Symfony\Service\Toasts\Message;
+use Northrook\UI\AssetHandler;
+use Northrook\UI\Component\Notification;
 use Stringable;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -81,9 +84,11 @@ abstract class CoreController
 
     private function responseContent( ?string $content ) : string {
         $notifications = $this->handleFlashBag();
+        $runtimeAssets = new AssetHandler( Get::path( 'dir.assets' ) );
         if ( \property_exists( $this, 'document' )
              &&
              $this->document instanceof DocumentService ) {
+            $this->document->asset( $runtimeAssets->getComponentAssets() );
             return $this->document->renderDocumentHtml( $content, $notifications );
         }
 
@@ -113,7 +118,7 @@ abstract class CoreController
         foreach ( $this->request->flashBag()->all() as $type => $flash ) {
             foreach ( $flash as $toast ) {
                 if ( $toast instanceof Message ) {
-                    $notifications .= new Latte\Component\Notification(
+                    $notifications .= new Notification(
                         $toast->type,
                         $toast->message,
                         $toast->description,
@@ -121,7 +126,7 @@ abstract class CoreController
                     );
                 }
                 else {
-                    $notifications .= new Latte\Component\Notification(
+                    $notifications .= new Notification(
                                   $type,
                                   toString( $toast ),
                         timeout : $type !== 'danger' ? 15 : null,
