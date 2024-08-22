@@ -61,7 +61,7 @@ final class StylesheetGenerator
             Get::path( 'path.admin.stylesheet' ),
             [
                 $this->designSystem->admin()->colorPalette->generateStyles(),
-                Get::path( 'dir.assets/styles' ),
+                Get::path( 'dir.core.assets/styles' ),
                 Get::path( 'dir.assets/admin/styles' ),
                 Get::path( 'dir.core.assets/admin/styles' ),
             ],
@@ -86,7 +86,7 @@ final class StylesheetGenerator
             Get::path( 'path.public.stylesheet' ),
             [
                 $this->designSystem->admin()->colorPalette->generateStyles(),
-                Get::path( 'dir.assets/styles' ),
+                Get::path( 'dir.core.assets/styles' ),
                 Get::path( 'dir.assets/public/styles' ),
             ],
             [], // templates
