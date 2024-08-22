@@ -270,38 +270,35 @@ abstract class CoreController
     /**
      * Returns a NotFoundHttpException.
      *
-     * This will result in a 404 response code. Usage example:
-     *
-     * ```
-     * throw $this->createNotFoundException( `Page not found!` );
-     *  ```
+     * This will result in a 404 response code.
      *
      * @param string      $message
      * @param ?Throwable  $previous
      *
-     * @return NotFoundHttpException
+     * @throws  NotFoundHttpException
      */
-    final protected function createNotFoundException(
+    final protected function throwNotFoundException(
         string     $message = 'Not Found',
         ?Throwable $previous = null,
     ) : NotFoundHttpException {
-        return new NotFoundHttpException( $message, $previous );
+        throw new NotFoundHttpException( $message, $previous );
     }
 
     /**
      * Returns an AccessDeniedException.
      *
-     * This will result in a 403 response code. Usage example:
+     * This will result in a 403 response code.
      *
-     *  ```
-     * throw $this->createAccessDeniedException('Access Denied!');
-     *  ```
+     * @param string      $message
+     * @param ?Throwable  $previous
+     *
+     * @throws  AccessDeniedException
      */
-    final protected function createAccessDeniedException(
+    final protected function throwAccessDeniedException(
         string      $message = 'Access Denied',
         ?\Throwable $previous = null,
     ) : AccessDeniedException {
-        return new AccessDeniedException( $message, $previous );
+        throw new AccessDeniedException( $message, $previous );
     }
 
 

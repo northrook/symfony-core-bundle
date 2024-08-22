@@ -61,8 +61,9 @@ final class StylesheetGenerator
             Get::path( 'path.admin.stylesheet' ),
             [
                 $this->designSystem->admin()->colorPalette->generateStyles(),
-                Get::path( 'dir.core.assets/admin/styles' ),
+                Get::path( 'dir.assets/styles' ),
                 Get::path( 'dir.assets/admin/styles' ),
+                Get::path( 'dir.core.assets/admin/styles' ),
             ],
             [], // templates
             $this->logger,
@@ -83,7 +84,11 @@ final class StylesheetGenerator
 
         $public = new Stylesheet(
             Get::path( 'path.public.stylesheet' ),
-            [ Get::path( 'dir.assets/public/styles' ) ],
+            [
+                $this->designSystem->admin()->colorPalette->generateStyles(),
+                Get::path( 'dir.assets/styles' ),
+                Get::path( 'dir.assets/public/styles' ),
+            ],
             [], // templates
             $this->logger,
         );
