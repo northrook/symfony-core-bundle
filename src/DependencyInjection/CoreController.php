@@ -119,6 +119,7 @@ abstract class CoreController
             foreach ( $flash as $toast ) {
                 if ( $toast instanceof Message ) {
                     $notifications .= new Notification(
+                        [],
                         $toast->type,
                         $toast->message,
                         $toast->description,
@@ -127,6 +128,7 @@ abstract class CoreController
                 }
                 else {
                     $notifications .= new Notification(
+                                  [],
                                   $type,
                                   toString( $toast ),
                         timeout : $type !== 'danger' ? 15 : null,
