@@ -36,11 +36,7 @@ return static function ( ContainerConfigurator $container ) : void {
         // service/designSystem
               ->set( DesignSystemService::class )
               ->tag( 'controller.service_arguments' )
-              ->args(
-                  [
-                      service( 'logger' )->nullOnInvalid(),
-                  ],
-              )
+              ->args( [ service( 'logger' )->nullOnInvalid() ] )
         /** # {}
          * Stylesheet Service
          *
