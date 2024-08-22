@@ -1,7 +1,9 @@
-root {
+:root {
     --offset-top    : 1rem;
     --offset-left   : 1rem;
     --offset-right  : 1rem;
     --offset-bottom : 1rem;
     --gap           : 1rem;
+    --color         : var(--baseline-300);
+    --background    : var(--baseline-900);
 }
