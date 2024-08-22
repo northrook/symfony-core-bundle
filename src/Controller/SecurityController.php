@@ -9,6 +9,7 @@ use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 
@@ -27,7 +28,10 @@ final class SecurityController extends CoreController
     public function login(
         FormService                 $form,
         StylesheetGenerationService $stylesheet,
+        Profiler                    $profiler,
     ) : Response {
+
+        $profiler->disable();
 
         if ( false === $this->request->is( 'hypermedia' ) ) {
             $stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );
@@ -61,7 +65,11 @@ final class SecurityController extends CoreController
         );
     }
 
-    public function register() : Response {
+    public function register(
+        Profiler $profiler,
+    ) : Response {
+
+        $profiler->disable();
 
         if ( !Settings::public( 'security.registration' ) ) {
             throw new NotFoundHttpException(

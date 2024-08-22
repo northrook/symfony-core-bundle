@@ -11,6 +11,8 @@ use Northrook\Symfony\Core\Facade\Toast;
 use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
+use const Northrook\Cache\EPHEMERAL;
 
 final class PublicController extends CoreController
 {
@@ -28,30 +30,28 @@ final class PublicController extends CoreController
             )->body(
                 id : 'public',
             )->asset(
-                'path.public.stylesheet',
-                Get::path( 'dir.core.assets/scripts/_core.js' ),
-                Get::path( 'dir.core.assets/scripts/notifications.js' ),
+                              [
+                                  'path.public.stylesheet',
+                                  Get::path( 'dir.core.assets/scripts/_core.js' ),
+                                  // Get::path( 'dir.core.assets/scripts/notifications.js' ),
+                              ],
+                persistence : EPHEMERAL,
             );
-
-        // if ( false === $this->request->type()-> ) {
-        //     $this->stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );
-        // }
-        //
-        // $this->document->stylesheet( 'dir.cache/styles/styles.css' );
-        //
-        // $this->document->script( 'dir.assets/scripts/core.js' );
-        //
-        // $this->document->body();
     }
 
     public function index(
         ?string             $route,
         StylesheetGenerator $generator,
+        Profiler            $profiler,
     ) : Response {
+
+        $profiler->disable();
 
         $generator->public->addSource( 'dir.assets/public/styles' );
 
-        if ( $generator->public->save() ) {
+        if ( $generator->public->save(
+            force : true,
+        ) ) {
             Toast::info( 'Public Stylesheet updated.' );
         };
 

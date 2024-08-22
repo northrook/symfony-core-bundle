@@ -10,6 +10,7 @@ use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
 
 // use Northrook\Symfony\Core\Components\Menu\Menu;
 // use Northrook\Symfony\Core\Components\Menu\Navigation;
@@ -98,7 +99,10 @@ final class AdminController extends CoreController
     public function index(
         ?string             $route,
         StylesheetGenerator $generator,
+        Profiler            $profiler,
     ) : Response {
+
+        $profiler->disable();
 
         $generator->admin->addSource( 'dir.assets/admin/styles' );
 

@@ -5,14 +5,15 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core;
 
 use Northrook\Env;
-use Northrook\Latte;
 use Northrook\Settings;
+use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
+use Northrook\Symfony\Core\Controller\EventController;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationSettingsPass;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\LatteEnvironmentPass;
-use Northrook\Symfony\Core\ErrorHandler\HttpExceptionListener;
 use Northrook\Symfony\Core\EventSubscriber\LoggerIntegrationSubscriber;
+use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -20,6 +21,8 @@ use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 use function Northrook\isCLI;
 use function Northrook\normalizePath;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
+
+// use Northrook\Symfony\Core\ErrorHandler\HttpExceptionListener;
 
 
 /**
@@ -66,7 +69,7 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         // Settings and Env
         $container->import( '../config/application.php' );
-        
+
         $services = $container->services();
 
         foreach (
@@ -96,13 +99,24 @@ final class SymfonyCoreBundle extends AbstractBundle
             $builder->setParameter( $name, normalizePath( $value ) );
         }
 
-        $services->set( HttpExceptionListener::class )
+        // $services->set( HttpExceptionListener::class )
+        //          ->tag( 'kernel.event_listener', [ 'priority' => 100 ] )
+        //          ->args(
+        //              [
+        //                  service( CurrentRequest::class ),
+        //                  service( Latte::class ),
+        //                  service( 'logger' )->nullOnInvalid(),
+        //              ],
+        //          );
+
+        $services->set( EventController::class )
                  ->tag( 'kernel.event_listener', [ 'priority' => 100 ] )
+                 ->tag( 'controller.service_arguments' )
                  ->args(
                      [
                          service( CurrentRequest::class ),
-                         service( Latte::class ),
-                         service( 'logger' )->nullOnInvalid(),
+                         service( DocumentService::class ),
+                         service( Authentication::class ),
                      ],
                  );
 

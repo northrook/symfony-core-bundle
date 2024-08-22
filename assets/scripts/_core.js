@@ -95,7 +95,7 @@ function elementGet(selector, attributes = {}, attach = document.body, append = 
     let element = document.querySelector(selector);
 
     if (!element) {
-        element = this.createElement(selector, attributes);
+        element = elementCreate(selector, attributes);
         if (append) {
             attach?.append(element);
         } else {
