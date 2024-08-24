@@ -1,54 +1,16 @@
 
-:root {
-    --color           : var(--baseline-300);
-    --background      : var(--baseline-900);
-    --outline         : var(--baseline-600);
-    --disabled        : var(--baseline-400);
-    --inactive        : var(--baseline-600);
-    --intent          : var(--primary-500);
-    --active          : var(--primary-600);
-    --shadow-color    : var(--baseline-600);
-
-
-    --font-regular    : 400;
-    --font-bold       : 600;
-    --font-size       : 1rem;
-    --font-size-small : 1rem;
-    --font-size-h1    : min(max(1.8rem, 6vw), 3.05rem);
-    --font-size-h2    : min(max(1.6rem, 6vw), 2rem);
-    --font-size-h3    : min(max(1.25rem, 6vw), 1.8rem);
-    --font-size-h4    : min(max(1.1rem, 6vw), 2rem);
-    --line-height     : 1.5rem;
-
-
-    --tiny            : .125rem;
-    --extra-small     : .25rem;
-    --small           : .5rem;
-    --medium          : 1rem;
-    --large           : 1.5rem;
-    --section-gap     : 2rem;
-
-    --input-size      : 2rem;
-    --button-size     : 2rem;
-}
-
 html {
-    /*scroll-behavior                : smooth;*/
-    /*text-rendering                 : optimizeLegibility;*/
-    /*-webkit-tap-highlight-color    : transparent;*/
-    /*text-size-adjust               : 100%;*/
-    /*font-family    : system-ui, sans-serif;*/
-    font-family    : "Inter V", sans-serif;
-    min-height     : 100vh;
-    display        : flex;
-    flex-direction : column;
-    color          : var(--color);
-    background     : var(--background);
+  font-family    : "Inter V", sans-serif;
+  color          : var(--color);
+  background     : var(--background);
+  min-height     : 100vh;
+  display        : flex;
+  flex-direction : column;
 }
 
 body {
-    display        : flex;
-    flex-direction : column;
-    flex-grow      : 1;
-    min-height     : 100%;
+  display        : flex;
+  flex-direction : column;
+  flex-grow      : 1;
+  min-height     : 100%;
 }

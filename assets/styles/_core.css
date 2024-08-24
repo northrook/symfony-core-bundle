@@ -1,9 +1,71 @@
 :root {
-    --offset-top    : 1rem;
-    --offset-left   : 1rem;
-    --offset-right  : 1rem;
-    --offset-bottom : 1rem;
-    --gap           : 1rem;
-    --color         : var(--baseline-300);
-    --background    : var(--baseline-900);
+  --offset-top      : 1rem;
+  --offset-left     : 1rem;
+  --offset-right    : 1rem;
+  --offset-bottom   : 1rem;
+  --gap             : 1rem;
+  --color           : var(--baseline-300);
+  --background      : var(--baseline-900);
+  --outline         : var(--baseline-500);
+  --shadow-color    : var(--baseline-600);
+
+  --font-regular    : 400;
+  --font-bold       : 600;
+  --font-size       : 1rem;
+  --font-size-small : .875rem;
+  --font-size-h1    : min(max(1.8rem, 6vw), 3.05rem);
+  --font-size-h2    : min(max(1.6rem, 6vw), 2rem);
+  --font-size-h3    : min(max(1.25rem, 6vw), 1.8rem);
+  --font-size-h4    : min(max(1.1rem, 6vw), 2rem);
+  --line-height     : 1.5rem;
+}
+
+.fixed {
+  position : fixed;
+  z-index  : 125;
+}
+
+.fixed.top {
+  top : var(--offset-top);
+}
+
+.fixed.bottom {
+  bottom : var(--offset-bottom);
+}
+
+.fixed.left {
+  left : var(--offset-left);
+}
+
+.fixed.right {
+  right : var(--offset-right);
+}
+
+[role=list] {
+  display        : flex;
+  flex-direction : column;
+}
+
+[role=list].right {
+  align-items : flex-end;
+}
+
+[role=list].reverse {
+  flex-direction : column-reverse;
+}
+
+
+@keyframes fadeInn {
+  100% {
+    opacity : 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity : 1;
+  }
+  100% {
+    opacity : 0;
+  }
 }
