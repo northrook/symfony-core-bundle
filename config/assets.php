@@ -8,14 +8,13 @@ declare( strict_types = 1 );
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Northrook\AssetManager;
 use Northrook\Symfony\Core\Service\DesignSystemService;
 use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use function Northrook\normalizePath;
 
 // use Northrook\UI\AssetHandler;
 
-return static function ( ContainerConfigurator $container ) : void {
+return static function( ContainerConfigurator $container ) : void {
 
     $container->parameters()
               ->set(
@@ -49,19 +48,19 @@ return static function ( ContainerConfigurator $container ) : void {
                       service( DesignSystemService::class ),
                       service( 'logger' )->nullOnInvalid(),
                   ],
-              )
-
-        // northrook/assets
-              ->set( AssetManager::class )
-              ->args(
-                  [
-                      param( 'dir.root' ),
-                      param( 'dir.asset.storage' ),
-                      param( 'dir.public' ),
-                      param( 'dir.public.assets' ),
-                      service( 'core.cache.assets' ),
-                  ],
               );
+
+    // northrook/assets
+    //       ->set( AssetManager::class )
+    //       ->args(
+    //           [
+    //               param( 'dir.root' ),
+    //               param( 'dir.asset.storage' ),
+    //               param( 'dir.public' ),
+    //               param( 'dir.public.assets' ),
+    //               service( 'core.cache.assets' ),
+    //           ],
+    //       );
 
     // northrook/components
     //       ->set( AssetHandler::class )

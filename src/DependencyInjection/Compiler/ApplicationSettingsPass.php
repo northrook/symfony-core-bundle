@@ -11,8 +11,8 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use function Northrook\normalizePath;
 use function Northrook\normalizeUrl;
 
-final readonly class ApplicationSettingsPass implements CompilerPassInterface
-{
+final readonly class ApplicationSettingsPass implements CompilerPassInterface {
+
     public function __construct( private string $projectDir ) {}
 
     public function process( ContainerBuilder $container ) : void {
@@ -75,6 +75,9 @@ final readonly class ApplicationSettingsPass implements CompilerPassInterface
             'site.locales_available' => $parameters->get( 'kernel.enabled_locales' ),
             'site.charset'           => \strtolower( $parameters->get( 'kernel.charset' ) ),
         ];
+        $settings += [
+            'notification.timeout' => 8500,
+        ];
 
         $settings += [
             'admin.url' => $this->resolveUrl( '/admin' ),
@@ -110,7 +113,7 @@ final readonly class ApplicationSettingsPass implements CompilerPassInterface
      * - Only keys containing `dir` or `path` will be considered
      * - Only values starting with the {@see projectDir} are used
      *
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @return array
      */
@@ -119,10 +122,10 @@ final readonly class ApplicationSettingsPass implements CompilerPassInterface
 
         $paths = \array_filter(
             array    : $parameters,
-            callback : fn ( $value, $key ) => \is_string( $value ) &&
-                                              ( \str_starts_with( $key, 'dir' ) ||
-                                                \str_starts_with( $key, 'path' ) ) &&
-                                              \str_starts_with( $value, $this->projectDir ),
+            callback : fn( $value, $key ) => \is_string( $value ) &&
+                                             ( \str_starts_with( $key, 'dir' ) ||
+                                               \str_starts_with( $key, 'path' ) ) &&
+                                             \str_starts_with( $value, $this->projectDir ),
             mode     : ARRAY_FILTER_USE_BOTH,
         );
 

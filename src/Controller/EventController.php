@@ -13,12 +13,12 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use const Northrook\Cache\EPHEMERAL;
 
-class EventController extends CoreController
-{
+class EventController extends CoreController {
+
     public function __construct(
-        protected readonly CurrentRequest  $request,
+        protected readonly CurrentRequest $request,
         protected readonly DocumentService $document,
-        protected readonly Authentication  $auth,
+        protected readonly Authentication $auth,
     ) {
         $this->document
             ->set(
@@ -26,11 +26,14 @@ class EventController extends CoreController
             )->body(
                 id : 'public',
             )->asset(
-                              [
-                                  'path.public.stylesheet',
-                                  Get::path( 'dir.core.assets/scripts/_core.js' ),
-                                  // Get::path( 'dir.core.assets/scripts/notifications.js' ),
-                              ],
+                [
+                    'path.public.stylesheet',
+                    Get::path( 'dir.core.assets/scripts/debug.js' ),
+                    Get::path( 'dir.core.assets/scripts/core.js' ),
+                    Get::path( 'dir.core.assets/scripts/elements.js' ),
+                    Get::path( 'dir.core.assets/scripts/functions.js' ),
+                    // Get::path( 'dir.core.assets/scripts/notifications.js' ),
+                ],
                 persistence : EPHEMERAL,
             );
     }
@@ -47,14 +50,14 @@ class EventController extends CoreController
 
 
     public function HttpException(
-        ExceptionEvent         $event,
+        ExceptionEvent $event,
         HttpExceptionInterface $exception,
     ) : void {
 
         dump( $event, $exception );
 
         Log::error( 'Manual error for 404' );
-        
+
         $event->setResponse(
             new Response( 'Not found, sadly.' ),
         );
