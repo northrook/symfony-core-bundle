@@ -70,14 +70,34 @@ function ElementProxy( element, context = document ) {
 			return this;
 		},
 
-		append: function ( to = document.body ) {
-			( to || this.context ).append( this.element );
+		appendTo: function ( context = document.body ) {
+			( context || this.context ).append( this.element );
 			return this;
 		},
 
-		prepend: function ( to = document.body ) {
-			( to || this.context ).prepend( this.element );
+		prependTo: function ( context = document.body ) {
+			( context || this.context ).prepend( this.element );
 			return this;
+		},
+
+		/**
+		 * @param {string}events
+		 * @param {EventListenerOrEventListenerObject}callback
+		 * @param {AddEventListenerOptions|boolean}options
+		 */
+		on: function ( events, callback, options ) {
+			events.split( ' ' ).forEach( event => this.element.addEventListener( event, callback, options ) );
+			return this
+		},
+
+		/**
+		 * @param {string}events
+		 * @param {EventListenerOrEventListenerObject}callback
+		 * @param {AddEventListenerOptions|boolean}options
+		 */
+		off: function ( events, callback, options ) {
+			events.split( ' ' ).forEach( event => this.element.removeEventListener( event, callback, options ) );
+			return this
 		},
 
 
@@ -141,7 +161,7 @@ function $get( selector, attributes = {}, context = document.body ) {
 /**
  * @param {string} html
  */
-function $make( html ) {
+function $new( html ) {
 	return ElementProxy( createElement( html ) );
 }
 
@@ -149,7 +169,7 @@ function $make( html ) {
  * @param {HTMLElement} node
  */
 function elementAnimations( node ) {
-	
+
 	/** @type {ElementAnimations}  */
 	const transitions = {
 		longest    : {
