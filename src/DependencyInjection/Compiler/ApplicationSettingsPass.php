@@ -11,19 +11,23 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use function Northrook\normalizePath;
 use function Northrook\normalizeUrl;
 
-final readonly class ApplicationSettingsPass implements CompilerPassInterface {
+
+final readonly class ApplicationSettingsPass implements CompilerPassInterface
+{
 
     public function __construct( private string $projectDir ) {}
 
-    public function process( ContainerBuilder $container ) : void {
-
+    public function process( ContainerBuilder $container ) : void
+    {
         // Assign the path parameters to the Pathfinder service
-        $container->getDefinition( Settings::class )
-                  ->replaceArgument( 0, $this->getCoreSettings( $container->getParameterBag() ) );
+        $container
+            ->getDefinition( Settings::class )
+            ->replaceArgument( 0, $this->getCoreSettings( $container->getParameterBag() ) )
+        ;
     }
 
-    private function getCoreSettings( ParameterBagInterface $parameters ) : array {
-
+    private function getCoreSettings( ParameterBagInterface $parameters ) : array
+    {
         // $params = $parameters->all();
         // unset(
         //     $params[ 'kernel.bundles' ],
@@ -68,13 +72,18 @@ final readonly class ApplicationSettingsPass implements CompilerPassInterface {
         $settings = [ ... $settings, ... $this->getPathEntries( $parameters->all() ) ];
 
         $settings += [
-            'site.public'            => false,
-            'site.name'              => 'Symfony',
-            'site.url'               => $this->resolveUrl(),
-            'site.locale'            => $parameters->get( 'kernel.default_locale' ),
-            'site.locales_available' => $parameters->get( 'kernel.enabled_locales' ),
-            'site.charset'           => \strtolower( $parameters->get( 'kernel.charset' ) ),
+            'charset'                 => \strtolower( $parameters->get( 'kernel.charset' ) ),
+            'language'                => $parameters->get( 'kernel.default_locale' ),
+            'language.locale'         => $parameters->get( 'kernel.default_locale' ),
+            'language.locale.listAll' => $parameters->get( 'kernel.enabled_locales' ),
         ];
+
+        $settings += [
+            'site.public' => false,
+            'site.name'   => 'Symfony',
+            'site.url'    => $this->resolveUrl(),
+        ];
+
         $settings += [
             'notification.timeout' => 8500,
         ];
@@ -100,7 +109,8 @@ final readonly class ApplicationSettingsPass implements CompilerPassInterface {
         return $settings;
     }
 
-    private function resolveUrl( ?string $append = null ) : ?string {
+    private function resolveUrl( ?string $append = null ) : ?string
+    {
         $homeUrl = $_SERVER[ 'SYMFONY_APPLICATION_DEFAULT_ROUTE_URL' ] ?? null;
 
         return $homeUrl ? normalizeUrl( $homeUrl . $append ) : null;
@@ -113,13 +123,12 @@ final readonly class ApplicationSettingsPass implements CompilerPassInterface {
      * - Only keys containing `dir` or `path` will be considered
      * - Only values starting with the {@see projectDir} are used
      *
-     * @param array $parameters
+     * @param array  $parameters
      *
      * @return array
      */
-    private function getPathEntries( array $parameters ) : array {
-
-
+    private function getPathEntries( array $parameters ) : array
+    {
         $paths = \array_filter(
             array    : $parameters,
             callback : fn( $value, $key ) => \is_string( $value ) &&
@@ -131,7 +140,6 @@ final readonly class ApplicationSettingsPass implements CompilerPassInterface {
 
         // Sort and normalise
         foreach ( $paths as $key => $value ) {
-
             // Simple sorting; unsetting 'dir' and 'path' prefixed keys, appending them after all Symfony-defined directories
             if ( \str_starts_with( $key, 'dir' ) || \str_starts_with( $key, 'path' ) ) {
                 unset( $paths[ $key ] );

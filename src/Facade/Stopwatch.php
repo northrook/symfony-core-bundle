@@ -8,6 +8,7 @@ use Northrook\Symfony\Core\DependencyInjection\Facade;
 use Symfony\Component\Stopwatch as Symfony;
 use Symfony\Component\Stopwatch\StopwatchEvent;
 
+
 /**
  * @method static bool isStarted( string $name )
  * @method static StopwatchEvent start( string $name, ?string $category = null )
@@ -18,5 +19,5 @@ use Symfony\Component\Stopwatch\StopwatchEvent;
  */
 final class Stopwatch extends Facade
 {
-    protected const SERVICE = Symfony\Stopwatch::class;
+    protected const string SERVICE = Symfony\Stopwatch::class;
 }

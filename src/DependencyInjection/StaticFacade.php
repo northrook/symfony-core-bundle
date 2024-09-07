@@ -6,6 +6,7 @@ namespace Northrook\Symfony\Core\DependencyInjection;
 
 trait StaticFacade
 {
+    const string SERVICE = '';
 
     /**
      * @var mixed The service instance for this {@see Facade}.
@@ -19,8 +20,8 @@ trait StaticFacade
      *
      * @return Service
      */
-    protected static function getService( ?string $className = null ) : mixed {
-
+    protected static function getService( ?string $className = null ) : mixed
+    {
         if ( !\method_exists( parent::class, 'getService' ) ) {
             throw new \LogicException( 'The service must be defined in the container.' );
         }
