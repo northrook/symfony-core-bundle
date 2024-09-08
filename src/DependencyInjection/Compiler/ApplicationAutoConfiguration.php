@@ -15,9 +15,10 @@ namespace Northrook\Symfony\Core\DependencyInjection\Compiler;
 use Northrook\Symfony\Configurator\AutoConfigure;
 use Symfony\Component\Yaml\Yaml;
 
+
 final class ApplicationAutoConfiguration extends AutoConfigure
 {
-    private const ROUTES = [
+    private const array ROUTES = [
         'core.controller.api'      => [
             'resource' => '@SymfonyCoreBundle/config/routes/api.php',
             'prefix'   => '/api',
@@ -36,14 +37,15 @@ final class ApplicationAutoConfiguration extends AutoConfigure
         ],
     ];
 
-    public function createConfigControllerRoutes() : self {
+    public function createConfigControllerRoutes() : self
+    {
         $this->createConfigFile( 'routes/core.yaml', Yaml::dump( $this::ROUTES ) );
 
         return $this;
     }
 
-
-    public function createConfigPreload() : self {
+    public function createConfigPreload() : self
+    {
         $this->createConfigFile(
             'preload.php',
             <<<PHP
@@ -60,7 +62,8 @@ final class ApplicationAutoConfiguration extends AutoConfigure
         return $this;
     }
 
-    public function createConfigRoutes() : self {
+    public function createConfigRoutes() : self
+    {
         $this->removeConfigFile( 'routes.yaml' );
         $this->createConfigFile(
             'routes.php',
@@ -86,7 +89,8 @@ final class ApplicationAutoConfiguration extends AutoConfigure
         return $this;
     }
 
-    public function createConfigServices() : self {
+    public function createConfigServices() : self
+    {
         $this->removeConfigFile( 'services.yaml' );
         $this->createConfigFile(
             'services.php',
