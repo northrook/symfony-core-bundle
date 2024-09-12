@@ -1,11 +1,20 @@
 <header id="admin-header">
-    <button id="toggle-sidebar" icon="toggle-sidebar"/>
+    {*
+    TODO : Sidebar Toogle should focus the sidebar when opened,
+              and restore focus to the toggle when closed.      *}
+    <button id="toggle-sidebar">
+        <icon get="toggle-sidebar" class="direction-left" />
+        <span>
+            {* Use {$sidebarState} for 'expand' or 'collapse' verbage *}
+            Toggle Sidebar
+        </span>
+    </button>
 
     <!-- Toggle Sidebar -->
 
     <!-- Global Search -->
-    <div id="admin-global-search">
-        {include 'admin/ui/topbar.search.latte'}
+    <div id="global-search">
+        {include 'admin/header/search.latte'}
     </div>
 
 
@@ -13,13 +22,28 @@
     <div class="group">
 
         <!-- Modal : Help and Info - documentation, guides, keyboard shortcuts etc -->
-        <button icon="help"/>
+        <button class="help">
+            <icon get="help" />
+            <span>
+                Help
+            </span>
+        </button>
 
         <!-- Aside : Notifications -->
-        <button icon="asterisk"/>
+        <button class="asterisk">
+            <icon get="asterisk" />
+            <span>
+                Notifications Toggle
+            </span>
+        </button>
 
         <!-- User Avatar & Dropdown -->
-        <button icon="arrow-down-circle"/>
+        <button class="user-avatar">
+            <icon get="arrow-down-circle" />
+            <span>
+                Avatar Dropdown
+            </span>
+        </button>
         <!-- Dropdown
 
         User
@@ -37,14 +61,15 @@
 </header>
 
 <sidebar id="admin-sidebar" resize="vertical">
-    <nav id="admin-sidebar-nav" hx-boost="true" hx-swap="innerHTML" hx-target="main">
-        {*            {$navigation|noescape}*}
-    </nav>
+
+    <nav:menu id="admin-sidebar-nav" hx-boost="true" hx-swap="innerHTML" hx-target="main" />
+
     <div class="resize vertical end"></div>
+
 </sidebar>
 
-
 <main id="content">
+    Main Content Area
     {*        {include $template}*}
 </main>
 

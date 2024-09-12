@@ -16,16 +16,16 @@ trait StaticFacade
     /**
      * @template Service
      *
-     * @param class-string<Service>  $className
+     * @param ?class-string<Service>  $className
      *
      * @return Service
      */
     protected static function getService( ?string $className = null ) : mixed
     {
-        if ( !\method_exists( parent::class, 'getService' ) ) {
+        if ( !\method_exists( static::class, 'getService' ) ) {
             throw new \LogicException( 'The service must be defined in the container.' );
         }
 
-        return self::$instance ??= parent::getService( $className ?? static::SERVICE );
+        return self::$instance ??= static::getService( $className ?? static::SERVICE );
     }
 }

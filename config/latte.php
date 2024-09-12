@@ -11,7 +11,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Northrook\Latte\Extension\CacheExtension;
 use Northrook\Latte\Extension\FormatterExtension;
 use Northrook\Latte\Extension\OptimizerExtension;
-use Northrook\UI\Latte\Extension\RenderExtension;
+use Northrook\UI\Compiler\Latte\UiCompileExtension;
 
 
 return static function( ContainerConfigurator $container ) : void
@@ -25,7 +25,7 @@ return static function( ContainerConfigurator $container ) : void
     ;
 
     $latte
-        ->set( RenderExtension::class )
+        ->set( UiCompileExtension::class )
         ->args(
             [
                 service( 'core.latte.cache' )->nullOnInvalid(),

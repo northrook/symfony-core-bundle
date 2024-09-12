@@ -125,10 +125,10 @@ abstract class CoreController
             foreach ( $flash as $toast ) {
                 if ( $toast instanceof Message ) {
                     $notification =
-                        new Notification( [], $toast->type, $toast->message, $toast->description, $toast->timeout, );
+                        new Notification( $toast->type, $toast->message, $toast->description, $toast->timeout, );
                 }
                 else {
-                    $notification = new Notification( [], $type, toString( $toast ) );
+                    $notification = new Notification( $type, toString( $toast ) );
                 }
 
                 if ( !$notification->description ) {

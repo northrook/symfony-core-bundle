@@ -10,6 +10,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Cache\MemoizationCache;
 use Northrook\Symfony\Core\EventSubscriber\DeferredCacheEvent;
+use Symfony\Component\Cache\Adapter\PhpArrayAdapter;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
 
@@ -40,7 +41,7 @@ return static function( ContainerConfigurator $container ) : void
 
     // Pathfinder
     $cache
-        ->set( 'core.cache.pathfinder', PhpFilesAdapter::class )
+        ->set( 'core.cache.pathfinder', PhpArrayAdapter::class )
         ->args( [ 'core.pathfinder', 0, '%kernel.cache_dir%/pathfinder' ] )
         ->tag( 'cache.pool' )
     ;
