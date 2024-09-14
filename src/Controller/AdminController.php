@@ -2,6 +2,7 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
+use Northrook\Get;
 use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
@@ -11,6 +12,8 @@ use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
+use const Cache\EPHEMERAL;
+
 
 // use Northrook\Symfony\Core\Components\Menu\Menu;
 // use Northrook\Symfony\Core\Components\Menu\Navigation;
@@ -24,7 +27,8 @@ final class AdminController extends CoreController
         protected readonly CurrentRequest  $request,
         protected readonly DocumentService $document,
         protected readonly Authentication  $auth,
-    ) {
+    )
+    {
         $this->document
             ->set(
                 'Admin',
@@ -37,8 +41,16 @@ final class AdminController extends CoreController
                 '#ff0000',
                 'light',
             )->asset(
-                'path.admin.stylesheet',
-            );
+                              [
+                                  'path.admin.stylesheet',
+                                  Get::path( 'dir.core.assets/scripts/debug.js' ),
+                                  Get::path( 'dir.core.assets/scripts/core.js' ),
+                                  Get::path( 'dir.core.assets/scripts/elements.js' ),
+                                  Get::path( 'dir.core.assets/scripts/functions.js' ),
+                              ],
+                persistence : EPHEMERAL,
+            )
+        ;
 
         // Auth::denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
         //
@@ -100,8 +112,8 @@ final class AdminController extends CoreController
         ?string             $route,
         StylesheetGenerator $generator,
         Profiler            $profiler,
-    ) : Response {
-
+    ) : Response
+    {
         $profiler->disable();
 
         $generator->admin->addSource( 'dir.assets/admin/styles' );
@@ -131,20 +143,22 @@ final class AdminController extends CoreController
         );
     }
 
-    public function dashboard() : Response {
+    public function dashboard() : Response
+    {
         return $this->response(
             'admin/dashboard.latte',
         );
     }
 
-    public function api( string $action ) : Response {
+    public function api( string $action ) : Response
+    {
         return new JsonResponse(
             [ 'action' => $action, ],
         );
     }
 
-    public function search( string $action ) : Response {
-
+    public function search( string $action ) : Response
+    {
         return new JsonResponse(
             [ 'action' => $action, ],
         );

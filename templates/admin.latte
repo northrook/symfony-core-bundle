@@ -1,16 +1,15 @@
-<header id="admin-header">
+<header id="topbar">
     {*
     TODO : Sidebar Toogle should focus the sidebar when opened,
               and restore focus to the toggle when closed.      *}
+    <!-- Toggle Sidebar -->
     <button id="toggle-sidebar">
         <icon get="arrow-to-line" direction="right" />
-        <span>
+        <span class="sr-only">
             {* Use {$sidebarState} for 'expand' or 'collapse' verbage *}
-            Toggle Sidebar
-        </span>
+                Toggle Sidebar
+            </span>
     </button>
-
-    <!-- Toggle Sidebar -->
 
     <!-- Global Search -->
     <div id="global-search">
@@ -19,12 +18,12 @@
 
 
     <!-- Right Button Group -->
-    <div class="group">
+    <div class="group flex-row gap-m ml-auto">
 
         <!-- Modal : Help and Info - documentation, guides, keyboard shortcuts etc -->
         <button class="help">
-            <icon get="help" />
-            <span>
+            <icon get="info" />
+            <span class="sr-only">
                 Help
             </span>
         </button>
@@ -32,7 +31,7 @@
         <!-- Aside : Notifications -->
         <button class="asterisk">
             <icon get="asterisk" />
-            <span>
+            <span class="sr-only">
                 Notifications Toggle
             </span>
         </button>
@@ -40,7 +39,7 @@
         <!-- User Avatar & Dropdown -->
         <button class="user-avatar">
             <icon get="arrow-down-circle" />
-            <span>
+            <span class="sr-only">
                 Avatar Dropdown
             </span>
         </button>
