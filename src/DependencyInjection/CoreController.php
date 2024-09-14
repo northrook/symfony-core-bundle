@@ -5,6 +5,7 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Exception;
+use Northrook\Env;
 use Northrook\Get;
 use Northrook\Latte;
 use Northrook\Logger\Log;
@@ -66,6 +67,18 @@ abstract class CoreController
     {
         if ( \str_ends_with( $content, '.latte' ) ) {
             if ( !$engine ??= ServiceContainer::get( Latte::class ) ?? null ) {
+                if ( !Env::isProduction() ) {
+                    $engine->clearTemplateCache();
+                }
+                else {
+                    Log::critical(
+                        'Do not perform {method} on every Latte render in production.',
+                        [
+                            'method' => '$engine->clearTemplateCache()',
+                        ],
+                    );
+                }
+
                 throw new \LogicException(
                     "A templating engine is required to use the Response method. 
                 Please inject '" . Latte::class . "' into to the '__construct' method.

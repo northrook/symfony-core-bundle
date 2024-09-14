@@ -9,6 +9,7 @@ use Northrook\Get;
 use Northrook\Trait\PropertyAccessor;
 use Psr\Log\LoggerInterface;
 
+
 /**
  * @property-read Stylesheet $admin
  * @property-read Stylesheet $public
@@ -16,6 +17,7 @@ use Psr\Log\LoggerInterface;
 final class StylesheetGenerator
 {
     use PropertyAccessor;
+
 
     /**
      * @var array{string: Stylesheet}
@@ -31,7 +33,8 @@ final class StylesheetGenerator
         private readonly ?LoggerInterface    $logger,
     ) {}
 
-    public function __get( string $property ) {
+    public function __get( string $property )
+    {
         return match ( $property ) {
             'admin'  => $this->adminStylesheet(),
             'public' => $this->publicStylesheet(),
@@ -42,7 +45,8 @@ final class StylesheetGenerator
         string $savePath,
         array  $sourceDirectories = [],
         array  $templateDirectories = [],
-    ) : Stylesheet {
+    ) : Stylesheet
+    {
         $path = Get::path( $savePath );
         return $this->stylesheets[ $path ] ??= new Stylesheet(
             $path,
@@ -51,8 +55,16 @@ final class StylesheetGenerator
         );
     }
 
-    private function adminStylesheet() : Stylesheet {
+    private function globalStyles() : array
+    {
+        return [
+            Get::path( 'dir.ui.assets/styles' ),
+            Get::path( 'dir.core.assets/styles' ),
+        ];
+    }
 
+    private function adminStylesheet() : Stylesheet
+    {
         if ( isset( $this->stylesheets[ 'admin' ] ) ) {
             return $this->stylesheets[ 'admin' ];
         }
@@ -61,7 +73,7 @@ final class StylesheetGenerator
             Get::path( 'path.admin.stylesheet' ),
             [
                 $this->designSystem->admin()->colorPalette->generateStyles(),
-                Get::path( 'dir.core.assets/styles' ),
+                ...$this->globalStyles(),
                 Get::path( 'dir.assets/admin/styles' ),
                 Get::path( 'dir.core.assets/admin/styles' ),
             ],
@@ -69,15 +81,17 @@ final class StylesheetGenerator
             $this->logger,
         );
 
-        $admin->addReset()
-              ->addBaseline()
-              ->addDynamicRules();
+        $admin
+            ->addReset()
+            ->addBaseline()
+            ->addDynamicRules()
+        ;
 
         return $this->stylesheets[ 'admin' ] = $admin;
     }
 
-    private function publicStylesheet() : Stylesheet {
-
+    private function publicStylesheet() : Stylesheet
+    {
         if ( isset( $this->stylesheets[ 'public' ] ) ) {
             return $this->stylesheets[ 'public' ];
         }
@@ -86,17 +100,18 @@ final class StylesheetGenerator
             Get::path( 'path.public.stylesheet' ),
             [
                 $this->designSystem->admin()->colorPalette->generateStyles(),
-                Get::path( 'dir.core.assets/styles' ),
+                ...$this->globalStyles(),
                 Get::path( 'dir.assets/public/styles' ),
             ],
             [], // templates
             $this->logger,
         );
 
-        $public->addReset()
-               ->addBaseline()
-               ->addDynamicRules();
-
+        $public
+            ->addReset()
+            ->addBaseline()
+            ->addDynamicRules()
+        ;
 
         return $this->stylesheets[ 'public' ] = $public;
     }

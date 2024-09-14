@@ -12,10 +12,27 @@ use Northrook\Latte\Extension\CacheExtension;
 use Northrook\Latte\Extension\FormatterExtension;
 use Northrook\Latte\Extension\OptimizerExtension;
 use Northrook\UI\Compiler\Latte\UiCompileExtension;
+use function Northrook\normalizePath;
 
 
 return static function( ContainerConfigurator $container ) : void
 {
+    $container
+        ->parameters()
+        ->set(
+            'dir.ui.assets',
+            normalizePath( '%dir.root%/vendor/northrook/ui/assets' ),
+        )
+        ->set(
+            'path.public.stylesheet',
+            normalizePath( '%dir.assets%/stylesheet.css' ),
+        )
+        ->set(
+            'path.admin.stylesheet',
+            normalizePath( '%dir.assets%/admin.css' ),
+        )
+    ;
+
     $latte = $container->services();
 
     $latte

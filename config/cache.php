@@ -17,6 +17,8 @@ return static function( ContainerConfigurator $container ) : void
 {
     $cache = $container->services();
 
+    $defaultLifetime = $container->env() === 'prod' ? 0 : 1;
+
     // Asset Cache
     $cache
         ->set( 'core.cache.assets', PhpFilesAdapter::class )
