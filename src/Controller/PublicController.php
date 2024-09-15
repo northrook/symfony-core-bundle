@@ -2,7 +2,6 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
-use Northrook\Get;
 use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
@@ -33,12 +32,8 @@ final class PublicController extends CoreController
                 id : 'public',
             )->asset(
                               [
-                                  'path.public.stylesheet',
-                                  Get::path( 'dir.core.assets/scripts/debug.js' ),
-                                  Get::path( 'dir.core.assets/scripts/core.js' ),
-                                  Get::path( 'dir.core.assets/scripts/elements.js' ),
-                                  Get::path( 'dir.core.assets/scripts/functions.js' ),
-                                  // Get::path( 'dir.core.assets/scripts/notifications.js' ),
+                                  'path.admin.stylesheet',
+                                  'dir.assets/scripts/*.js',
                               ],
                 persistence : EPHEMERAL,
             )

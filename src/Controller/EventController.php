@@ -2,7 +2,6 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
-use Northrook\Get;
 use Northrook\Logger\Log;
 use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
@@ -21,26 +20,7 @@ class EventController extends CoreController
         protected readonly CurrentRequest  $request,
         protected readonly DocumentService $document,
         protected readonly Authentication  $auth,
-    )
-    {
-        $this->document
-            ->set(
-                'Welcome!',
-            )->body(
-                id : 'public',
-            )->asset(
-                              [
-                                  'path.public.stylesheet',
-                                  Get::path( 'dir.core.assets/scripts/debug.js' ),
-                                  Get::path( 'dir.core.assets/scripts/core.js' ),
-                                  Get::path( 'dir.core.assets/scripts/elements.js' ),
-                                  Get::path( 'dir.core.assets/scripts/functions.js' ),
-                                  // Get::path( 'dir.core.assets/scripts/notifications.js' ),
-                              ],
-                persistence : EPHEMERAL,
-            )
-        ;
-    }
+    ) {}
 
     public function __invoke( ExceptionEvent $event ) : void
     {
@@ -59,6 +39,20 @@ class EventController extends CoreController
         dump( $event, $exception );
 
         Log::error( 'Manual error for 404' );
+
+        $this->document
+            ->set(
+                'Welcome!',
+            )->body(
+                id : 'public',
+            )->asset(
+                              [
+                                  'path.admin.stylesheet',
+                                  'dir.assets/scripts/*.js',
+                              ],
+                persistence : EPHEMERAL,
+            )
+        ;
 
         $event->setResponse(
             new Response( 'Not found, sadly.' ),

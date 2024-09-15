@@ -2,7 +2,6 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
-use Northrook\Get;
 use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
@@ -20,8 +19,6 @@ use const Cache\EPHEMERAL;
 
 final class AdminController extends CoreController
 {
-    public const STYLESHEETS          = [ 'dir.core.assets/styles' ];
-    public const DYNAMIC_TEMPLATE_DIR = 'admin';
 
     public function __construct(
         protected readonly CurrentRequest  $request,
@@ -43,10 +40,7 @@ final class AdminController extends CoreController
             )->asset(
                               [
                                   'path.admin.stylesheet',
-                                  Get::path( 'dir.core.assets/scripts/debug.js' ),
-                                  Get::path( 'dir.core.assets/scripts/core.js' ),
-                                  Get::path( 'dir.core.assets/scripts/elements.js' ),
-                                  Get::path( 'dir.core.assets/scripts/functions.js' ),
+                                  'dir.assets/scripts/*.js',
                               ],
                 persistence : EPHEMERAL,
             )
