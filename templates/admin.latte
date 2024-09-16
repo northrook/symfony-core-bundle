@@ -1,21 +1,24 @@
-<header id="topbar">
-    {*
-    TODO : Sidebar Toogle should focus the sidebar when opened,
-              and restore focus to the toggle when closed.      *}
-    <!-- Toggle Sidebar -->
-    <button id="toggle-sidebar">
-        <icon get="arrow-to-line" direction="right" />
-        <span class="sr-only">
+<div class="visual-viewport"></div>
+
+<header id="admin-topbar">
+    <!-- Sidebar -->
+    <div>
+        {*
+        TODO : Sidebar Toogle should focus the sidebar when opened,
+                  and restore focus to the toggle when closed.      *}
+        <button id="toggle-sidebar" aria-controls="admin-sidebar">
+            <icon get="arrow-to-line" direction="right" />
+            <span class="sr-only">
             {* Use {$sidebarState} for 'expand' or 'collapse' verbage *}
                 Toggle Sidebar
             </span>
-    </button>
-
-    <!-- Global Search -->
-    <div id="global-search">
-        {include 'admin/header/search.latte'}
+        </button>
     </div>
 
+    <!-- Global Search -->
+    <div id="global-search" class="flex-row">
+        {include 'admin/header/search.latte'}
+    </div>
 
     <!-- Right Button Group -->
     <div class="group flex-row gap-m ml-auto">
@@ -38,7 +41,7 @@
 
         <!-- User Avatar & Dropdown -->
         <button class="user-avatar">
-            <icon get="arrow-down-circle" />
+            <icon get="user" />
             <span class="sr-only">
                 Avatar Dropdown
             </span>
@@ -63,13 +66,13 @@
 
     <nav:menu id="admin-sidebar-nav" hx-boost="true" hx-swap="innerHTML" hx-target="main" />
 
+    {* Render this with JS *}
     <div class="resize vertical end"></div>
 
 </sidebar>
 
 <main id="content">
-    Main Content Area
-    {*        {include $template}*}
+    {include $template}
 </main>
 
 <!-- Editor Actions -->

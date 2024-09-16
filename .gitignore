@@ -12,6 +12,7 @@
 # Build data
 .env
 *.lock
+/assets/
 /public/
 /var/
 /build/

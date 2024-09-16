@@ -58,8 +58,9 @@ final class StylesheetGenerator
     private function globalStyles() : array
     {
         return [
-            Get::path( 'dir.ui.assets/styles' ),
-            Get::path( 'dir.core.assets/styles' ),
+            Get::path( 'dir.assets/styles' ),
+            // Get::path( 'dir.ui.assets/styles' ),
+            // Get::path( 'dir.core.assets/styles' ),
         ];
     }
 

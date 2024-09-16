@@ -2,6 +2,8 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
+use Northrook\Assets\Script;
+use Northrook\Assets\Style;
 use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
@@ -10,14 +12,11 @@ use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
-use const Cache\EPHEMERAL;
 
 
 final class PublicController extends CoreController
 {
-
-    public const STYLESHEETS          = [ 'dir.core.assets/styles' ];
-    public const DYNAMIC_TEMPLATE_DIR = 'public';
+    public const string DYNAMIC_TEMPLATE_DIR = 'public';
 
     public function __construct(
         protected readonly CurrentRequest  $request,
@@ -30,13 +29,9 @@ final class PublicController extends CoreController
                 'Welcome!',
             )->body(
                 id : 'public',
-            )->asset(
-                              [
-                                  'path.admin.stylesheet',
-                                  'dir.assets/scripts/*.js',
-                              ],
-                persistence : EPHEMERAL,
             )
+            ->asset( Style::from( 'path.public.stylesheet', 'core-styles' ) )
+            ->asset( Script::from( 'dir.assets/scripts/*.js', 'core-scripts' ) )
         ;
     }
 
@@ -48,12 +43,12 @@ final class PublicController extends CoreController
     {
         $profiler->disable();
 
-        $generator->public->addSource( 'dir.assets/public/styles' );
+        $generator->public->addSource( 'dir . assets /public/styles' );
 
         if ( $generator->public->save(
             force : true,
         ) ) {
-            Toast::info( 'Public Stylesheet updated.' );
+            Toast::info( 'public Stylesheet updated . ' );
         };
 
         $this->document->set(
@@ -71,7 +66,7 @@ final class PublicController extends CoreController
         return match ( $route ) {
                    'demo'  => 'demo',
                    default => 'welcome',
-               } . '.latte';
+               } . ' . latte';
     }
 
 }

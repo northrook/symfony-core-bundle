@@ -2,6 +2,8 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
+use Northrook\Assets\Script;
+use Northrook\Assets\Style;
 use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
@@ -11,7 +13,6 @@ use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
-use const Cache\EPHEMERAL;
 
 
 // use Northrook\Symfony\Core\Components\Menu\Menu;
@@ -32,18 +33,14 @@ final class AdminController extends CoreController
                 'This is an example admin template.',
             )->body(
                 id               : 'admin',
-                style            : [ '--sidebar-width' => '120px' ],
+                style            : [ '--sidebar-width' => '160px' ],
                 sidebar_expanded : true,
             )->theme(
                 '#ff0000',
                 'light',
-            )->asset(
-                              [
-                                  'path.admin.stylesheet',
-                                  'dir.assets/scripts/*.js',
-                              ],
-                persistence : EPHEMERAL,
             )
+            ->asset( Style::from( 'path.admin.stylesheet', 'core-styles' ) )
+            ->asset( Script::from( 'dir.assets/scripts/*.js', 'core-scripts' ) )
         ;
 
         // Auth::denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
@@ -125,7 +122,7 @@ final class AdminController extends CoreController
         // dump( $this->document->getMetaTags() );
         // return $this->view( $route );
 
-        $template = $this->dynamicTemplatePath();
+        $template = $this->dynamicTemplatePath( 'admin' );
 
         return $this->response(
             content    : $this->request->isHtmx ? $template : 'admin.latte',

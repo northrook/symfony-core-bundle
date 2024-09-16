@@ -13,24 +13,23 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 
+
 final class SecurityController extends CoreController
 {
-    public const STYLESHEETS = [ 'dir.core.assets/styles' ];
 
-    public const DYNAMIC_TEMPLATE_DIR = 'security';
+    public const string DYNAMIC_TEMPLATE_DIR = 'security';
 
     public function __construct(
         protected readonly CurrentRequest  $request,
         protected readonly DocumentService $document,
     ) {}
 
-
     public function login(
         FormService                 $form,
         StylesheetGenerationService $stylesheet,
         Profiler                    $profiler,
-    ) : Response {
-
+    ) : Response
+    {
         $profiler->disable();
 
         if ( false === $this->request->is( 'hypermedia' ) ) {
@@ -39,11 +38,13 @@ final class SecurityController extends CoreController
 
         $this->document->stylesheet( 'dir.cache/styles/styles.css' );
 
-        $this->document->script( 'dir.assets/scripts/core.js' )
-                       ->script( 'dir.assets/scripts/components.js' )
-                       ->script( 'dir.assets/scripts/navigation.js' )
-                       ->script( 'dir.assets/scripts/interactions.js' )
-                       ->script( 'dir.assets/scripts/admin.js' );
+        $this->document
+            ->script( 'dir.assets/scripts/core.js' )
+            ->script( 'dir.assets/scripts/components.js' )
+            ->script( 'dir.assets/scripts/navigation.js' )
+            ->script( 'dir.assets/scripts/interactions.js' )
+            ->script( 'dir.assets/scripts/admin.js' )
+        ;
 
         $this->document->title( 'Northrook' );
 
@@ -67,8 +68,8 @@ final class SecurityController extends CoreController
 
     public function register(
         Profiler $profiler,
-    ) : Response {
-
+    ) : Response
+    {
         $profiler->disable();
 
         if ( !Settings::public( 'security.registration' ) ) {
@@ -82,21 +83,22 @@ final class SecurityController extends CoreController
         );
     }
 
-    public function verifyEmail( ?string $action ) : JsonResponse {
+    public function verifyEmail( ?string $action ) : JsonResponse
+    {
         return new JsonResponse(
             [ 'action' => $action, ],
         );
     }
 
-    public function resetPassword( ?string $action ) : Response {
+    public function resetPassword( ?string $action ) : Response
+    {
         return new JsonResponse(
             [ 'action' => $action, ],
         );
     }
 
-
-    private function lastAuthenticationError( bool $clearSession = true ) : ?AuthenticationException {
-
+    private function lastAuthenticationError( bool $clearSession = true ) : ?AuthenticationException
+    {
         $request                 = $this->request->current;
         $authenticationException = null;
 
@@ -114,10 +116,10 @@ final class SecurityController extends CoreController
         }
 
         return $authenticationException;
-
     }
 
-    private function lastKnownUsername() : ?string {
+    private function lastKnownUsername() : ?string
+    {
         return $this->request->attributes( SecurityRequestAttributes::LAST_USERNAME )
                ?? $this->request->session( SecurityRequestAttributes::LAST_USERNAME );
     }
