@@ -27,9 +27,7 @@ return static function( ContainerConfigurator $container ) : void
             ->set( RenderEvent::class )
             ->args(
                     [
-                            service( 'core.cache.latte' ),
-                            service( 'core.cache.memoization' ),
-                            service( 'core.cache.pathfinder' ),
+                            service( CurrentRequest::class ),
                     ],
             )
             ->tag( 'kernel.event_subscriber' )

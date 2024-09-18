@@ -4,8 +4,8 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\EventSubscriber;
 
+use Northrook\Symfony\Core\Service\CurrentRequest;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 
 /**
@@ -15,7 +15,7 @@ final readonly class RenderEvent implements EventSubscriberInterface
 {
 
     public function __construct(
-            private ?FlashBagInterface $flashbag,
+            private CurrentRequest $request,
     )
     {
         dump( $this );
@@ -23,12 +23,12 @@ final readonly class RenderEvent implements EventSubscriberInterface
 
     public function kernelResponseEvent() : void
     {
-        dump( 'kernelResponseEvent', $this->flashbag );
+        dump( 'kernelResponseEvent', $this->request );
     }
 
     public function kernelViewEvent() : void
     {
-        dump( 'kernelViewEvent', $this->flashbag );
+        dump( 'kernelViewEvent', $this->request );
     }
 
     public static function getSubscribedEvents() : array
