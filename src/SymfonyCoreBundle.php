@@ -162,6 +162,7 @@ final class SymfonyCoreBundle extends AbstractBundle
         // Initialize the Settings instance.
         $this->container->get( Settings::class );
 
+        new App( $this->container->get( 'app.service_locator' ) );
         DependencyInjection\ServiceContainer::set( $this->container );
     }
 

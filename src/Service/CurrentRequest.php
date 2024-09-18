@@ -18,6 +18,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  * @property-read string       $route
  * @property-read string       $method
  * @property-read string       $type
+ * @property-read string       $controller
  * @property-read bool         $isHtmx
  * @property-read bool         $isJson
  * @property-read bool         $isHtml
@@ -29,10 +30,8 @@ final readonly class CurrentRequest
 
     private string $requestType;
     private string $routeName;
-    private string $routeRoot;
-    private string $pathInfo;
     private string $route;
-    private string $method;
+    private string $controller;
 
     /**
      * Assigns the current {@see Http\Request} from the {@see Http\RequestStack}, to {@see CurrentRequest::$current}.
@@ -64,16 +63,17 @@ final readonly class CurrentRequest
     public function __get( string $property ) : string | bool
     {
         return match ( $property ) {
-            'current'   => $this->currentRequest(),
-            'route'     => $this->route(),
-            'routeName' => $this->routeName(),
-            'routeRoot' => $this->routeRoot(),
-            'pathInfo'  => $this->currentRequest()->getPathInfo(),
-            'method'    => $this->currentRequest()->getMethod(),
-            'type'      => $this->type(),
-            'isHtmx'    => $this->type( 'htmx' ),
-            'isJson'    => $this->type( 'json' ),
-            'isHtml'    => $this->type( 'html' ),
+            'current'    => $this->currentRequest(),
+            'route'      => $this->route(),
+            'routeName'  => $this->routeName(),
+            'routeRoot'  => $this->routeRoot(),
+            'pathInfo'   => $this->currentRequest()->getPathInfo(),
+            'method'     => $this->currentRequest()->getMethod(),
+            'controller' => $this->requestController(),
+            'type'       => $this->type(),
+            'isHtmx'     => $this->type( 'htmx' ),
+            'isJson'     => $this->type( 'json' ),
+            'isHtml'     => $this->type( 'html' ),
         };
     }
 
@@ -211,7 +211,19 @@ final readonly class CurrentRequest
      */
     private function routeRoot() : string
     {
-        return strstr( $this->routeName(), ':', true );
+        return \strstr( $this->routeName(), ':', true );
+    }
+
+    /**
+     * Resolve and cache the controller and method for this request.
+     *
+     * @return string
+     */
+    private function requestController() : string
+    {
+        return $this->controller ??= ( \is_array( $controller = $this->parameter( '_controller' ) ) )
+                ? \implode( '::', $controller )
+                : $controller;
     }
 
 }

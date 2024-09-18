@@ -5,6 +5,7 @@ namespace Northrook\Symfony\Core\Controller;
 use Northrook\Assets\Script;
 use Northrook\Assets\Style;
 use Northrook\Symfony\Core\Admin\SidebarMenu;
+use Northrook\Symfony\Core\Controller\Trait\ResponseMethods;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
 use Northrook\Symfony\Core\Facade\Toast;
 use Northrook\Symfony\Core\Security\Authentication;
@@ -21,6 +22,8 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
 
 final class AdminController extends CoreController
 {
+    use ResponseMethods;
+
 
     public function __construct(
             protected readonly CurrentRequest  $request,

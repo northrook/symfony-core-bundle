@@ -52,9 +52,10 @@ abstract class CoreController
     /**
      * Return a {@see Response}`view` from a `.latte` template.
      *
-     * @param string        $content
-     * @param object|array  $parameters
-     * @param int           $status
+     * @param string                 $content
+     * @param object|array           $parameters
+     * @param int                    $status
+     * @param null|\Northrook\Latte  $engine
      *
      * @return Response
      */
