@@ -32,7 +32,16 @@ final class ServiceContainer
             return ServiceContainer::$serviceLocator;
         }
 
-        return ServiceContainer::$serviceLocator->get( $get );
+        try {
+            return ServiceContainer::$serviceLocator->get( $get );
+        }
+        catch ( \Exception $exception ) {
+            throw new \LogicException(
+                    message  : "The '" . ServiceContainer::class . "' does not provide access to the '" . $get::class . "' service.",
+                    code     : 500,
+                    previous : $exception,
+            );
+        }
     }
 
 }

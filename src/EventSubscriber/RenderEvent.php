@@ -4,7 +4,6 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\EventSubscriber;
 
-use Northrook\Symfony\Core\App;
 use Northrook\Symfony\Core\DependencyInjection\ServiceContainer;
 use Northrook\Symfony\Core\Service\CurrentRequest;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -27,8 +26,7 @@ final readonly class RenderEvent implements EventSubscriberInterface
     public function kernelRequestEvent()
     {
         dump(
-                ServiceContainer::get(),
-                App::serviceContainer( ServiceLocator::class ),
+                ServiceContainer::get( ServiceLocator::class ),
         );
     }
 
