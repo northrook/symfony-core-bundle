@@ -18,23 +18,28 @@ final class ServiceContainer
      *
      * @param ContainerInterface  $container
      */
-    public static function set( ContainerInterface $container ) : void {
+    public static function set( ContainerInterface $container ) : void
+    {
         ServiceContainer::$instance       = $container;
         ServiceContainer::$serviceLocator = $container->get(
-            id              : 'core.service.locator',
-            invalidBehavior : ContainerInterface::NULL_ON_INVALID_REFERENCE,
+                id              : 'core.service.locator',
+                invalidBehavior : ContainerInterface::NULL_ON_INVALID_REFERENCE,
         );
     }
 
     /**
      * @template Service
      *
-     * @param class-string<Service>  $className
+     * @param ?class-string<Service>  $className
      *
      * @return Service
      */
-    public static function get( string $className ) : mixed {
-
+    public static function get( ?string $className = null ) : mixed
+    {
+        if ( !$className ) {
+            // return ServiceContainer::$instance;
+            return ServiceContainer::$serviceLocator;
+        }
         if ( ServiceContainer::$instance->has( $className ) ) {
             return ServiceContainer::$instance->get( $className );
         }
