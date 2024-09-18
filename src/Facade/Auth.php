@@ -5,7 +5,7 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core\Facade;
 
 use LogicException;
-use Northrook\Symfony\Core\DependencyInjection\Facade;
+use Northrook\Symfony\Core\DependencyInjection\ServiceContainer;
 use SensitiveParameter;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
@@ -14,8 +14,19 @@ use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Throwable;
 
-final class Auth extends Facade
+
+final class Auth
 {
+
+    public static function authorizationChecker() : AuthorizationCheckerInterface
+    {
+        return ServiceContainer::get( AuthorizationCheckerInterface::class );
+    }
+
+    public static function tokenManager() : CsrfTokenManagerInterface
+    {
+        return ServiceContainer::get( CsrfTokenManagerInterface::class );
+    }
 
     /**
      * Checks the validity of a CSRF token.
@@ -24,12 +35,12 @@ final class Auth extends Facade
      * @param string|null  $token  The actual token sent with the request that should be validated
      */
     public static function isCsrfTokenValid(
-        string  $id,
-        #[SensitiveParameter]
-        ?string $token,
-    ) : bool {
-        return Request::getService( CsrfTokenManagerInterface::class )
-                      ->isTokenValid( new CsrfToken( $id, $token ) );
+            string  $id,
+            #[SensitiveParameter]
+            ?string $token,
+    ) : bool
+    {
+        return Auth::tokenManager()->isTokenValid( new CsrfToken( $id, $token ) );
     }
 
     /**
@@ -39,16 +50,18 @@ final class Auth extends Facade
      *
      * @return CsrfToken
      */
-    public static function getToken( string $tokenId ) : CsrfToken {
-        return Auth::getService( CsrfTokenManagerInterface::class )->getToken( $tokenId );
+    public static function getToken( string $tokenId ) : CsrfToken
+    {
+        return Auth::tokenManager()->getToken( $tokenId );
     }
 
     /**
      * Checks if the attribute is granted against the current authentication token and optionally supplied subject.
      *
      */
-    public static function isGranted( mixed $attribute, mixed $subject = null ) : bool {
-        return Auth::getService( AuthorizationCheckerInterface::class )->isGranted( $attribute, $subject );
+    public static function isGranted( mixed $attribute, mixed $subject = null ) : bool
+    {
+        return Auth::authorizationChecker()->isGranted( $attribute, $subject );
     }
 
     /**
@@ -58,11 +71,11 @@ final class Auth extends Facade
      * @throws AccessDeniedException
      */
     public static function denyAccessUnlessGranted(
-        mixed  $attribute = AuthenticatedVoter::IS_AUTHENTICATED_FULLY,
-        mixed  $subject = null,
-        string $message = 'Access Denied',
-    ) : void {
-
+            mixed  $attribute = AuthenticatedVoter::IS_AUTHENTICATED_FULLY,
+            mixed  $subject = null,
+            string $message = 'Access Denied',
+    ) : void
+    {
         if ( !Auth::isGranted( $attribute, $subject ) ) {
             $exception = Auth::accessDenied( $message );
             $exception->setAttributes( [ $attribute ] );
@@ -84,9 +97,10 @@ final class Auth extends Facade
      * @throws LogicException If the Security component is not available
      */
     public static function accessDenied(
-        string     $message = 'Access Denied',
-        ?Throwable $previous = null,
-    ) : AccessDeniedException {
+            string     $message = 'Access Denied',
+            ?Throwable $previous = null,
+    ) : AccessDeniedException
+    {
         return new AccessDeniedException( $message, $previous );
     }
 }
