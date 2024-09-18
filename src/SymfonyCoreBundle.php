@@ -6,12 +6,12 @@ namespace Northrook\Symfony\Core;
 
 use Northrook\Env;
 use Northrook\Settings;
-use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\Controller\EventController;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationSettingsPass;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\LatteEnvironmentPass;
 use Northrook\Symfony\Core\EventSubscriber\LoggerIntegrationSubscriber;
+use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
@@ -137,6 +137,7 @@ final class SymfonyCoreBundle extends AbstractBundle
         $container->import( '../config/cache.php' );
         $container->import( '../config/admin.php' );
         $container->import( '../config/services.php' );
+        $container->import( '../config/security.php' );
         $container->import( '../config/latte.php' );
         $container->import( '../config/facades.php' );
         $container->import( '../config/controllers.php' );

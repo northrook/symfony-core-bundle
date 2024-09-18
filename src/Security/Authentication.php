@@ -1,6 +1,6 @@
 <?php
 
-namespace Northrook\Symfony\Core\Autowire;
+namespace Northrook\Symfony\Core\Security;
 
 // user object access
 // authentication
@@ -15,12 +15,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
+
 final readonly class Authentication
 {
     public function __construct(
-        private AuthorizationCheckerInterface $authorization,
-        private TokenStorageInterface         $tokenStorage,
-        private CsrfTokenManagerInterface     $tokenManager,
+            private AuthorizationCheckerInterface $authorization,
+            private TokenStorageInterface         $tokenStorage,
+            private CsrfTokenManagerInterface     $tokenManager,
     ) {}
 
     /**
@@ -28,8 +29,8 @@ final readonly class Authentication
      *
      * @see TokenInterface::getUser()
      */
-    public function getUser() : ?UserInterface {
-
+    public function getUser() : ?UserInterface
+    {
         $token = $this->tokenStorage->getToken();
 
         return $token->getUser();
@@ -38,7 +39,8 @@ final readonly class Authentication
     /**
      * Checks if the attribute is granted against the current authentication token and optionally supplied subject.
      */
-    public function isGranted( mixed $attribute, mixed $subject = null ) : bool {
+    public function isGranted( mixed $attribute, mixed $subject = null ) : bool
+    {
         return $this->authorization->isGranted( $attribute, $subject );
     }
 
@@ -49,11 +51,11 @@ final readonly class Authentication
      * @throws AccessDeniedException
      */
     public function denyAccessUnlessGranted(
-        mixed  $attribute = AuthenticatedVoter::IS_AUTHENTICATED_FULLY,
-        mixed  $subject = null,
-        string $message = 'Access Denied',
-    ) : void {
-
+            mixed  $attribute = AuthenticatedVoter::IS_AUTHENTICATED_FULLY,
+            mixed  $subject = null,
+            string $message = 'Access Denied',
+    ) : void
+    {
         if ( !$this->isGranted( $attribute, $subject ) ) {
             $exception = Auth::accessDenied( $message );
             $exception->setAttributes( [ $attribute ] );
@@ -75,9 +77,10 @@ final readonly class Authentication
      * @throws \LogicException If the Security component is not available
      */
     public static function accessDenied(
-        string      $message = 'Access Denied',
-        ?\Throwable $previous = null,
-    ) : AccessDeniedException {
+            string      $message = 'Access Denied',
+            ?\Throwable $previous = null,
+    ) : AccessDeniedException
+    {
         return new AccessDeniedException( $message, $previous );
     }
 
@@ -88,7 +91,8 @@ final readonly class Authentication
      *
      * @return CsrfToken
      */
-    public function getToken( string $tokenId ) : CsrfToken {
+    public function getToken( string $tokenId ) : CsrfToken
+    {
         return $this->tokenManager->getToken( $tokenId );
     }
 
@@ -99,12 +103,13 @@ final readonly class Authentication
      * @param string|null  $token  The actual token sent with the request that should be validated
      */
     public function isCsrfTokenValid(
-        string  $id,
-        #[\SensitiveParameter]
-        ?string $token,
-    ) : bool {
+            string  $id,
+            #[\SensitiveParameter]
+            ?string $token,
+    ) : bool
+    {
         return $this->tokenManager->isTokenValid(
-            new CsrfToken( $id, $token ),
+                new CsrfToken( $id, $token ),
         );
     }
 }

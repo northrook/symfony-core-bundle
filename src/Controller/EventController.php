@@ -3,8 +3,8 @@
 namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Logger\Log;
-use Northrook\Symfony\Core\Autowire\Authentication;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
+use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpFoundation\Response;
