@@ -7,12 +7,12 @@ namespace Northrook\Symfony\Core;
 use Northrook\Env;
 use Northrook\Settings;
 use Northrook\Symfony\Core\Autowire\Authentication;
-use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\Controller\EventController;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationSettingsPass;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\LatteEnvironmentPass;
 use Northrook\Symfony\Core\EventSubscriber\LoggerIntegrationSubscriber;
+use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -22,25 +22,27 @@ use function Northrook\isCLI;
 use function Northrook\normalizePath;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
+
 // use Northrook\Symfony\Core\ErrorHandler\HttpExceptionListener;
 
 
 /**
- * @version 1.0 ☑️
+ * @todo    Update URL to documentation : root of symfony-core-bundle
  * @author  Martin Nielsen <mn@northrook.com>
  *
  * @link    https://github.com/northrook Documentation
- * @todo    Update URL to documentation : root of symfony-core-bundle
+ * @version 1.0 ☑️
  */
 final class SymfonyCoreBundle extends AbstractBundle
 {
 
-    public function getPath() : string {
+    public function getPath() : string
+    {
         return \dirname( __DIR__ );
     }
 
-    public function build( ContainerBuilder $container ) : void {
-
+    public function build( ContainerBuilder $container ) : void
+    {
         $projectDir = $container->getParameter( 'kernel.project_dir' );
 
         // Remove Symfony default .yaml config, create .php config
@@ -50,51 +52,51 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         // Provide the Application Settings and Env core parameters
         $container->addCompilerPass(
-            pass : new ApplicationSettingsPass( $projectDir ),
-            type : PassConfig::TYPE_OPTIMIZE,
+                pass : new ApplicationSettingsPass( $projectDir ),
+                type : PassConfig::TYPE_OPTIMIZE,
         );
 
         // Provide the Pathfinder with directory and path parameters
         $container->addCompilerPass(
-            pass : new LatteEnvironmentPass( $projectDir ),
-            type : PassConfig::TYPE_OPTIMIZE,
+                pass : new LatteEnvironmentPass( $projectDir ),
+                type : PassConfig::TYPE_OPTIMIZE,
         );
     }
 
     public function loadExtension(
-        array                 $config,
-        ContainerConfigurator $container,
-        ContainerBuilder      $builder,
-    ) : void {
-
+            array                 $config,
+            ContainerConfigurator $container,
+            ContainerBuilder      $builder,
+    ) : void
+    {
         // Settings and Env
         $container->import( '../config/application.php' );
 
         $services = $container->services();
 
         foreach (
-            [
-                'core.config.latte.autoRefresh' => false,
-                'core.config.latte.cacheTTL'    => null,
-            ] as $name => $value
+                [
+                        'core.config.latte.autoRefresh' => false,
+                        'core.config.latte.cacheTTL'    => null,
+                ] as $name => $value
         ) {
             $builder->setParameter( $name, $value );
         }
 
         foreach ( [
-            'dir.root'           => '%kernel.project_dir%',
-            'dir.var'            => '%dir.root%/var',
-            'dir.cache'          => '%dir.var%/cache',
-            'dir.cache.latte'    => '%dir.cache%/latte',
-            'dir.manifest'       => '%dir.var%/manifest',
-            'dir.config'         => '%dir.root%/config',
-            'dir.src'            => '%dir.root%/src',
-            'dir.assets'         => '%dir.root%/assets',
-            'dir.public'         => '%dir.root%/public',
-            'dir.templates'      => '%dir.root%/templates',
-            'dir.core.templates' => dirname( __DIR__ ) . '/templates',
-            'dir.public.assets'  => '%dir.root%/public/assets',
-            'dir.core.assets'    => dirname( __DIR__ ) . '/assets',
+                'dir.root'           => '%kernel.project_dir%',
+                'dir.var'            => '%dir.root%/var',
+                'dir.cache'          => '%dir.var%/cache',
+                'dir.cache.latte'    => '%dir.cache%/latte',
+                'dir.manifest'       => '%dir.var%/manifest',
+                'dir.config'         => '%dir.root%/config',
+                'dir.src'            => '%dir.root%/src',
+                'dir.assets'         => '%dir.root%/assets',
+                'dir.public'         => '%dir.root%/public',
+                'dir.templates'      => '%dir.root%/templates',
+                'dir.core.templates' => dirname( __DIR__ ) . '/templates',
+                'dir.public.assets'  => '%dir.root%/public/assets',
+                'dir.core.assets'    => dirname( __DIR__ ) . '/assets',
         ] as $name => $value ) {
             $builder->setParameter( $name, normalizePath( $value ) );
         }
@@ -109,28 +111,31 @@ final class SymfonyCoreBundle extends AbstractBundle
         //              ],
         //          );
 
-        $services->set( EventController::class )
-                 ->tag( 'kernel.event_listener', [ 'priority' => 100 ] )
-                 ->tag( 'controller.service_arguments' )
-                 ->args(
-                     [
-                         service( CurrentRequest::class ),
-                         service( DocumentService::class ),
-                         service( Authentication::class ),
-                     ],
-                 );
+        $services
+                ->set( EventController::class )
+                ->tag( 'kernel.event_listener', [ 'priority' => 100 ] )
+                ->tag( 'controller.service_arguments' )
+                ->args(
+                        [
+                                service( CurrentRequest::class ),
+                                service( DocumentService::class ),
+                                service( Authentication::class ),
+                        ],
+                )
+        ;
 
         /** # 📝
          * Current Request Service
          */
-        $services->set( LoggerIntegrationSubscriber::class )
-                 ->args( [ service( 'logger' )->nullOnInvalid() ] )
-                 ->tag( 'kernel.event_subscriber' );
-
+        $services
+                ->set( LoggerIntegrationSubscriber::class )
+                ->args( [ service( 'logger' )->nullOnInvalid() ] )
+                ->tag( 'kernel.event_subscriber' )
+        ;
 
         $container->import( '../config/assets.php' );
         $container->import( '../config/cache.php' );
-        $container->import( '../config/autowire.php' );
+        $container->import( '../config/admin.php' );
         $container->import( '../config/services.php' );
         $container->import( '../config/latte.php' );
         $container->import( '../config/facades.php' );
@@ -142,7 +147,8 @@ final class SymfonyCoreBundle extends AbstractBundle
         // $this->autoconfigureRoutes();
     }
 
-    public function boot() : void {
+    public function boot() : void
+    {
         parent::boot();
 
         if ( isCLI() ) {
@@ -158,12 +164,14 @@ final class SymfonyCoreBundle extends AbstractBundle
         DependencyInjection\ServiceContainer::set( $this->container );
     }
 
-    private function autoConfigure( string $configDir ) : void {
+    private function autoConfigure( string $configDir ) : void
+    {
         ( new ApplicationAutoConfiguration( $configDir ) )
-            ->createConfigPreload()
-            ->createConfigRoutes()
-            ->createConfigServices()
-            ->createConfigControllerRoutes();
+                ->createConfigPreload()
+                ->createConfigRoutes()
+                ->createConfigServices()
+                ->createConfigControllerRoutes()
+        ;
     }
 
 }

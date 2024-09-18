@@ -15,7 +15,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 // use Northrook\Symfony\Latte\Environment;
 
 use Northrook\Latte;
-use Northrook\Symfony\Core\Autowire\CurrentRequest;
+use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Service\Toasts\ToastService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
@@ -24,33 +24,36 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-return static function ( ContainerConfigurator $container ) : void {
 
+return static function( ContainerConfigurator $container ) : void
+{
     $services = $container->services();
 
-    $services->set( 'core.service.locator', ServiceLocator::class )
-             ->tag( 'container.service_locator' )
-             ->args(
-                 [
-                     [
-                         RouterInterface::class     => service( 'router' ),
-                         HttpKernelInterface::class => service( 'http_kernel' ),
-                         LoggerInterface::class     => service( 'logger' )->nullOnInvalid(),
-                         Stopwatch::class           => service( 'debug.stopwatch' )->nullOnInvalid(),
-                         // CsrfTokenManagerInterface::class     => service( 'security.csrf.token_manager' ),
-                         // NotificationService::class => service( 'core.service.notification' ),
+    $services
+            ->set( 'core.service.locator', ServiceLocator::class )
+            ->tag( 'container.service_locator' )
+            ->args(
+                    [
+                            [
+                                    RouterInterface::class     => service( 'router' ),
+                                    HttpKernelInterface::class => service( 'http_kernel' ),
+                                    LoggerInterface::class     => service( 'logger' )->nullOnInvalid(),
+                                    Stopwatch::class           => service( 'debug.stopwatch' )->nullOnInvalid(),
+                                    // CsrfTokenManagerInterface::class     => service( 'security.csrf.token_manager' ),
+                                    // NotificationService::class => service( 'core.service.notification' ),
 
-                         // Core
-                         CurrentRequest::class      => service( CurrentRequest::class ),
-                         Latte::class               => service( Latte::class ),
-                         ToastService::class        => service( ToastService::class ),
+                                    // Core
+                                    CurrentRequest::class      => service( CurrentRequest::class ),
+                                    Latte::class               => service( Latte::class ),
+                                    ToastService::class        => service( ToastService::class ),
 
-                         // Dev
-                         SerializerInterface::class => service( 'serializer' ),
-                         // AuthorizationCheckerInterface::class => service( 'security.authorization_checker' ),
-                         // TokenStorageInterface::class         => service( 'security.token_storage' ),
-                     ],
-                 ],
-             )
-             ->public();
+                                    // Dev
+                                    SerializerInterface::class => service( 'serializer' ),
+                                    // AuthorizationCheckerInterface::class => service( 'security.authorization_checker' ),
+                                    // TokenStorageInterface::class         => service( 'security.token_storage' ),
+                            ],
+                    ],
+            )
+            ->public()
+    ;
 };

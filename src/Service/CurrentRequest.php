@@ -1,6 +1,6 @@
 <?php
 
-namespace Northrook\Symfony\Core\Autowire;
+namespace Northrook\Symfony\Core\Service;
 
 use Northrook\Trait\PropertyAccessor;
 use Symfony\Component\HttpFoundation as Http;
@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+
 
 /**
  * @property-read Http\Request $current
@@ -25,6 +26,7 @@ final readonly class CurrentRequest
 {
     use PropertyAccessor;
 
+
     private string $requestType;
     private string $routeName;
     private string $routeRoot;
@@ -41,9 +43,10 @@ final readonly class CurrentRequest
      * @param HttpKernelInterface  $kernel
      */
     public function __construct(
-        public Http\RequestStack    $stack,
-        private HttpKernelInterface $kernel,
-    ) {
+            public Http\RequestStack    $stack,
+            private HttpKernelInterface $kernel,
+    )
+    {
         if ( !$this->stack->getCurrentRequest() ) {
             $this->stack->push( Http\Request::createFromGlobals() );
         }
@@ -58,7 +61,8 @@ final readonly class CurrentRequest
      *
      * @return string|bool
      */
-    public function __get( string $property ) : string | bool {
+    public function __get( string $property ) : string | bool
+    {
         return match ( $property ) {
             'current'   => $this->currentRequest(),
             'route'     => $this->route(),
@@ -78,7 +82,8 @@ final readonly class CurrentRequest
      *
      * @return Request
      */
-    private function currentRequest() : Http\Request {
+    private function currentRequest() : Http\Request
+    {
         return $this->stack->getCurrentRequest();
     }
 
@@ -88,8 +93,8 @@ final readonly class CurrentRequest
      *
      * @return null|Http\HeaderBag|string|bool
      */
-    public function headerBag( ?string $get = null, ?string $has = null ) : Http\HeaderBag | string | bool | null {
-
+    public function headerBag( ?string $get = null, ?string $has = null ) : Http\HeaderBag | string | bool | null
+    {
         if ( !$get && !$has ) {
             return $this->currentRequest()->headers;
         }
@@ -102,14 +107,15 @@ final readonly class CurrentRequest
      *
      * @return FlashBagAwareSessionInterface|mixed
      */
-    public function session( ?string $get = null ) : mixed {
+    public function session( ?string $get = null ) : mixed
+    {
         try {
             return $get ? $this->currentRequest()->getSession()->get( $get ) : $this->currentRequest()->getSession();
         }
         catch ( Http\Exception\SessionNotFoundException $exception ) {
             throw new Http\Exception\LogicException(
-                message  : 'Sessions are disabled. Enable them in "config/packages/framework".',
-                previous : $exception,
+                    message  : 'Sessions are disabled. Enable them in "config/packages/framework".',
+                    previous : $exception,
             );
         }
     }
@@ -119,11 +125,13 @@ final readonly class CurrentRequest
      *
      * @return Http\ParameterBag|array|string|int|bool|float|null
      */
-    public function parameter( ?string $get = null ) : Http\ParameterBag | array | string | int | bool | float | null {
+    public function parameter( ?string $get = null ) : Http\ParameterBag | array | string | int | bool | float | null
+    {
         return $get ? $this->currentRequest()->get( $get ) : $this->currentRequest()->attributes;
     }
 
-    public function attributes( ?string $get = null ) : Http\ParameterBag | array | string | int | bool | float | null {
+    public function attributes( ?string $get = null ) : Http\ParameterBag | array | string | int | bool | float | null
+    {
         return $get ? $this->currentRequest()->attributes->get( $get ) : $this->currentRequest()->attributes;
     }
 
@@ -132,7 +140,8 @@ final readonly class CurrentRequest
      *
      * @return Http\InputBag|string|int|float|bool|null
      */
-    public function query( ?string $get = null ) : Http\InputBag | string | int | float | bool | null {
+    public function query( ?string $get = null ) : Http\InputBag | string | int | float | bool | null
+    {
         return $get ? $this->currentRequest()->query->get( $get ) : $this->currentRequest()->query;
     }
 
@@ -141,15 +150,18 @@ final readonly class CurrentRequest
      *
      * @return Http\InputBag|string|int|float|bool|null
      */
-    public function cookies( ?string $get = null ) : Http\InputBag | string | int | float | bool | null {
+    public function cookies( ?string $get = null ) : Http\InputBag | string | int | float | bool | null
+    {
         return $get ? $this->currentRequest()->cookies->get( $get ) : $this->currentRequest()->cookies;
     }
 
-    public function flashBag() : FlashBagInterface {
+    public function flashBag() : FlashBagInterface
+    {
         return $this->session()->getFlashBag();
     }
 
-    public function httpKernel() : HttpKernelInterface {
+    public function httpKernel() : HttpKernelInterface
+    {
         return $this->kernel;
     }
 
@@ -162,12 +174,12 @@ final readonly class CurrentRequest
      *
      * @return bool|string
      */
-    private function type( ?string $is = null ) : bool | string {
-
-        $this->requestType ??=
-            $this->headerBag( get : 'hx-request' )
-            ?? $this->headerBag( get : 'content-type' )
-               ?? 'text/html; charset=utf-8';
+    private function type( ?string $is = null ) : bool | string
+    {
+        $this->requestType
+                ??= $this->headerBag( get : 'hx-request' )
+                    ?? $this->headerBag( get : 'content-type' )
+                       ?? 'text/html; charset=utf-8';
 
         return $is ? $is === $this->requestType : $this->requestType;
     }
@@ -177,7 +189,8 @@ final readonly class CurrentRequest
      *
      * @return string
      */
-    private function route() : string {
+    private function route() : string
+    {
         return $this->route ??= $this->currentRequest()->attributes->get( 'route' ) ?? '';
     }
 
@@ -186,7 +199,8 @@ final readonly class CurrentRequest
      *
      * @return string
      */
-    private function routeName() : string {
+    private function routeName() : string
+    {
         return $this->routeName ??= $this->currentRequest()->get( '_route' ) ?? '';
     }
 
@@ -195,7 +209,8 @@ final readonly class CurrentRequest
      *
      * @return string
      */
-    private function routeRoot() : string {
+    private function routeRoot() : string
+    {
         return strstr( $this->routeName(), ':', true );
     }
 

@@ -10,10 +10,10 @@ use Northrook\Get;
 use Northrook\Latte;
 use Northrook\Logger\Log;
 use Northrook\Settings;
-use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\ErrorHandler\ErrorEventException;
 use Northrook\Symfony\Core\Facade\Request;
 use Northrook\Symfony\Core\Facade\URL;
+use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Northrook\Symfony\Service\Toasts\Message;
 use Northrook\UI\AssetHandler;
@@ -59,10 +59,10 @@ abstract class CoreController
      * @return Response
      */
     final protected function response(
-        string         $content,
-        object | array $parameters = [],
-        int            $status = Response::HTTP_OK,
-        ?Latte         $engine = null,
+            string         $content,
+            object | array $parameters = [],
+            int            $status = Response::HTTP_OK,
+            ?Latte         $engine = null,
     ) : Response
     {
         if ( \str_ends_with( $content, '.latte' ) ) {
@@ -72,15 +72,15 @@ abstract class CoreController
                 }
                 else {
                     Log::critical(
-                        'Do not perform {method} on every Latte render in production.',
-                        [
-                            'method' => '$engine->clearTemplateCache()',
-                        ],
+                            'Do not perform {method} on every Latte render in production.',
+                            [
+                                    'method' => '$engine->clearTemplateCache()',
+                            ],
                     );
                 }
 
                 throw new \LogicException(
-                    "A templating engine is required to use the Response method. 
+                        "A templating engine is required to use the Response method. 
                 Please inject '" . Latte::class . "' into to the '__construct' method.
                 Alternatively, you can inject it directly into the controller method, 
                 and pass it as the fourth argument to this Response method.",
@@ -91,9 +91,9 @@ abstract class CoreController
         }
 
         return new Response(
-            content : $this->responseContent( $content ),
-            status  : $this->responseStatus( $status ),
-            headers : $this->responseHeaders(),
+                content : $this->responseContent( $content ),
+                status  : $this->responseStatus( $status ),
+                headers : $this->responseHeaders(),
         );
     }
 
@@ -137,8 +137,8 @@ abstract class CoreController
         foreach ( $this->request->flashBag()->all() as $type => $flash ) {
             foreach ( $flash as $toast ) {
                 if ( $toast instanceof Message ) {
-                    $notification =
-                        new Notification( $toast->type, $toast->message, $toast->description, $toast->timeout, );
+                    $notification
+                            = new Notification( $toast->type, $toast->message, $toast->description, $toast->timeout, );
                 }
                 else {
                     $notification = new Notification( $type, toString( $toast ) );
@@ -178,11 +178,11 @@ abstract class CoreController
      * @return JsonResponse
      */
     final protected function json(
-        mixed                $data,
-        int                  $status = Response::HTTP_OK,
-        array                $headers = [],
-        array                $context = [],
-        ?SerializerInterface $serializer = null,
+            mixed                $data,
+            int                  $status = Response::HTTP_OK,
+            array                $headers = [],
+            array                $context = [],
+            ?SerializerInterface $serializer = null,
     ) : JsonResponse
     {
         if ( null === $serializer &&
@@ -194,8 +194,8 @@ abstract class CoreController
 
         if ( $serializer ) {
             $context = array_merge(
-                [ 'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS ],
-                $context,
+                    [ 'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS ],
+                    $context,
             );
             $json    = $serializer->serialize( $data, 'json', $context );
 
@@ -210,9 +210,9 @@ abstract class CoreController
      * file name and disposition header.
      */
     final protected function file(
-        SplFileInfo | string $file,
-        ?string              $fileName = null,
-        string               $disposition = ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            SplFileInfo | string $file,
+            ?string              $fileName = null,
+            string               $disposition = ResponseHeaderBag::DISPOSITION_ATTACHMENT,
     ) : BinaryFileResponse
     {
         $response = new BinaryFileResponse( $file );
@@ -232,9 +232,9 @@ abstract class CoreController
      *                                          if it is invokable)
      */
     final protected function forward(
-        string $controller,
-        array  $path = [],
-        array  $query = [],
+            string $controller,
+            array  $path = [],
+            array  $query = [],
     ) : Response
     {
         $request               = $this->request->current;
@@ -243,16 +243,16 @@ abstract class CoreController
 
         try {
             return $this->request
-                ->httpKernel()
-                ->handle(
-                    $subRequest, HttpKernelInterface::SUB_REQUEST,
-                )
+                    ->httpKernel()
+                    ->handle(
+                            $subRequest, HttpKernelInterface::SUB_REQUEST,
+                    )
             ;
         }
         catch ( Exception $e ) {
             Log::error( $e->getMessage() );
             return new Response(
-                status : Response::HTTP_INTERNAL_SERVER_ERROR,
+                    status : Response::HTTP_INTERNAL_SERVER_ERROR,
             );
         }
     }
@@ -263,8 +263,8 @@ abstract class CoreController
      * @param int  $status  The HTTP status code (302 "Found" by default)
      */
     final protected function redirect(
-        string $url,
-        int    $status = Response::HTTP_FOUND,
+            string $url,
+            int    $status = Response::HTTP_FOUND,
     ) : RedirectResponse
     {
         return new RedirectResponse( $url, $status );
@@ -276,16 +276,16 @@ abstract class CoreController
      * @param int  $status  The HTTP status code (302 "Found" by default)
      */
     final protected function redirectToRoute(
-        string $route,
-        array  $parameters = [],
-        int    $status = 302,
+            string $route,
+            array  $parameters = [],
+            int    $status = 302,
     ) : RedirectResponse
     {
         try {
             $url = URL::get( $route, $parameters );
             Log::info(
-                '{controller} is redirecting to {url}',
-                [ 'controller' => $this::class, 'url' => $url ],
+                    '{controller} is redirecting to {url}',
+                    [ 'controller' => $this::class, 'url' => $url ],
             );
             return $this->redirect( $url, $status );
         }
@@ -304,7 +304,7 @@ abstract class CoreController
      * @return void
      */
     public function addFlash(
-        string $type, string | Stringable | array $message,
+            string $type, string | Stringable | array $message,
     ) : void
     {
         Request::addFlash( $type, $message );
@@ -323,8 +323,8 @@ abstract class CoreController
      *
      */
     final protected function throwNotFoundException(
-        string     $message = 'Not Found',
-        ?Throwable $previous = null,
+            string     $message = 'Not Found',
+            ?Throwable $previous = null,
     ) : NotFoundHttpException
     {
         throw new NotFoundHttpException( $message, $previous );
@@ -343,8 +343,8 @@ abstract class CoreController
      *
      */
     final protected function throwAccessDeniedException(
-        string      $message = 'Access Denied',
-        ?\Throwable $previous = null,
+            string      $message = 'Access Denied',
+            ?\Throwable $previous = null,
     ) : AccessDeniedException
     {
         throw new AccessDeniedException( $message, $previous );
@@ -353,7 +353,7 @@ abstract class CoreController
     final protected function dynamicTemplatePath( ?string $dir = null ) : string
     {
         $dir  ??= \defined( static::class . '::DYNAMIC_TEMPLATE_DIR' )
-            ? static::DYNAMIC_TEMPLATE_DIR : '';
+                ? static::DYNAMIC_TEMPLATE_DIR : '';
         $file = \str_replace( '/', '.', $this->request->route ) . '.latte';
 
         return normalizePath( $dir . DIRECTORY_SEPARATOR . $file );

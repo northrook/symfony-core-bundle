@@ -5,8 +5,8 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core\Facade;
 
 use LogicException;
-use Northrook\Symfony\Core\Autowire\CurrentRequest;
 use Northrook\Symfony\Core\DependencyInjection\Facade;
+use Northrook\Symfony\Core\Service\CurrentRequest;
 use SensitiveParameter;
 use Stringable;
 use Symfony\Component\HttpFoundation as Http;
@@ -18,6 +18,7 @@ use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Throwable;
 
+
 final class Request extends Facade
 {
     /**
@@ -25,7 +26,8 @@ final class Request extends Facade
      *
      * @return Http\Request
      */
-    public static function current() : Http\Request {
+    public static function current() : Http\Request
+    {
         return Request::getService( CurrentRequest::class )->current;
     }
 
@@ -34,7 +36,8 @@ final class Request extends Facade
      *
      * @return Http\RequestStack
      */
-    public static function stack() : Http\RequestStack {
+    public static function stack() : Http\RequestStack
+    {
         return Request::getService( CurrentRequest::class )->stack;
     }
 
@@ -44,7 +47,8 @@ final class Request extends Facade
      * @return Session
      * @throws SessionNotFoundException if no session is active
      */
-    public static function session() : Session {
+    public static function session() : Session
+    {
         return Request::stack()->getSession();
     }
 
@@ -56,15 +60,16 @@ final class Request extends Facade
      *
      * @return void
      */
-    public static function addFlash( string $type, string | Stringable | array $message ) : void {
+    public static function addFlash( string $type, string | Stringable | array $message ) : void
+    {
         $session = Request::session();
 
         if ( !$session instanceof FlashBagAwareSessionInterface ) {
             throw new LogicException(
-                sprintf(
-                    'You cannot use the addFlash method because class "%s" doesn\'t implement "%s".',
-                    get_debug_type( $session ), FlashBagAwareSessionInterface::class,
-                ),
+                    sprintf(
+                            'You cannot use the addFlash method because class "%s" doesn\'t implement "%s".',
+                            get_debug_type( $session ), FlashBagAwareSessionInterface::class,
+                    ),
             );
         }
 
@@ -78,12 +83,14 @@ final class Request extends Facade
      * @param string|null  $token  The actual token sent with the request that should be validated
      */
     public static function isCsrfTokenValid(
-        string  $id,
-        #[SensitiveParameter]
-        ?string $token,
-    ) : bool {
+            string  $id,
+            #[SensitiveParameter]
+            ?string $token,
+    ) : bool
+    {
         return Request::getService( CsrfTokenManagerInterface::class )
-                      ->isTokenValid( new CsrfToken( $id, $token ) );
+                      ->isTokenValid( new CsrfToken( $id, $token ) )
+        ;
     }
 
     /**
@@ -101,9 +108,10 @@ final class Request extends Facade
      * @return NotFoundHttpException
      */
     public static function notFound(
-        string     $message = 'Not Found',
-        ?Throwable $previous = null,
-    ) : NotFoundHttpException {
+            string     $message = 'Not Found',
+            ?Throwable $previous = null,
+    ) : NotFoundHttpException
+    {
         return new NotFoundHttpException( $message, $previous );
     }
 
