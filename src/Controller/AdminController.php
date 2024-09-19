@@ -4,11 +4,12 @@ namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
 use Northrook\Symfony\Core\Http\DocumentResponse;
-use Northrook\Symfony\Core\ResponseHandler\ResponsePayload;
+use Northrook\Symfony\Core\ResponseHandler\RenderPayload;
 use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use Northrook\UI\Model\Menu;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 
@@ -87,15 +88,20 @@ final class AdminController extends CoreController
     {
         $profiler->disable();
 
-        // $generator->admin->addSource( 'dir.assets/admin/styles' );
-        //
-        // if ( $generator->admin->save(
-        //         force : true,
-        // ) ) {
-        //     Toast::info( 'Admin Stylesheet updated.' );
-        // };
+        $response = new RenderPayload(
+                'admin/dashboard.latte',
+        );
 
-        return new Response( __METHOD__ );
+        if ( $this->request->isHtmx ) {
+            return $response;
+        }
+
+        $response->document->set(
+                title : 'The Document Title',
+        )->isPublic
+                = true;
+
+        return $response;
 
         // $this->document->title( 'testme' )->description( 'we describe things' );
 
@@ -114,10 +120,24 @@ final class AdminController extends CoreController
         // );
     }
 
-    public function dashboard() : ResponsePayload
+    public function dashboard() : RenderPayload
     {
-        return new ResponsePayload(
+        return new RenderPayload(
                 'admin/dashboard.latte',
+        );
+    }
+
+    public function api( string $action ) : Response
+    {
+        return new JsonResponse(
+                [ 'action' => $action, ],
+        );
+    }
+
+    public function search( string $action ) : Response
+    {
+        return new JsonResponse(
+                [ 'action' => $action, ],
         );
     }
 
