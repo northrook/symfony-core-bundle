@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core;
 
+use Northrook\Cache\MemoizationCache;
 use Northrook\Env;
 use Northrook\Settings;
 use Northrook\Symfony\Core\Controller\EventController;
@@ -119,8 +120,12 @@ final class SymfonyCoreBundle extends AbstractBundle
                 ->tag( 'kernel.event_listener', [ 'priority' => 125 ] )
                 ->args(
                         [
-                                service( 'core.cache.memoization' ),
-                                service( 'logger' )->nullOnInvalid(),
+                            // Initialize the MemoizationCache
+                            service( MemoizationCache::class ),
+                            // Passed to a new ServiceContainer on invocation
+                            service( 'core.service_locator' ),
+                            // Passed to Log::setLogger on invocation
+                            service( 'logger' )->nullOnInvalid(),
                         ],
                 )
         ;
@@ -160,8 +165,6 @@ final class SymfonyCoreBundle extends AbstractBundle
 
         // Initialize the Settings instance.
         $this->container->get( Settings::class );
-
-        new DependencyInjection\ServiceContainer( $this->container->get( 'core.service_locator' ) );
     }
 
     private function autoConfigure( string $configDir ) : void

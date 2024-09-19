@@ -47,8 +47,7 @@ return static function( ContainerConfigurator $container ) : void
                             ],
                     ],
             )
-            ->public()
-    ;;
+    ;
 
     $container
             ->services()
