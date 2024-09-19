@@ -2,6 +2,8 @@
 
 namespace Northrook\Symfony\Core\Controller;
 
+use Northrook\Assets\Script;
+use Northrook\Assets\Style;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
 use Northrook\Symfony\Core\Http\DocumentResponse;
 use Northrook\Symfony\Core\ResponseHandler\RenderPayload;
@@ -96,10 +98,23 @@ final class AdminController extends CoreController
             return $response;
         }
 
-        $response->document->set(
-                title : 'The Document Title',
-        )->isPublic
-                = true;
+        $response
+                ->isPublic( true )
+                ->document
+                ->set(
+                        'Admin',
+                        'This is an example admin template.',
+                )->body(
+                        id               : 'admin',
+                        style            : [ '--sidebar-width' => '160px' ],
+                        sidebar_expanded : true,
+                )->theme(
+                        '#ff0000',
+                        'light',
+                )
+                ->asset( Style::from( 'path.admin.stylesheet', 'core-styles' ) )
+                ->asset( Script::from( 'dir.assets/scripts/*.js', 'core-scripts' ) )
+        ;
 
         return $response;
 

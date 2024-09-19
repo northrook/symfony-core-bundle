@@ -30,27 +30,6 @@ final class DocumentResponse extends Response
         parent::__construct( $content, $status, $headers );
     }
 
-    public function isPublic( bool $set ) : DocumentResponse
-    {
-        $this->document->isPublic = $set;
-
-        return $this;
-    }
-
-    public function set(
-            ?string               $title = null,
-            ?string               $description = null,
-            null | string | array $keywords = null,
-            ?string               $author = null,
-            ?string               $id = null,
-            ?string               $status = null,
-    ) : DocumentResponse
-    {
-        $this->document->setTitle( \get_defined_vars() );
-
-        return $this;
-    }
-
     public function getContent() : string
     {
         if ( !$this->document->isPublic ) {
