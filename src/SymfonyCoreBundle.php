@@ -10,7 +10,7 @@ use Northrook\Symfony\Core\Controller\EventController;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationSettingsPass;
 use Northrook\Symfony\Core\DependencyInjection\Compiler\LatteEnvironmentPass;
-use Northrook\Symfony\Core\EventSubscriber\LoggerIntegrationSubscriber;
+use Northrook\Symfony\Core\EventSubscriber\CoreServiceInitializer;
 use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Service\Document\DocumentService;
@@ -111,6 +111,20 @@ final class SymfonyCoreBundle extends AbstractBundle
         //              ],
         //          );
 
+        /** # 📝
+         * Current Request Service
+         */
+        $services
+                ->set( CoreServiceInitializer::class )
+                ->tag( 'kernel.event_listener', [ 'priority' => 125 ] )
+                ->args(
+                        [
+                                service( 'core.cache.memoization' ),
+                                service( 'logger' )->nullOnInvalid(),
+                        ],
+                )
+        ;
+
         $services
                 ->set( EventController::class )
                 ->tag( 'kernel.event_listener', [ 'priority' => 100 ] )
@@ -122,15 +136,6 @@ final class SymfonyCoreBundle extends AbstractBundle
                                 service( Authentication::class ),
                         ],
                 )
-        ;
-
-        /** # 📝
-         * Current Request Service
-         */
-        $services
-                ->set( LoggerIntegrationSubscriber::class )
-                ->args( [ service( 'logger' )->nullOnInvalid() ] )
-                ->tag( 'kernel.event_subscriber' )
         ;
 
         $container->import( '../config/assets.php' );
