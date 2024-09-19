@@ -8,15 +8,13 @@ declare( strict_types = 1 );
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Northrook\Symfony\Core\Admin\SidebarMenu;
 use Northrook\Symfony\Core\Controller\AdminController;
 use Northrook\Symfony\Core\Controller\ApiController;
 use Northrook\Symfony\Core\Controller\PublicController;
 use Northrook\Symfony\Core\Controller\SecurityController;
-use Northrook\Symfony\Core\EventSubscriber\RenderEvent;
+use Northrook\Symfony\Core\ResponseHandler\RenderEvent;
 use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\CurrentRequest;
-use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 
 
@@ -53,7 +51,6 @@ return static function( ContainerConfigurator $container ) : void
             ->args(
                     [
                             service( CurrentRequest::class ),
-                            service( DocumentService::class ),
                             service( Authentication::class ),
                     ],
             )
@@ -68,8 +65,6 @@ return static function( ContainerConfigurator $container ) : void
             ->args(
                     [
                             service( CurrentRequest::class ),
-                            service( DocumentService::class ),
-                            service( SidebarMenu::class ),
                             service( Authentication::class ),
                     ],
             )

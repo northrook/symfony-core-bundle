@@ -5,22 +5,15 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Exception;
-use Northrook\Env;
-use Northrook\Get;
-use Northrook\Latte;
 use Northrook\Logger\Log;
-use Northrook\Settings;
 use Northrook\Symfony\Core\ErrorHandler\ErrorEventException;
 use Northrook\Symfony\Core\Facade\Request;
 use Northrook\Symfony\Core\Facade\URL;
 use Northrook\Symfony\Core\Service\CurrentRequest;
-use Northrook\Symfony\Service\Document\DocumentService;
-use Northrook\Symfony\Service\Toasts\Message;
-use Northrook\UI\AssetHandler;
-use Northrook\UI\Component\Notification;
 use Stringable;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,12 +23,11 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Throwable;
-use function Northrook\normalizePath;
-use function Northrook\toString;
 
 
 /**
  * @property-read HttpKernelInterface $httpKernel
+ * @property-read HeaderBag           $headerBag
  *
  * @author  Martin Nielsen <mn@northrook.com>
  *
@@ -45,119 +37,27 @@ use function Northrook\toString;
  */
 abstract class CoreController
 {
-
-    public bool                       $isPublic = false;
     protected readonly CurrentRequest $request;
 
+    public function __get( string $property )
+    {
+        return match ( $property ) {
+            'headerBag' => $this->request->headerBag(),
+        };
+    }
+
     /**
-     * Return a {@see Response}`view` from a `.latte` template.
+     * Return a {@see Response} with an arbitrary string.
      *
-     * @param string                 $content
-     * @param object|array           $parameters
-     * @param int                    $status
-     * @param null|\Northrook\Latte  $engine
+     * @param ?string  $content
+     * @param int      $status
+     * @param array    $headers
      *
      * @return Response
      */
-    final protected function response(
-            string         $content,
-            object | array $parameters = [],
-            int            $status = Response::HTTP_OK,
-            ?Latte         $engine = null,
-    ) : Response
+    final protected function response( ?string $content = '', int $status = 200, array $headers = [] ) : Response
     {
-        if ( \str_ends_with( $content, '.latte' ) ) {
-            if ( !$engine ??= ServiceContainer::get( Latte::class ) ?? null ) {
-                if ( !Env::isProduction() ) {
-                    $engine->clearTemplateCache();
-                }
-                else {
-                    Log::critical(
-                            'Do not perform {method} on every Latte render in production.',
-                            [
-                                    'method' => '$engine->clearTemplateCache()',
-                            ],
-                    );
-                }
-
-                throw new \LogicException(
-                        "A templating engine is required to use the Response method. 
-                Please inject '" . Latte::class . "' into to the '__construct' method.
-                Alternatively, you can inject it directly into the controller method, 
-                and pass it as the fourth argument to this Response method.",
-                );
-            }
-
-            $content = $engine->render( $content, $parameters );
-        }
-
-        return new Response(
-                content : $this->responseContent( $content ),
-                status  : $this->responseStatus( $status ),
-                headers : $this->responseHeaders(),
-        );
-    }
-
-    private function responseContent( ?string $content ) : string
-    {
-        $notifications = $this->handleFlashBag();
-        $runtimeAssets = new AssetHandler( Get::path( 'dir.assets' ) );
-        if ( \property_exists( $this, 'document' )
-             &&
-             $this->document instanceof DocumentService ) {
-            $this->document->asset( $runtimeAssets->getComponentAssets() );
-            return $this->document->renderDocumentHtml( $content, $notifications );
-        }
-
-        return $notifications . $content;
-    }
-
-
-    // protected function renderView( ?string $content ) : string {
-    //
-    // }
-
-    private function responseStatus( int $assume ) : int
-    {
-        return Response::HTTP_OK;
-    }
-
-    private function responseHeaders() : array
-    {
-        $headers = [];
-        if ( !$this->isPublic ) {
-            $headers[ 'X-Robots-Tag' ] = 'noindex, nofollow';
-        }
-        return $headers;
-    }
-
-    private function handleFlashBag() : string
-    {
-        $notifications = '';
-
-        foreach ( $this->request->flashBag()->all() as $type => $flash ) {
-            foreach ( $flash as $toast ) {
-                if ( $toast instanceof Message ) {
-                    $notification
-                            = new Notification( $toast->type, $toast->message, $toast->description, $toast->timeout, );
-                }
-                else {
-                    $notification = new Notification( $type, toString( $toast ) );
-                }
-
-                if ( !$notification->description ) {
-                    $notification->attributes->add( 'class', 'compact' );
-                }
-
-                if ( !$notification->timeout && $notification->type !== 'danger' ) {
-                    $notification->setTimeout( Settings::get( 'notification.timeout' ) ?? 5000 );
-                }
-
-                $notifications .= $notification;
-            }
-        }
-
-        return $notifications;
+        return new Response( $content, $status, $headers );
     }
 
     /**
@@ -178,7 +78,7 @@ abstract class CoreController
      *
      * @return JsonResponse
      */
-    final protected function json(
+    final protected function jsonResponse(
             mixed                $data,
             int                  $status = Response::HTTP_OK,
             array                $headers = [],
@@ -186,18 +86,15 @@ abstract class CoreController
             ?SerializerInterface $serializer = null,
     ) : JsonResponse
     {
-        if ( null === $serializer &&
-             \property_exists( $this, 'serializer' ) &&
-             $this->serializer instanceof SerializerInterface
+        if ( null === $serializer
+             && \property_exists( $this, 'serializer' )
+             && $this->serializer instanceof SerializerInterface
         ) {
             $serializer = $this->serializer;
         }
 
         if ( $serializer ) {
-            $context = array_merge(
-                    [ 'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS ],
-                    $context,
-            );
+            $context = \array_merge( [ 'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS ], $context );
             $json    = $serializer->serialize( $data, 'json', $context );
 
             return new JsonResponse( $json, $status, $headers, true );
@@ -279,15 +176,12 @@ abstract class CoreController
     final protected function redirectToRoute(
             string $route,
             array  $parameters = [],
-            int    $status = 302,
+            int    $status = Response::HTTP_FOUND,
     ) : RedirectResponse
     {
         try {
             $url = URL::get( $route, $parameters );
-            Log::info(
-                    '{controller} is redirecting to {url}',
-                    [ 'controller' => $this::class, 'url' => $url ],
-            );
+            Log::info( '{controller} is redirecting to {url}', [ 'controller' => $this::class, 'url' => $url ] );
             return $this->redirect( $url, $status );
         }
         catch ( Exception $exception ) {
@@ -298,8 +192,7 @@ abstract class CoreController
     /**
      * Adds a simple flash message to the current session.
      *
-     * @param string                   $type  = ['info', 'success', 'warning',
-     *                                        'error', 'notice'][$any]
+     * @param string                   $type  = ['info', 'success', 'warning', 'error', 'notice'][$any]
      * @param string|Stringable|array  $message
      *
      * @return void
@@ -316,9 +209,9 @@ abstract class CoreController
      *
      * This will result in a 404 response code.
      *
-     * @param ?Throwable  $previous
-     *
      * @param string      $message
+     * @param ?Throwable  $previous
+     * @param array       $headers
      *
      * @throws  NotFoundHttpException
      *
@@ -326,9 +219,10 @@ abstract class CoreController
     final protected function throwNotFoundException(
             string     $message = 'Not Found',
             ?Throwable $previous = null,
-    ) : NotFoundHttpException
+            array      $headers = [],
+    ) : void
     {
-        throw new NotFoundHttpException( $message, $previous );
+        throw new NotFoundHttpException( $message, $previous, 404, $headers );
     }
 
     /**
@@ -346,18 +240,26 @@ abstract class CoreController
     final protected function throwAccessDeniedException(
             string      $message = 'Access Denied',
             ?\Throwable $previous = null,
-    ) : AccessDeniedException
+            int         $code = Response::HTTP_FORBIDDEN,
+    ) : void
     {
-        throw new AccessDeniedException( $message, $previous );
+        throw new AccessDeniedException( $message, $previous, $code, );
     }
 
-    final protected function dynamicTemplatePath( ?string $dir = null ) : string
-    {
-        $dir  ??= \defined( static::class . '::DYNAMIC_TEMPLATE_DIR' )
-                ? static::DYNAMIC_TEMPLATE_DIR : '';
-        $file = \str_replace( '/', '.', $this->request->route ) . '.latte';
+    // ::: Templating ::::
 
-        return normalizePath( $dir . DIRECTORY_SEPARATOR . $file );
+    /**
+     * Parse an incoming route, converting it to a simple string for match comparison.
+     *
+     * @param null|string  $route
+     *
+     * @return string
+     */
+    final protected function routeHandler( ?string $route ) : string
+    {
+        dump( $route );
+
+        return $route;
     }
 
 }

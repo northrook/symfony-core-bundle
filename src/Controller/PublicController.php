@@ -9,7 +9,6 @@ use Northrook\Symfony\Core\Facade\Toast;
 use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Core\Service\StylesheetGenerator;
-use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 
@@ -19,9 +18,8 @@ final class PublicController extends CoreController
     public const string DYNAMIC_TEMPLATE_DIR = 'public';
 
     public function __construct(
-            protected readonly CurrentRequest  $request,
-            protected readonly DocumentService $document,
-            protected readonly Authentication  $auth,
+            protected readonly CurrentRequest $request,
+            protected readonly Authentication $auth,
     )
     {
         $this->document

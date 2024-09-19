@@ -16,6 +16,7 @@ use Northrook\Env;
 use Northrook\Latte;
 use Northrook\Settings;
 use Northrook\Symfony\Core\Service\CurrentRequest;
+use Northrook\Symfony\Service\Document\DocumentService;
 use Northrook\Symfony\Service\Toasts\ToastService;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -33,6 +34,7 @@ return static function( ContainerConfigurator $container ) : void
                                 // Core
                                 CurrentRequest::class                => service( CurrentRequest::class ),
                                 Latte::class                         => service( Latte::class ),
+                                DocumentService::class               => service( DocumentService::class ),
                                 ToastService::class                  => service( ToastService::class ),
 
                                 // Security

@@ -10,29 +10,58 @@ use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpFoundation\Response;
 
 
+/**
+ */
 final class DocumentResponse extends Response
 {
-
     public readonly DocumentService $document;
+    public readonly object | array  $context;
 
     public function __construct(
-            string          $content,
-            DocumentService $document,
-            int             $status = 200,
-            array           $headers = [],
+            string           $content,
+            object | array   $context = [],
+            int              $status = Response::HTTP_OK,
+            array            $headers = [],
+            ?DocumentService $document = null,
     )
     {
-        $this->document = $document;
-        parent::__construct(
-                content : $this->responseContent( $content ),
-                status  : $this->responseStatus( $status ),
-                headers : $this->responseHeaders( $headers ),
-        );
+        $this->document = $document ?? ServiceContainer::get( DocumentService::class );
+        $this->context  = $context;
+        parent::__construct( $content, $status, $headers );
     }
 
-    private function responseContent( string $string ) : string
+    public function isPublic( bool $set ) : DocumentResponse
     {
-        if ( \str_ends_with( $string, '.latte' ) ) {
+        $this->document->isPublic = $set;
+
+        return $this;
+    }
+
+    public function set(
+            ?string               $title = null,
+            ?string               $description = null,
+            null | string | array $keywords = null,
+            ?string               $author = null,
+            ?string               $id = null,
+            ?string               $status = null,
+    ) : DocumentResponse
+    {
+        $this->document->setTitle( \get_defined_vars() );
+
+        return $this;
+    }
+
+    public function getContent() : string
+    {
+        if ( !$this->document->isPublic ) {
+            $this->headers->set( 'X-Robots-Tag', 'noindex, nofollow', true );
+        }
+        return $this->responseContent();
+    }
+
+    private function responseContent() : string
+    {
+        if ( \str_ends_with( $this->content, '.latte' ) ) {
             $latte = ServiceContainer::get( Latte::class );
 
             if ( !Env::isProduction() ) {
@@ -45,23 +74,18 @@ final class DocumentResponse extends Response
                 );
             }
 
-            return $latte->render( $string );
+            return $latte->render(
+                    template   : $this->content,
+                    parameters : [ 'document' => $this->document ] + $this->context,
+            );
         }
 
-        return $string;
+        return $this;
     }
 
     private function responseStatus( int $assume ) : int
     {
         return Response::HTTP_OK;
-    }
-
-    private function responseHeaders( array $headers ) : array
-    {
-        if ( !$this->document->isPublic ) {
-            $headers[ 'X-Robots-Tag' ] = 'noindex, nofollow';
-        }
-        return $headers;
     }
 
 }
