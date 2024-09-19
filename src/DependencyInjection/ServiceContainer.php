@@ -12,7 +12,7 @@ final class ServiceContainer
     private static ServiceLocator $serviceLocator;
 
     /**
-     * @param ServiceLocator  $serviceLocator
+     * @param ?ServiceLocator  $serviceLocator
      */
     public function __construct( ?ServiceLocator $serviceLocator )
     {

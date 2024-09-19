@@ -14,6 +14,8 @@ use Northrook\UI\Model\Menu;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
+use function Northrook\Cache\memoize;
+use const Cache\HOUR;
 
 
 // use Northrook\Symfony\Core\Components\Menu\Menu;
@@ -88,7 +90,7 @@ final class AdminController extends CoreController
             Profiler            $profiler,
     ) : Response
     {
-        $profiler->disable();
+        // $profiler->disable();
 
         $response = new RenderPayload(
                 'admin/dashboard.latte',
@@ -100,6 +102,7 @@ final class AdminController extends CoreController
 
         $response
                 ->isPublic( true )
+                ->addParameter( 'navigation', memoize( fn() => $this->sidebarMenu(), 'admin-sidebar-menu', HOUR ) )
                 ->document
                 ->set(
                         'Admin',
@@ -158,7 +161,7 @@ final class AdminController extends CoreController
 
     private function sidebarMenu() : Menu
     {
-        dump( "Called " . __METHOD__ );
+        // dump( "Called " . __METHOD__ );
         $sidebar = new Menu( 'sidebar', $this->request->routeRoot );
 
         $sidebar->items(

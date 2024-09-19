@@ -12,7 +12,6 @@ use Northrook\Symfony\Core\Controller\AdminController;
 use Northrook\Symfony\Core\Controller\ApiController;
 use Northrook\Symfony\Core\Controller\PublicController;
 use Northrook\Symfony\Core\Controller\SecurityController;
-use Northrook\Symfony\Core\ResponseHandler\RenderEvent;
 use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\CurrentRequest;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
@@ -20,16 +19,16 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
 
 return static function( ContainerConfigurator $container ) : void
 {
-    $container
-            ->services()
-            ->set( RenderEvent::class )
-            ->args(
-                    [
-                            service( CurrentRequest::class ),
-                    ],
-            )
-            ->tag( 'kernel.event_subscriber' )
-    ;
+    // $container
+    //         ->services()
+    //         ->set( RenderEvent::class )
+    //         ->args(
+    //                 [
+    //                         service( CurrentRequest::class ),
+    //                 ],
+    //         )
+    //         ->tag( 'kernel.event_subscriber' )
+    // ;
 
     /**
      * Profiler Alias for `autowiring`

@@ -4,10 +4,8 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\ResponseHandler;
 
-use Northrook\Env;
 use Northrook\Get;
 use Northrook\Latte;
-use Northrook\Logger\Log;
 use Northrook\Settings;
 use Northrook\Symfony\Core\DependencyInjection\ServiceContainer;
 use Northrook\Symfony\Core\Service\CurrentRequest;
@@ -77,6 +75,12 @@ final class RenderPayload extends Response
         return $this;
     }
 
+    public function addParameter( string $key, $value ) : RenderPayload
+    {
+        $this->parameters[ $key ] = $value;
+        return $this;
+    }
+
     private function renderPayload() : void
     {
         if ( $this->rendered || $this->payloadIsArbitraryString() ) {
@@ -129,15 +133,15 @@ final class RenderPayload extends Response
     {
         $latte = ServiceContainer::get( Latte::class );
 
-        if ( !Env::isProduction() ) {
-            $latte->clearTemplateCache();
-        }
-        else {
-            Log::critical(
-                    'Do not perform {method} on every Latte render in production.',
-                    [ 'method' => '$latte->clearTemplateCache()', ],
-            );
-        }
+        // if ( !Env::isProduction() ) {
+        // $latte->clearTemplateCache();
+        // }
+        // else {
+        //     Log::critical(
+        //             'Do not perform {method} on every Latte render in production.',
+        //             [ 'method' => '$latte->clearTemplateCache()', ],
+        //     );
+        // }
 
         return $latte;
     }
@@ -149,7 +153,7 @@ final class RenderPayload extends Response
 
     private function flashBagHandler() : string
     {
-        $flashes       = $this->request()->flashBag()->peekAll();
+        $flashes       = $this->request()->flashBag()->all();
         $notifications = EMPTY_STRING;
 
         foreach ( $flashes as $type => $flash ) {
