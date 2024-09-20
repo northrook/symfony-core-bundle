@@ -10,6 +10,7 @@ use Northrook\Symfony\Core\ResponseHandler\RenderPayload;
 use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Core\Service\StylesheetGenerator;
+use Northrook\Symfony\Core\Telemetry\Clerk;
 use Northrook\UI\Model\Menu;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -57,6 +58,7 @@ final class AdminController extends CoreController
             Profiler            $profiler,
     ) : Response
     {
+        Clerk::monitor( $route, 'controller' );
         $response->template( 'admin/dashboard.latte' );
 
         // $response = new RenderPayload(

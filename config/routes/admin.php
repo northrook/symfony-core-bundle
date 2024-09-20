@@ -9,12 +9,13 @@ declare( strict_types = 1 );
 
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
-return static function ( RoutingConfigurator $routes ) : void {
 
+return static function( RoutingConfigurator $routes ) : void
+{
     $routes->add( 'core:admin', '/{route}' )
            ->controller( [ 'core.controller.admin', 'index' ] )
            ->requirements( [ 'route' => '.+' ] )
-           ->defaults( [ 'route' => 'dashboard' ] )
+           ->defaults( [ 'route' => '/admin/dashboard' ] )
            ->schemes( [ 'https' ] )
            ->methods( [ 'GET', 'POST', 'HEAD' ] );
 
@@ -30,5 +31,4 @@ return static function ( RoutingConfigurator $routes ) : void {
            ->defaults( [ 'action' => null ] )
            ->schemes( [ 'https' ] )
            ->methods( [ 'GET', 'POST', 'HEAD' ] );
-
 };

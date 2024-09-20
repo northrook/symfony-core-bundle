@@ -9,6 +9,7 @@ use Northrook\Latte;
 use Northrook\Settings;
 use Northrook\Symfony\Core\DependencyInjection\ServiceContainer;
 use Northrook\Symfony\Core\Service\CurrentRequest;
+use Northrook\Symfony\Core\Telemetry\Clerk;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Northrook\Symfony\Service\Toasts\Message;
 use Northrook\UI\AssetHandler;
@@ -40,6 +41,7 @@ final class HtmlResponse extends Response
             array                             $headers = [],
     )
     {
+        Clerk::monitor( 'HtmlResponse', 'response' );
         $this->isTemplate = $this->parameters !== null;
         parent::__construct( $content, $status, $headers );
     }
@@ -47,6 +49,7 @@ final class HtmlResponse extends Response
     public function prepare( Request $request ) : static
     {
         $this->render();
+        Clerk::monitor( 'HtmlResponse' )->stop();
         return parent::prepare( $request );
     }
 

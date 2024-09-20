@@ -20,8 +20,8 @@ return static function( ContainerConfigurator $container ) : void
               ->set( Telemetry\Clerk::class )
               ->args( [ service( Stopwatch::class ) ] )
 
-            // EventListener
-              ->set( Telemetry\EventListener::class )
+            // TelemetryEventListener
+              ->set( Telemetry\TelemetryEventListener::class )
               ->tag( 'kernel.event_subscriber' );
 
     // $container
