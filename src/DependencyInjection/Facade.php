@@ -21,7 +21,8 @@ abstract class Facade
      *
      * @return mixed
      */
-    public static function __callStatic( string $method, array $arguments ) {
+    public static function __callStatic( string $method, array $arguments )
+    {
         return static::getService( static::SERVICE )?->$method( ...$arguments );
     }
 
@@ -32,9 +33,17 @@ abstract class Facade
      *
      * @return Service
      */
-    protected static function getService( ?string $className = null ) : mixed {
+    protected static function getService( ?string $className = null ) : mixed
+    {
+        if (
+                \property_exists( static::class, 'service' )
+                &&
+                static::$service instanceof $className ?? static::SERVICE
+        ) {
+            dump( 'Static Facade' );
+        }
+
         return ServiceContainer::get( $className ?? static::SERVICE );
     }
-
 
 }

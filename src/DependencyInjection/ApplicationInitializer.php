@@ -2,17 +2,18 @@
 
 declare( strict_types = 1 );
 
-namespace Northrook\Symfony\Core\EventSubscriber;
+namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Northrook\Cache\MemoizationCache;
 use Northrook\Logger\Log;
-use Northrook\Symfony\Core\DependencyInjection\ServiceContainer;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 
 /**
+ *
+ *
  * Pass the {@see LoggerInterface} instance into {@see Log} for static logging.
  *
  * * {@see LoggerInterface} - Symfony's internal logger
@@ -23,11 +24,11 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
  *
  * @author  Martin Nielsen <mn@northrook.com>
  */
-final readonly class CoreServiceInitializer
+final readonly class ApplicationInitializer
 {
 
     public function __construct(
-            private MemoizationCache $memoizationCache,
+            MemoizationCache         $memoizationCache,
             private ServiceLocator   $serviceLocator,
             private ?LoggerInterface $logger = null,
     ) {}

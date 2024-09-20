@@ -4,6 +4,10 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\DependencyInjection;
 
+use JetBrains\PhpStorm\Deprecated;
+
+
+#[Deprecated]
 trait StaticFacade
 {
     const string SERVICE = '';

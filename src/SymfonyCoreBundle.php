@@ -4,14 +4,12 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core;
 
-use Northrook\Cache\MemoizationCache;
 use Northrook\Env;
 use Northrook\Settings;
 use Northrook\Symfony\Core\Controller\EventController;
-use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationAutoConfiguration;
-use Northrook\Symfony\Core\DependencyInjection\Compiler\ApplicationSettingsPass;
-use Northrook\Symfony\Core\DependencyInjection\Compiler\LatteEnvironmentPass;
-use Northrook\Symfony\Core\EventSubscriber\CoreServiceInitializer;
+use Northrook\Symfony\Core\DependencyInjection\CompilerPass\ApplicationAutoConfiguration;
+use Northrook\Symfony\Core\DependencyInjection\CompilerPass\ApplicationSettingsPass;
+use Northrook\Symfony\Core\DependencyInjection\CompilerPass\LatteEnvironmentPass;
 use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Service\Document\DocumentService;
@@ -102,34 +100,6 @@ final class SymfonyCoreBundle extends AbstractBundle
             $builder->setParameter( $name, normalizePath( $value ) );
         }
 
-        // $services->set( HttpExceptionListener::class )
-        //          ->tag( 'kernel.event_listener', [ 'priority' => 100 ] )
-        //          ->args(
-        //              [
-        //                  service( CurrentRequest::class ),
-        //                  service( Latte::class ),
-        //                  service( 'logger' )->nullOnInvalid(),
-        //              ],
-        //          );
-
-        /** # 📝
-         * Current Request Service
-         */
-        $services
-                ->set( CoreServiceInitializer::class )
-                ->tag( 'kernel.event_listener', [ 'priority' => 125 ] )
-                ->args(
-                        [
-                            // Initialize the MemoizationCache
-                            service( MemoizationCache::class ),
-                            // Passed to a new ServiceContainer on invocation
-                            service( 'core.service_locator' ),
-                            // Passed to Log::setLogger on invocation
-                            service( 'logger' )->nullOnInvalid(),
-                        ],
-                )
-        ;
-
         $services
                 ->set( EventController::class )
                 ->tag( 'kernel.event_listener', [ 'priority' => 100 ] )
@@ -140,8 +110,7 @@ final class SymfonyCoreBundle extends AbstractBundle
                                 service( DocumentService::class ),
                                 service( Authentication::class ),
                         ],
-                )
-        ;
+                );
 
         $container->import( '../config/assets.php' );
         $container->import( '../config/cache.php' );
@@ -173,8 +142,7 @@ final class SymfonyCoreBundle extends AbstractBundle
                 ->createConfigPreload()
                 ->createConfigRoutes()
                 ->createConfigServices()
-                ->createConfigControllerRoutes()
-        ;
+                ->createConfigControllerRoutes();
     }
 
 }

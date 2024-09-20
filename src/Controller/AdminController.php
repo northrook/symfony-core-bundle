@@ -5,7 +5,7 @@ namespace Northrook\Symfony\Core\Controller;
 use Northrook\Assets\Script;
 use Northrook\Assets\Style;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
-use Northrook\Symfony\Core\Http\DocumentResponse;
+use Northrook\Symfony\Core\Response\ResponseHandler;
 use Northrook\Symfony\Core\ResponseHandler\RenderPayload;
 use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\CurrentRequest;
@@ -27,41 +27,7 @@ final class AdminController extends CoreController
     public function __construct(
             protected readonly CurrentRequest $request,
             protected readonly Authentication $auth,
-    )
-    {
-        // $this->document
-        //         ->set(
-        //                 'Admin',
-        //                 'This is an example admin template.',
-        //         )->body(
-        //                 id               : 'admin',
-        //                 style            : [ '--sidebar-width' => '160px' ],
-        //                 sidebar_expanded : true,
-        //         )->theme(
-        //                 '#ff0000',
-        //                 'light',
-        //         )
-        //         ->asset( Style::from( 'path.admin.stylesheet', 'core-styles' ) )
-        //         ->asset( Script::from( 'dir.assets/scripts/*.js', 'core-scripts' ) )
-        // ;
-
-        // Auth::denyAccessUnlessGranted( AuthenticatedVoter::IS_AUTHENTICATED_FULLY );
-        //
-        // if ( false === $this->request->is( 'hypermedia' ) ) {
-        //     $this->stylesheet->includeStylesheets( $this::STYLESHEETS )->save( force : true );
-        // }
-        //
-        // $this->document->stylesheet( 'dir.cache/styles/styles.css' );
-        //
-        // $this->document->script( 'dir.assets/scripts/core.js' )
-        //                ->script( 'dir.assets/scripts/components.js' )
-        //                ->script( 'dir.assets/scripts/navigation.js' )
-        //                ->script( 'dir.assets/scripts/interactions.js' )
-        //                ->script( 'dir.assets/scripts/admin.js' );
-        //
-        //
-
-    }
+    ) {}
 
     /**
      * # EntryPoint
@@ -87,27 +53,25 @@ final class AdminController extends CoreController
     public function index(
             ?string             $route,
             StylesheetGenerator $generator,
+            ResponseHandler     $response,
             Profiler            $profiler,
     ) : Response
     {
-        // $profiler->disable();
+        $response->template( 'admin/dashboard.latte' );
 
-        $response = new RenderPayload(
-                'admin/dashboard.latte',
-        );
+        // $response = new RenderPayload(
+        //         'admin/dashboard.latte',
+        // );
 
         if ( $this->request->isHtmx ) {
-            return $response;
+            return $response();
         }
 
-        $response
-                ->isPublic( true )
-                ->addParameter( 'navigation', memoize( fn() => $this->sidebarMenu(), 'admin-sidebar-menu', HOUR ) )
-                ->document
-                ->set(
-                        'Admin',
-                        'This is an example admin template.',
-                )->body(
+        $response->document( true )
+                 ->set(
+                         'Admin',
+                         'This is an example admin template.',
+                 )->body(
                         id               : 'admin',
                         style            : [ '--sidebar-width' => '160px' ],
                         sidebar_expanded : true,
@@ -115,11 +79,12 @@ final class AdminController extends CoreController
                         '#ff0000',
                         'light',
                 )
-                ->asset( Style::from( 'path.admin.stylesheet', 'core-styles' ) )
-                ->asset( Script::from( 'dir.assets/scripts/*.js', 'core-scripts' ) )
-        ;
+                 ->asset( Style::from( 'path.admin.stylesheet', 'core-styles' ) )
+                 ->asset( Script::from( 'dir.assets/scripts/*.js', 'core-scripts' ) );
 
-        return $response;
+        $response->addParameter( 'navigation', memoize( fn() => $this->sidebarMenu(), 'admin-sidebar-menu', HOUR ) );
+
+        return $response();
 
         // $this->document->title( 'testme' )->description( 'we describe things' );
 

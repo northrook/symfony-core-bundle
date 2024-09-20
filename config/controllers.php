@@ -12,23 +12,24 @@ use Northrook\Symfony\Core\Controller\AdminController;
 use Northrook\Symfony\Core\Controller\ApiController;
 use Northrook\Symfony\Core\Controller\PublicController;
 use Northrook\Symfony\Core\Controller\SecurityController;
+use Northrook\Symfony\Core\Response\ResponseHandler;
 use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\CurrentRequest;
+use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 
 
 return static function( ContainerConfigurator $container ) : void
 {
-    // $container
-    //         ->services()
-    //         ->set( RenderEvent::class )
-    //         ->args(
-    //                 [
-    //                         service( CurrentRequest::class ),
-    //                 ],
-    //         )
-    //         ->tag( 'kernel.event_subscriber' )
-    // ;
+    $container->services()
+              ->set( ResponseHandler::class )
+              ->tag( 'controller.service_arguments' )
+              ->args(
+                      [
+                              service( CurrentRequest::class ),
+                              service_closure( DocumentService::class ),
+                      ],
+              );
 
     /**
      * Profiler Alias for `autowiring`
@@ -38,8 +39,7 @@ return static function( ContainerConfigurator $container ) : void
     $controllers = $container
             ->services()
             ->defaults()
-            ->autoconfigure()
-    ;
+            ->autoconfigure();
 
     /**
      * Core `Public` Controller
@@ -52,8 +52,7 @@ return static function( ContainerConfigurator $container ) : void
                             service( CurrentRequest::class ),
                             service( Authentication::class ),
                     ],
-            )
-    ;
+            );
 
     /**
      * Core `Admin` Controller
@@ -66,8 +65,7 @@ return static function( ContainerConfigurator $container ) : void
                             service( CurrentRequest::class ),
                             service( Authentication::class ),
                     ],
-            )
-    ;
+            );
 
     /**
      * Core `Security` Controller
@@ -79,8 +77,7 @@ return static function( ContainerConfigurator $container ) : void
                     [
                             service( CurrentRequest::class ),
                     ],
-            )
-    ;
+            );
     /**
      * Core `API` Controller
      */
@@ -91,6 +88,5 @@ return static function( ContainerConfigurator $container ) : void
                     [
                             service( CurrentRequest::class ),
                     ],
-            )
-    ;
+            );
 };

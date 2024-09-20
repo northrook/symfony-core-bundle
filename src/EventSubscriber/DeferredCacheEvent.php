@@ -6,6 +6,8 @@ namespace Northrook\Symfony\Core\EventSubscriber;
 
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\TerminateEvent;
+
 
 /**
  * @author  Martin Nielsen <mn@northrook.com>
@@ -14,19 +16,22 @@ final readonly class DeferredCacheEvent implements EventSubscriberInterface
 {
     private array $cacheAdapters;
 
-    public function __construct( AdapterInterface ...$cacheAdapters ) {
+    public function __construct( AdapterInterface ...$cacheAdapters )
+    {
         $this->cacheAdapters = $cacheAdapters;
     }
 
-    public function persistDeferredCacheItems() : void {
+    public function persistDeferredCacheItems( TerminateEvent $event ) : void
+    {
         foreach ( $this->cacheAdapters as $adapter ) {
             $adapter->commit();
         }
     }
 
-    public static function getSubscribedEvents() : array {
+    public static function getSubscribedEvents() : array
+    {
         return [
-            'kernel.terminate' => 'persistDeferredCacheItems',
+                'kernel.terminate' => 'persistDeferredCacheItems',
         ];
     }
 }

@@ -6,7 +6,7 @@
 
 declare( strict_types = 1 );
 
-namespace Northrook\Symfony\Core\DependencyInjection\Compiler;
+namespace Northrook\Symfony\Core\DependencyInjection\CompilerPass;
 
 use Northrook\Latte;
 use Northrook\Latte\Extension\FormatterExtension;
@@ -30,7 +30,7 @@ final class LatteEnvironmentPass implements CompilerPassInterface
         }
 
         $latteBundle->addMethodCall(
-            'addExtension', [
+                'addExtension', [
             // $container->getDefinition( IconManager::class ),
             $container->getDefinition( UiCompileExtension::class ),
             $container->getDefinition( FormatterExtension::class ),
@@ -42,12 +42,12 @@ final class LatteEnvironmentPass implements CompilerPassInterface
     private function getTemplateDirectories( ParameterBagInterface $parameterBag ) : array
     {
         $parameters = \array_filter(
-            array    : $parameterBag->all(),
-            callback : fn( $value, $key ) => \is_string( $value ) &&
-                                             \str_contains( $key, 'dir' ) &&
-                                             \str_contains( $key, 'templates' ) &&
-                                             \str_starts_with( $value, $this->projectDir ),
-            mode     : ARRAY_FILTER_USE_BOTH,
+                array    : $parameterBag->all(),
+                callback : fn( $value, $key ) => \is_string( $value ) &&
+                                                 \str_contains( $key, 'dir' ) &&
+                                                 \str_contains( $key, 'templates' ) &&
+                                                 \str_starts_with( $value, $this->projectDir ),
+                mode     : ARRAY_FILTER_USE_BOTH,
         );
 
         return \array_map( 'Northrook\normalizePath', $parameters );
