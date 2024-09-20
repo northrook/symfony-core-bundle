@@ -4,7 +4,6 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\Response;
 
-use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Core\Telemetry\Clerk;
 use Northrook\Symfony\Service\Document\DocumentService;
 
@@ -19,20 +18,16 @@ final class ResponseHandler
     private null | array | object $parameters = null;
 
     /**
-     * @param \Northrook\Symfony\Core\Service\CurrentRequest  $request
-     * @param \Closure<DocumentService>                       $lazyDocumentService
+     * @param \Closure<DocumentService>  $lazyDocumentService
      */
-    public function __construct(
-            private readonly CurrentRequest $request,
-            private readonly \Closure       $lazyDocumentService,
-    )
+    public function __construct( private readonly \Closure $lazyDocumentService )
     {
-        Clerk::monitor( $this->request->pathInfo, $this->request->routeName );
+        Clerk::event( 'ResponseHandler', 'controller' );
     }
 
     public function __invoke() : HtmlResponse
     {
-        Clerk::monitor( $this->request->pathInfo )->stop();
+        Clerk::event( 'ResponseHandler' )->stop();
         return new HtmlResponse(
                 $this->content,
                 $this->parameters,
@@ -85,9 +80,14 @@ final class ResponseHandler
         return $this->parameters[ $key ] ?? null;
     }
 
-    public function document( bool $isPublic = false ) : DocumentService
+    public function document( ?bool $isPublic = null ) : DocumentService
     {
-        $this->getDocumentService()->isPublic = $isPublic;
+        $this->getDocumentService();
+
+        if ( $isPublic !== null ) {
+            $this->documentService->isPublic = $isPublic;
+        }
+
         return $this->documentService;
     }
 

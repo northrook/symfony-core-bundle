@@ -41,7 +41,7 @@ final class HtmlResponse extends Response
             array                             $headers = [],
     )
     {
-        Clerk::monitor( 'HtmlResponse', 'response' );
+        Clerk::event( 'HtmlResponse', 'response' );
         $this->isTemplate = $this->parameters !== null;
         parent::__construct( $content, $status, $headers );
     }
@@ -49,7 +49,7 @@ final class HtmlResponse extends Response
     public function prepare( Request $request ) : static
     {
         $this->render();
-        Clerk::monitor( 'HtmlResponse' )->stop();
+        Clerk::event( 'HtmlResponse' )->stop();
         return parent::prepare( $request );
     }
 

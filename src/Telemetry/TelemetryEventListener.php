@@ -40,11 +40,13 @@ final readonly class TelemetryEventListener implements EventSubscriberInterface
     public function onKernelController() : void
     {
         $this->monitor->event( 'onKernelController', $this::GROUP );
+        $this->monitor->stop( 'onKernelRequest', $this::GROUP );
     }
 
     public function onKernelControllerArguments() : void
     {
-        $this->monitor->event( 'onKernelControllerArguments', $this::GROUP );
+        $this->monitor->stop( 'onKernelController', $this::GROUP );
+        // $this->monitor->event( 'onKernelControllerArguments', $this::GROUP );
     }
 
     public function onKernelView() : void
@@ -59,6 +61,7 @@ final readonly class TelemetryEventListener implements EventSubscriberInterface
 
     public function onKernelFinishRequest() : void
     {
+        $this->monitor->stop( 'onKernelResponse', $this::GROUP );
         $this->monitor->event( 'onKernelFinishRequest', $this::GROUP );
     }
 

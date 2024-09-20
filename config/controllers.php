@@ -24,12 +24,7 @@ return static function( ContainerConfigurator $container ) : void
     $container->services()
               ->set( ResponseHandler::class )
               ->tag( 'controller.service_arguments' )
-              ->args(
-                      [
-                              service( CurrentRequest::class ),
-                              service_closure( DocumentService::class ),
-                      ],
-              );
+              ->args( [ service_closure( DocumentService::class ) ] );
 
     /**
      * Profiler Alias for `autowiring`

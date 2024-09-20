@@ -58,7 +58,6 @@ final class AdminController extends CoreController
             Profiler            $profiler,
     ) : Response
     {
-        Clerk::monitor( $route, 'controller' );
         $response->template( 'admin/dashboard.latte' );
 
         // $response = new RenderPayload(
@@ -69,6 +68,7 @@ final class AdminController extends CoreController
             return $response();
         }
 
+        Clerk::event( 'document meta', 'controller:document' );
         $response->document( true )
                  ->set(
                          'Admin',
@@ -80,12 +80,15 @@ final class AdminController extends CoreController
                 )->theme(
                         '#ff0000',
                         'light',
-                )
+                );
+
+        Clerk::event( 'document assets', 'controller:document' );
+        $response->document()
                  ->asset( Style::from( 'path.admin.stylesheet', 'core-styles' ) )
                  ->asset( Script::from( 'dir.assets/scripts/*.js', 'core-scripts' ) );
 
         $response->addParameter( 'navigation', memoize( fn() => $this->sidebarMenu(), 'admin-sidebar-menu', HOUR ) );
-
+        Clerk::stopGroup( 'controller:document' );
         return $response();
 
         // $this->document->title( 'testme' )->description( 'we describe things' );

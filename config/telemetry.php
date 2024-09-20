@@ -22,16 +22,6 @@ return static function( ContainerConfigurator $container ) : void
 
             // TelemetryEventListener
               ->set( Telemetry\TelemetryEventListener::class )
-              ->tag( 'kernel.event_subscriber' );
-
-    // $container
-    //         ->services()
-    //         ->set( SidebarMenu::class )
-    //         ->tag( 'controller.service_arguments' )
-    //         ->args(
-    //                 [
-    //                         service( CurrentRequest::class ),
-    //                 ],
-    //         )
-    // ;
+              ->tag( 'kernel.event_subscriber' )
+              ->args( [ service( Telemetry\Clerk::class ) ] );
 };
