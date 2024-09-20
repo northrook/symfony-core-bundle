@@ -20,4 +20,6 @@ use Symfony\Component\Stopwatch\StopwatchEvent;
 final class Stopwatch extends Facade
 {
     protected const string SERVICE = Symfony\Stopwatch::class;
+    
+    protected static Symfony\Stopwatch $service;
 }

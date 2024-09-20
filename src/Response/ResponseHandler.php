@@ -8,6 +8,9 @@ use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Service\Document\DocumentService;
 
 
+/**
+ * @phpstan-return HtmlResponse
+ */
 final class ResponseHandler
 {
     private readonly DocumentService $documentService;

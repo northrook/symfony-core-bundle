@@ -4,6 +4,9 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\DependencyInjection;
 
+/**
+ * @property mixed $service [static]
+ */
 abstract class Facade
 {
     /**
@@ -35,14 +38,17 @@ abstract class Facade
      */
     protected static function getService( ?string $className = null ) : mixed
     {
-        if (
-                \property_exists( static::class, 'service' )
-                &&
-                static::$service instanceof $className ?? static::SERVICE
-        ) {
-            dump( 'Static Facade' );
+        if ( \property_exists( static::class, 'service' ) ) {
+            return static::$service ??= ServiceContainer::get( $className ?? static::SERVICE );
         }
+        // if (
+        //         &&
+        //         static::$service instanceof $className ?? static::SERVICE
+        // ) {
+        //     dump( 'Static Facade' );
+        // }
 
+        dump( 'Dynamic Facade' );
         return ServiceContainer::get( $className ?? static::SERVICE );
     }
 

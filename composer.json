@@ -14,6 +14,9 @@
       "Northrook\\Symfony\\Core\\": "src/"
     }
   },
+  "scripts": {
+    "phpstan": "vendor/bin/phpstan -c phpstan.neon"
+  },
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
@@ -39,6 +42,7 @@
     "northrook/ui": "dev-main"
   },
   "require-dev": {
-    "roave/security-advisories": "dev-latest"
+    "roave/security-advisories": "dev-latest",
+    "phpstan/phpstan": "^1.12"
   }
 }

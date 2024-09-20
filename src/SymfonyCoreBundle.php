@@ -70,6 +70,7 @@ final class SymfonyCoreBundle extends AbstractBundle
     {
         // Settings and Env
         $container->import( '../config/application.php' );
+        $container->import( '../config/telemetry.php' );
 
         $services = $container->services();
 
