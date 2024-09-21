@@ -6,7 +6,7 @@ namespace Northrook\Symfony\Core\DependencyInjection;
 
 use Exception;
 use Northrook\Logger\Log;
-use Northrook\Symfony\Core\ErrorHandler\ErrorEventException;
+use Northrook\Symfony\Core\Exception\ErrorEventException;
 use Northrook\Symfony\Core\Facade\Request;
 use Northrook\Symfony\Core\Facade\URL;
 use Northrook\Symfony\Core\Service\CurrentRequest;

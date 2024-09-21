@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Event\TerminateEvent;
 /**
  * @author Martin Nielsen <mn@northrook.com>
  */
-final readonly class TelemetryEventListener implements EventSubscriberInterface
+final readonly class TelemetryEventSubscriber implements EventSubscriberInterface
 {
     const string GROUP = 'Clerk';
 

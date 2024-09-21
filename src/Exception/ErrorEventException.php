@@ -2,7 +2,7 @@
 
 declare( strict_types = 1 );
 
-namespace Northrook\Symfony\Core\ErrorHandler;
+namespace Northrook\Symfony\Core\Exception;
 
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;

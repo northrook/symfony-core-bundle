@@ -2,7 +2,7 @@
 
 declare( strict_types = 1 );
 
-namespace Northrook\Symfony\Core\EventSubscriber;
+namespace Northrook\Symfony\Core\Event;
 
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
