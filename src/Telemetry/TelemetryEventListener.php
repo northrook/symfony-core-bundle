@@ -6,6 +6,8 @@ namespace Northrook\Symfony\Core\Telemetry;
 
 use Northrook\Symfony\Core\Telemetry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Event\TerminateEvent;
 
 
@@ -34,40 +36,38 @@ final readonly class TelemetryEventListener implements EventSubscriberInterface
 
     public function onKernelRequest() : void
     {
-        $this->monitor->event( 'onKernelRequest', $this::GROUP );
+        // $this->monitor->event( 'onKernelRequest', $this::GROUP );
     }
 
     public function onKernelController() : void
     {
-        $this->monitor->event( 'onKernelController', $this::GROUP );
-        $this->monitor->stop( 'onKernelRequest', $this::GROUP );
+        // $this->monitor->event( 'onKernelController', $this::GROUP );
+        // $this->monitor->stopwatch->stop( 'onKernelRequest' );
     }
 
     public function onKernelControllerArguments() : void
     {
-        $this->monitor->stop( 'onKernelController', $this::GROUP );
-        // $this->monitor->event( 'onKernelControllerArguments', $this::GROUP );
+        // $this->monitor->stop( 'onKernelController' );
     }
 
     public function onKernelView() : void
     {
-        $this->monitor->event( 'onKernelView', $this::GROUP );
+        // $this->monitor->event( 'onKernelView', $this::GROUP );
     }
 
-    public function onKernelResponse() : void
+    public function onKernelResponse( ResponseEvent $event ) : void
     {
-        $this->monitor->event( 'onKernelResponse', $this::GROUP );
+        $this->monitor->event( $event::class, 'response' );
     }
 
     public function onKernelFinishRequest() : void
     {
-        $this->monitor->stop( 'onKernelResponse', $this::GROUP );
-        $this->monitor->event( 'onKernelFinishRequest', $this::GROUP );
+        $this->monitor::stopGroup( 'response' );
     }
 
-    public function onKernelException() : void
+    public function onKernelException( ExceptionEvent $event ) : void
     {
-        $this->monitor->event( 'onKernelException', $this::GROUP );
+        $this->monitor->event( $event::class, 'exception' );
     }
 
     public function onKernelTerminate( TerminateEvent $event ) : void

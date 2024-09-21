@@ -19,7 +19,7 @@ final class Clerk
     use SingletonClass;
 
 
-    private readonly ?Stopwatch $stopwatch;
+    public readonly ?Stopwatch $stopwatch;
 
     protected array $groups = [];
     protected array $events = [];

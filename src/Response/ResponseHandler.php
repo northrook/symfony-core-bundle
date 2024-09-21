@@ -22,12 +22,12 @@ final class ResponseHandler
      */
     public function __construct( private readonly \Closure $lazyDocumentService )
     {
-        Clerk::event( 'ResponseHandler', 'controller' );
+        Clerk::event( $this::class, 'controller' );
     }
 
     public function __invoke() : HtmlResponse
     {
-        Clerk::event( 'ResponseHandler' )->stop();
+        Clerk::stopGroup( 'controller' );
         return new HtmlResponse(
                 $this->content,
                 $this->parameters,
