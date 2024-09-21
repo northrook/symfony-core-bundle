@@ -4,7 +4,6 @@ namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Assets\Script;
 use Northrook\Assets\Style;
-use Northrook\Clerk;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
 use Northrook\Symfony\Core\Response\ResponseHandler;
 use Northrook\Symfony\Core\Security\Authentication;
@@ -67,7 +66,6 @@ final class AdminController extends CoreController
             return $response();
         }
 
-        Clerk::event( 'document meta', 'controller:document' );
         $response->document( true )
                  ->set(
                          'Admin',
@@ -81,7 +79,6 @@ final class AdminController extends CoreController
                         'light',
                 );
 
-        Clerk::event( 'document assets', 'controller:document' );
         $response->document()
                  ->asset( Style::from( 'path.admin.stylesheet', 'core-styles' ) )
                  ->asset( Script::from( 'dir.assets/scripts/*.js', 'core-scripts' ) );
