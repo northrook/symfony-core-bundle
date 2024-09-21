@@ -4,7 +4,7 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\Response;
 
-use Northrook\Symfony\Core\Telemetry\Clerk;
+use Northrook\Clerk;
 use Northrook\Symfony\Service\Document\DocumentService;
 
 
@@ -27,21 +27,19 @@ final class ResponseHandler
 
     public function __invoke() : HtmlResponse
     {
-        Clerk::stopGroup( 'controller' );
-        return new HtmlResponse(
+        $response = new HtmlResponse(
                 $this->content,
                 $this->parameters,
                 $this->documentService ?? null,
         );
+        Clerk::stopGroup( 'controller' );
+        return $response;
     }
 
     public function html( string $html, bool $override = false ) : self
     {
-        if ( $this->content && !$override ) {
-            throw new \LogicException( 'The content has already been set.', );
-        }
+        $this->assignContent( $html, $override, __METHOD__ );
 
-        $this->content = $html;
         return $this;
     }
 
@@ -49,11 +47,8 @@ final class ResponseHandler
 
     public function template( string $template, array | object $parameters = [], bool $override = false ) : self
     {
-        if ( $this->content && !$override ) {
-            throw new \LogicException( 'The template has already been set.', );
-        }
+        $this->assignContent( $template, $override, __METHOD__ );
 
-        $this->content    = $template;
         $this->parameters = $parameters;
         return $this;
     }
@@ -99,6 +94,15 @@ final class ResponseHandler
     private function getDocumentService() : DocumentService
     {
         return $this->documentService ??= ( $this->lazyDocumentService )();
+    }
+
+    private function assignContent( string $value, bool $override, string $__METHOD__ ) : void
+    {
+        if ( $this->content && !$override ) {
+            throw new \LogicException( 'The content has already been set.', );
+        }
+        Clerk::event( $__METHOD__, 'controller' );
+        $this->content = $value;
     }
 
 }

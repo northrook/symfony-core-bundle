@@ -4,7 +4,7 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\Telemetry;
 
-use Northrook\Symfony\Core\Telemetry;
+use Northrook\Clerk;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -18,7 +18,7 @@ final readonly class TelemetryEventListener implements EventSubscriberInterface
 {
     const string GROUP = 'Clerk';
 
-    public function __construct( private Telemetry\Clerk $monitor ) {}
+    public function __construct( private Clerk $monitor ) {}
 
     public static function getSubscribedEvents() : array
     {

@@ -4,13 +4,12 @@ namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Assets\Script;
 use Northrook\Assets\Style;
+use Northrook\Clerk;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
 use Northrook\Symfony\Core\Response\ResponseHandler;
-use Northrook\Symfony\Core\ResponseHandler\RenderPayload;
 use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Core\Service\StylesheetGenerator;
-use Northrook\Symfony\Core\Telemetry\Clerk;
 use Northrook\UI\Model\Menu;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -88,31 +87,7 @@ final class AdminController extends CoreController
                  ->asset( Script::from( 'dir.assets/scripts/*.js', 'core-scripts' ) );
 
         $response->addParameter( 'navigation', memoize( fn() => $this->sidebarMenu(), 'admin-sidebar-menu', HOUR ) );
-        Clerk::stopGroup( 'controller:document' );
         return $response();
-
-        // $this->document->title( 'testme' )->description( 'we describe things' );
-
-        // $this->document->robots( 'test', 'gooblebot')->robots( 'another', 'all');
-
-        // dump( $this->document->getMetaTags() );
-        // return $this->view( $route );
-
-        // return $this->response(
-        //         content    : $this->request->isHtmx ? $template : 'admin.latte',
-        //         parameters : [
-        //                              'template' => $template,
-        //                              'route'    => $route,
-        //                              // 'navigation' => $this->getNavigation(),
-        //                      ],
-        // );
-    }
-
-    public function dashboard() : RenderPayload
-    {
-        return new RenderPayload(
-                'admin/dashboard.latte',
-        );
     }
 
     public function api( string $action ) : Response

@@ -4,12 +4,12 @@ declare( strict_types = 1 );
 
 namespace Northrook\Symfony\Core\Response;
 
+use Northrook\Clerk;
 use Northrook\Get;
 use Northrook\Latte;
 use Northrook\Settings;
 use Northrook\Symfony\Core\DependencyInjection\ServiceContainer;
 use Northrook\Symfony\Core\Service\CurrentRequest;
-use Northrook\Symfony\Core\Telemetry\Clerk;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Northrook\Symfony\Service\Toasts\Message;
 use Northrook\UI\AssetHandler;
@@ -27,11 +27,11 @@ final class HtmlResponse extends Response
     public readonly bool $isTemplate;
 
     /**
-     * @param string                $content
-     * @param null | object|array   $parameters
-     * @param null|DocumentService  $documentService
-     * @param int                   $status
-     * @param array                 $headers
+     * @param string               $content
+     * @param null | object|array  $parameters
+     * @param ?DocumentService     $documentService
+     * @param int                  $status
+     * @param array                $headers
      */
     public function __construct(
             string                            $content,
@@ -74,6 +74,7 @@ final class HtmlResponse extends Response
             $this->content = $this->documentService->renderDocumentHtml(
                     $this->content, $notifications,
             );
+            Clerk::stopGroup( 'document' );
         }
         else {
             $this->content = $notifications . $this->content;

@@ -39,7 +39,8 @@
     "northrook/design-system": "dev-main",
     "northrook/memo": "dev-main",
     "northrook/settings": "dev-main",
-    "northrook/ui": "dev-main"
+    "northrook/ui": "dev-main",
+    "northrook/clerk": "dev-main"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
