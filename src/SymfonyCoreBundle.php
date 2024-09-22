@@ -21,7 +21,6 @@ use function Northrook\isCLI;
 use function Northrook\normalizePath;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
-
 // use Northrook\Symfony\Core\ErrorHandler\HttpExceptionListener;
 
 
@@ -35,17 +34,19 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 final class SymfonyCoreBundle extends AbstractBundle
 {
 
-    public function getPath() : string
-    {
-        return \dirname( __DIR__ );
-    }
-
     public function build( ContainerBuilder $container ) : void
     {
         $projectDir = $container->getParameter( 'kernel.project_dir' );
 
         // Remove Symfony default .yaml config, create .php config
-        $this->autoConfigure( "$projectDir/config" );
+        ( new ApplicationAutoConfiguration( $projectDir ) )
+                ->configurePreload()
+                ->createConfigServices()
+                ->removeDefaultRouteConfiguration()
+                // ->appControllerRouteConfiguration() // Should only run on-demand, as we may have no App/Controller present
+                ->coreControllerRoutes()
+                ->appKernel()
+                ->publicIndex();
 
         parent::build( $container );
 
@@ -71,6 +72,7 @@ final class SymfonyCoreBundle extends AbstractBundle
         // Settings and Env
         $container->import( '../config/application.php' );
         $container->import( '../config/telemetry.php' );
+        $container->import( '../config/controllers.php' );
 
         $services = $container->services();
 
@@ -118,7 +120,6 @@ final class SymfonyCoreBundle extends AbstractBundle
         $container->import( '../config/services.php' );
         $container->import( '../config/security.php' );
         $container->import( '../config/latte.php' );
-        $container->import( '../config/controllers.php' );
     }
 
     public function boot() : void
@@ -136,13 +137,12 @@ final class SymfonyCoreBundle extends AbstractBundle
         $this->container->get( Settings::class );
     }
 
-    private function autoConfigure( string $configDir ) : void
+    /**
+     * Gets the Bundle directory path.
+     */
+    public function getPath() : string
     {
-        ( new ApplicationAutoConfiguration( $configDir ) )
-                ->createConfigPreload()
-                ->createConfigRoutes()
-                ->createConfigServices()
-                ->createConfigControllerRoutes();
+        return \dirname( __DIR__ );
     }
 
 }

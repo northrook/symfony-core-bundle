@@ -16,7 +16,6 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
 use function Northrook\Cache\memoize;
 use const Cache\HOUR;
 
-
 // use Northrook\Symfony\Core\Components\Menu\Menu;
 // use Northrook\Symfony\Core\Components\Menu\Navigation;
 
@@ -43,9 +42,10 @@ final class AdminController extends CoreController
      *
      * ---
      *
-     * @param ?string                                              $route
-     * @param \Northrook\Symfony\Core\Service\StylesheetGenerator  $generator
-     * @param \Symfony\Component\HttpKernel\Profiler\Profiler      $profiler
+     * @param ?string              $route
+     * @param StylesheetGenerator  $generator
+     * @param ResponseHandler      $response
+     * @param Profiler             $profiler
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -57,11 +57,7 @@ final class AdminController extends CoreController
     ) : Response
     {
         $response->template( 'admin/dashboard.latte' );
-
-        // $response = new RenderPayload(
-        //         'admin/dashboard.latte',
-        // );
-
+        
         if ( $this->request->isHtmx ) {
             return $response();
         }

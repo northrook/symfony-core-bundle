@@ -15,7 +15,6 @@ namespace Northrook\Symfony\Core\DependencyInjection\CompilerPass;
 use Northrook\Symfony\Configurator\AutoConfigure;
 use Symfony\Component\Yaml\Yaml;
 
-
 final class ApplicationAutoConfiguration extends AutoConfigure
 {
     private const array ROUTES
@@ -38,17 +37,17 @@ final class ApplicationAutoConfiguration extends AutoConfigure
                     ],
             ];
 
-    public function createConfigControllerRoutes() : self
+    public function coreControllerRoutes() : self
     {
-        $this->createConfigFile( 'routes/core.yaml', Yaml::dump( $this::ROUTES ) );
+        $this->createFile( 'config/routes/core.yaml', Yaml::dump( $this::ROUTES ) );
 
         return $this;
     }
 
-    public function createConfigPreload() : self
+    public function configurePreload() : self
     {
-        $this->createConfigFile(
-                'preload.php',
+        $this->createFile(
+                'config/preload.php',
                 <<<PHP
                     <?php
                     
@@ -63,10 +62,16 @@ final class ApplicationAutoConfiguration extends AutoConfigure
         return $this;
     }
 
-    public function createConfigRoutes() : self
+    public function removeDefaultRouteConfiguration() : self
     {
-        $this->removeConfigFile( 'routes.yaml' );
-        $this->createConfigFile(
+        $this->removeFile( 'config/routes.yaml' );
+        return $this;
+    }
+
+    public function appControllerRouteConfiguration() : self
+    {
+        $this->removeFile( 'config/routes.yaml' );
+        $this->createFile(
                 'routes.php',
                 <<<PHP
                     <?php
@@ -92,40 +97,86 @@ final class ApplicationAutoConfiguration extends AutoConfigure
 
     public function createConfigServices() : self
     {
-        $this->removeConfigFile( 'services.yaml' );
-        $this->createConfigFile(
-                'services.php',
+        $this->removeFile( 'config/services.yaml' );
+        $this->createFile(
+                'config/services.php',
                 <<<PHP
-                <?php
-
-                declare( strict_types = 1 );
-
-                use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-
-                return static function ( ContainerConfigurator \$container ) : void {
-
-                    \$services = \$container->services();
-
-                    // Defaults for App services.
-                    \$services
-                        ->defaults()
-                        ->autowire()
-                        ->autoconfigure();
-
-                    \$services
-                        // Make classes in src/ available to be used as services.
-                        ->load( "App\\\\", __DIR__ . '/../src/' )
-                        // We do not want to autowire DI, ORM, or Kernel classes.
-                        ->exclude(
-                            [
-                                __DIR__ . '/../src/DependencyInjection/',
-                                __DIR__ . '/../src/Entity/',
-                                __DIR__ . '/../src/Kernel.php',
-                            ],
-                        );
-                };
-                PHP,
+                    <?php
+                    
+                    declare( strict_types = 1 );
+                    
+                    use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+                    
+                    return static function ( ContainerConfigurator \$container ) : void {
+                    
+                        \$services = \$container->services();
+                    
+                        // Defaults for App services.
+                        \$services
+                            ->defaults()
+                            ->autowire()
+                            ->autoconfigure();
+                    
+                        \$services
+                            // Make classes in src/ available to be used as services.
+                            ->load( "App\\\\", __DIR__ . '/../src/' )
+                            // We do not want to autowire DI, ORM, or Kernel classes.
+                            ->exclude(
+                                [
+                                    __DIR__ . '/../src/DependencyInjection/',
+                                    __DIR__ . '/../src/Entity/',
+                                    __DIR__ . '/../src/Kernel.php',
+                                ],
+                            );
+                    };
+                    PHP,
         );
         return $this;
     }
+
+    public function publicIndex() : self
+    {
+        $this->createFile(
+                'public/index.php',
+                <<<PHP
+                    <?php
+                    
+                    declare( strict_types = 1 );
+                    
+                    require_once \dirname( __DIR__ ) . '/vendor/autoload_runtime.php';
+                    
+                    return function( array \$context ) : \App\Kernel
+                    {
+                        return new \App\Kernel( \$context[ 'APP_ENV' ], (bool) \$context[ 'APP_DEBUG' ] );
+                    };
+                    PHP,
+        );
+
+        return $this;
+    }
+
+    public function appKernel() : self
+    {
+        $this->createFile(
+                'src/Kernel.php',
+                <<<PHP
+                    <?php
+                    
+                    declare( strict_types = 1 );
+                    
+                    namespace App;
+                    
+                    use Symfony\Bundle\FrameworkBundle\Kernel as FrameworkBundle;
+                    use Symfony\Component\HttpKernel\Kernel as HttpKernel;
+                    
+                    
+                    final class Kernel extends HttpKernel
+                    {
+                        use FrameworkBundle\MicroKernelTrait;
+                    }
+                    PHP,
+        );
+        return $this;
+    }
+
 }
