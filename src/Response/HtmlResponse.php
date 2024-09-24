@@ -9,17 +9,20 @@ use Northrook\Get;
 use Northrook\Latte;
 use Northrook\Settings;
 use Northrook\Symfony\Core\DependencyInjection\ServiceContainer;
+use Northrook\Symfony\Core\Response\ResponseHandler\AssetHandler;
 use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Northrook\Symfony\Service\Toasts\Message;
-use Northrook\UI\AssetHandler;
 use Northrook\UI\Component\Notification;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use function Northrook\toString;
 use const Northrook\EMPTY_STRING;
 
-
+/**
+ * @internal
+ * @author Martin Nielsen <mn@northrook.com>
+ */
 final class HtmlResponse extends Response
 {
 
@@ -30,6 +33,7 @@ final class HtmlResponse extends Response
      * @param string               $content
      * @param null | object|array  $parameters
      * @param ?DocumentService     $documentService
+     * @param ?AssetHandler        $assetHandler
      * @param int                  $status
      * @param array                $headers
      */
@@ -37,6 +41,7 @@ final class HtmlResponse extends Response
             string                            $content,
             private null | array | object     $parameters = [],
             private readonly ?DocumentService $documentService = null,
+            private readonly ?AssetHandler    $assetHandler = null,
             int                               $status = Response::HTTP_OK,
             array                             $headers = [],
     )
@@ -144,10 +149,10 @@ final class HtmlResponse extends Response
 
     private function assetHandler() : void
     {
-        $runtimeAssets = ( new AssetHandler( Get::path( 'dir.assets' ) ) )->getComponentAssets();
+        $runtimeAssets = ( new \Northrook\UI\AssetHandler( Get::path( 'dir.assets' ) ) )->getComponentAssets();
 
         if ( $this->documentService ) {
-            $this->documentService->asset( $runtimeAssets );
+            $this->documentService->asset( $runtimeAssets, minify : $this->assetHandler->minify );
             return;
         }
 

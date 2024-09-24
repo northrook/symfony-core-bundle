@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-
 /**
  * @property-read Http\Request $current
  * @property-read string       $routeName
@@ -26,13 +25,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 final readonly class CurrentRequest
 {
     use PropertyAccessor;
-
-
-    private string $requestType;
-    private string $routeName;
-    private string $route;
-    private string $controller;
-
+    
     /**
      * Assigns the current {@see Http\Request} from the {@see Http\RequestStack}, to {@see CurrentRequest::$current}.
      *
@@ -176,12 +169,14 @@ final readonly class CurrentRequest
      */
     private function type( ?string $is = null ) : bool | string
     {
-        $this->requestType
+        static $requestType;
+
+        $requestType
                 ??= $this->headerBag( get : 'hx-request' )
                     ?? $this->headerBag( get : 'content-type' )
                        ?? 'text/html; charset=utf-8';
 
-        return $is ? $is === $this->requestType : $this->requestType;
+        return $is ? $is === $requestType : $requestType;
     }
 
     /**
@@ -191,7 +186,8 @@ final readonly class CurrentRequest
      */
     private function route() : string
     {
-        return $this->route ??= $this->currentRequest()->attributes->get( 'route' ) ?? '';
+        static $route;
+        return $route ??= $this->currentRequest()->attributes->get( 'route' ) ?? '';
     }
 
     /**
@@ -201,7 +197,8 @@ final readonly class CurrentRequest
      */
     private function routeName() : string
     {
-        return $this->routeName ??= $this->currentRequest()->get( '_route' ) ?? '';
+        static $routeName;
+        return $routeName ??= $this->currentRequest()->get( '_route' ) ?? '';
     }
 
     /**
@@ -221,7 +218,8 @@ final readonly class CurrentRequest
      */
     private function requestController() : string
     {
-        return $this->controller ??= ( \is_array( $controller = $this->parameter( '_controller' ) ) )
+        static $controller;
+        return $controller ??= ( \is_array( $controller = $this->parameter( '_controller' ) ) )
                 ? \implode( '::', $controller )
                 : $controller;
     }

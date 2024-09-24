@@ -5,8 +5,8 @@ declare( strict_types = 1 );
 namespace Northrook\Symfony\Core\Response;
 
 use Northrook\Clerk;
+use Northrook\Symfony\Core\Response\ResponseHandler\AssetHandler;
 use Northrook\Symfony\Service\Document\DocumentService;
-
 
 /**
  * @phpstan-return HtmlResponse
@@ -20,7 +20,10 @@ final class ResponseHandler
     /**
      * @param \Closure<DocumentService>  $lazyDocumentService
      */
-    public function __construct( private readonly \Closure $lazyDocumentService )
+    public function __construct(
+            public readonly AssetHandler $assetHandler,
+            private readonly \Closure    $lazyDocumentService,
+    )
     {
         Clerk::event( $this::class, 'controller' );
     }

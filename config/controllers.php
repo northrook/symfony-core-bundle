@@ -18,13 +18,17 @@ use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Service\Document\DocumentService;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 
-
 return static function( ContainerConfigurator $container ) : void
 {
     $container->services()
               ->set( ResponseHandler::class )
               ->tag( 'controller.service_arguments' )
-              ->args( [ service_closure( DocumentService::class ) ] );
+              ->args(
+                      [
+                              service( ResponseHandler\AssetHandler::class ),
+                              service_closure( DocumentService::class ),
+                      ],
+              );
 
     /**
      * Profiler Alias for `autowiring`
