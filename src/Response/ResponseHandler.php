@@ -34,6 +34,7 @@ final class ResponseHandler
                 $this->content,
                 $this->parameters,
                 $this->documentService ?? null,
+                $this->assetHandler,
         );
         Clerk::stopGroup( 'controller' );
         return $response;

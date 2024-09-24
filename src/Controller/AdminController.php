@@ -5,6 +5,7 @@ namespace Northrook\Symfony\Core\Controller;
 use Northrook\Assets\Script;
 use Northrook\Assets\Style;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
+use Northrook\Symfony\Core\Facade\Toast;
 use Northrook\Symfony\Core\Response\ResponseHandler;
 use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\CurrentRequest;
@@ -57,10 +58,19 @@ final class AdminController extends CoreController
     ) : Response
     {
         $response->template( 'admin/dashboard.latte' );
-        
+
         if ( $this->request->isHtmx ) {
             return $response();
         }
+
+        if ( $generator->admin->save(
+                force : true,
+        ) ) {
+            Toast::info( 'Admin Stylesheet updated.' );
+            Toast::warning( 'Admin Stylesheet updated?!' );
+            Toast::error( 'Admin Stylesheet updated!!' );
+            Toast::notice( 'Admin Stylesheet updated. 😏' );
+        };
 
         $response->document( true )
                  ->set(

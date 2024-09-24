@@ -101,7 +101,8 @@ final class HtmlResponse extends Response
 
         $layout = \strstr( $this->content, '/', true );
 
-        $this->documentService->document->add( 'body.id', $layout );
+        $this->documentService->document->add( 'body.id', $layout )
+                                        ->add( 'body.data-route', $this->request()->route );
 
         $this->parameters[ 'template' ] = $this->content;
         $this->parameters[ 'document' ] = $this->documentService;
@@ -136,7 +137,7 @@ final class HtmlResponse extends Response
                     $notification->attributes->add( 'class', 'compact' );
                 }
 
-                if ( !$notification->timeout && $notification->type !== 'danger' ) {
+                if ( !$notification->timeout && $notification->type !== 'error' ) {
                     $notification->setTimeout( Settings::get( 'notification.timeout' ) ?? 5000 );
                 }
 
