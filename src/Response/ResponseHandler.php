@@ -7,8 +7,7 @@ namespace Northrook\Symfony\Core\Response;
 use Closure;
 use LogicException;
 use Northrook\Clerk;
-use Northrook\Symfony\Document;
-use Northrook\Symfony\Service\DocumentService;
+use Northrook\Symfony\Service\{Document, DocumentService};
 use Northrook\Trait\PropertyAccessor;
 
 /**

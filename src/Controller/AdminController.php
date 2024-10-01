@@ -7,7 +7,7 @@ use Northrook\Symfony\Core\Facade\Toast;
 use Northrook\Symfony\Core\Response\ResponseHandler;
 use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\{CurrentRequest, StylesheetGenerator};
-use Northrook\Symfony\Document;
+use Northrook\Symfony\Service\Document;
 use Northrook\UI\Model\Menu;
 use Symfony\Component\HttpFoundation\{JsonResponse, Response};
 use Symfony\Component\HttpKernel\Profiler\Profiler;
