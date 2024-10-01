@@ -1,40 +1,52 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Northrook\Symfony\Core\Response;
 
+use Closure;
+use LogicException;
 use Northrook\Clerk;
-use Northrook\Symfony\Core\Response\ResponseHandler\AssetHandler;
-use Northrook\Symfony\Service\Document\DocumentService;
+use Northrook\Symfony\Document;
+use Northrook\Symfony\Service\DocumentService;
+use Northrook\Trait\PropertyAccessor;
 
 /**
+ * @property-read Document $document
+ *
  * @phpstan-return HtmlResponse
  */
 final class ResponseHandler
 {
-    private ?DocumentService      $documentService;
-    private null | string         $content    = null;
-    private null | array | object $parameters = null;
+    use PropertyAccessor;
+
+    private ?DocumentService $documentService;
+
+    private ?string $content = null;
+
+    private null|array|object $parameters = null;
 
     /**
-     * @param \Closure<DocumentService>  $lazyDocumentService
+     * @param Closure $lazyDocumentService
      */
     public function __construct(
-            public readonly AssetHandler $assetHandler,
-            private readonly \Closure    $lazyDocumentService,
-    )
-    {
+        private readonly Closure $lazyDocumentService,
+    ) {
         Clerk::event( $this::class, 'controller' );
     }
 
-    public function __invoke() : HtmlResponse
+    /**
+     * @param ?string $content
+     *
+     * @return HtmlResponse
+     */
+    public function __invoke( ?string $content = null ) : HtmlResponse
     {
+        $content ??= $this->content;
         $response = new HtmlResponse(
-                $this->content,
-                $this->parameters,
-                $this->documentService ?? null,
-                $this->assetHandler,
+            $content,
+            $this->parameters,
+            $this->documentService ?? null,
         );
         Clerk::stopGroup( 'controller' );
         return $response;
@@ -49,7 +61,7 @@ final class ResponseHandler
 
     // ::: Templating
 
-    public function template( string $template, array | object $parameters = [], bool $override = false ) : self
+    public function template( string $template, array|object $parameters = [], bool $override = false ) : self
     {
         $this->assignContent( $template, $override, __METHOD__ );
 
@@ -59,13 +71,13 @@ final class ResponseHandler
 
     public function addParameter( string $key, $value ) : self
     {
-        $this->parameters[ $key ] ??= $value;
+        $this->parameters[$key] ??= $value;
         return $this;
     }
 
     public function setParameter( string $key, $value ) : self
     {
-        $this->parameters[ $key ] = $value;
+        $this->parameters[$key] = $value;
         return $this;
     }
 
@@ -76,18 +88,7 @@ final class ResponseHandler
 
     public function getParameter( string $key ) : mixed
     {
-        return $this->parameters[ $key ] ?? null;
-    }
-
-    public function document( ?bool $isPublic = null ) : DocumentService
-    {
-        $this->getDocumentService();
-
-        if ( $isPublic !== null ) {
-            $this->documentService->isPublic = $isPublic;
-        }
-
-        return $this->documentService;
+        return $this->parameters[$key] ?? null;
     }
 
     /**
@@ -102,11 +103,15 @@ final class ResponseHandler
 
     private function assignContent( string $value, bool $override, string $__METHOD__ ) : void
     {
-        if ( $this->content && !$override ) {
-            throw new \LogicException( 'The content has already been set.', );
+        if ( $this->content && ! $override ) {
+            throw new LogicException( 'The content has already been set.' );
         }
         Clerk::event( $__METHOD__, 'controller' );
         $this->content = $value;
     }
 
+    public function __get( string $property )
+    {
+        // TODO: Implement __get() method.
+    }
 }

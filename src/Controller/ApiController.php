@@ -4,11 +4,11 @@ namespace Northrook\Symfony\Core\Controller;
 
 use Northrook\Get;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
+use Northrook\Symfony\Core\Facade\Toast;
 use Northrook\Symfony\Core\Service\CurrentRequest;
 use Northrook\Symfony\Core\Service\StylesheetGenerator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-
 
 final class ApiController extends CoreController
 {
@@ -29,8 +29,7 @@ final class ApiController extends CoreController
         $path = Get::path( 'dir.cache/styles/styles.css', true );
 
         if ( !$path->exists ) {
-            $this->addFlash(
-                    'error',
+            Toast::error(
                     'No stylesheet generated',
                     'The save path is not valid. See the logs for more information.',
             );

@@ -4,55 +4,49 @@
    config/assets
 /-------------------------------------------------------------------*/
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Northrook\Symfony\Core\Response\ResponseHandler\AssetHandler;
-use Northrook\Symfony\Core\Service\DesignSystemService;
-use Northrook\Symfony\Core\Service\StylesheetGenerator;
-use function Northrook\normalizePath;
+use Northrook\Symfony\Core\Service\{DesignSystemService, StylesheetGenerator};
+use Support\Normalize;
 
 // use Northrook\UI\AssetHandler;
 
-return static function( ContainerConfigurator $container ) : void
-{
+return static function( ContainerConfigurator $container ) : void {
     $container->parameters()
-              ->set(
-                      'dir.asset.storage',
-                      normalizePath( '%dir.var%/assets' ),
-              )
-              ->set(
-                      'path.public.stylesheet',
-                      normalizePath( '%dir.assets%/stylesheet.css' ),
-              )
-              ->set(
-                      'path.admin.stylesheet',
-                      normalizePath( '%dir.assets%/admin.css' ),
-              );
+        ->set(
+            'dir.asset.storage',
+            Normalize::path( '%dir.var%/assets' ),
+        )
+        ->set(
+            'path.public.stylesheet',
+            Normalize::path( '%dir.assets%/stylesheet.css' ),
+        )
+        ->set(
+            'path.admin.stylesheet',
+            Normalize::path( '%dir.assets%/admin.css' ),
+        );
 
     $container->services()
 
-            // response/AssetHandler
-              ->set( AssetHandler::class )
-
             // service/designSystem
-              ->set( DesignSystemService::class )
-              ->tag( 'controller.service_arguments' )
-              ->args( [ service( 'logger' )->nullOnInvalid() ] )
-            /** # {}
-             * Stylesheet Service
-             *
-             * `service/stylesheetGenerator`
-             */
-              ->set( StylesheetGenerator::class )
-              ->tag( 'controller.service_arguments' )
-              ->args(
-                      [
-                              service( DesignSystemService::class ),
-                              service( 'logger' )->nullOnInvalid(),
-                      ],
-              );
+        ->set( DesignSystemService::class )
+        ->tag( 'controller.service_arguments' )
+        ->args( [service( 'logger' )->nullOnInvalid()] )
+        /** # {}
+         * Stylesheet Service.
+         *
+         * `service/stylesheetGenerator`
+         */
+        ->set( StylesheetGenerator::class )
+        ->tag( 'controller.service_arguments' )
+        ->args(
+            [
+                service( DesignSystemService::class ),
+                service( 'logger' )->nullOnInvalid(),
+            ],
+        );
 
     // northrook/assets
     //       ->set( AssetManager::class )

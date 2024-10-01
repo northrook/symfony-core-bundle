@@ -10,50 +10,49 @@ use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
- * @property-read Http\Request $current
- * @property-read string       $routeName
- * @property-read string       $routeRoot
- * @property-read string       $pathInfo
- * @property-read string       $route
- * @property-read string       $method
- * @property-read string       $type
- * @property-read string       $controller
- * @property-read bool         $isHtmx
- * @property-read bool         $isJson
- * @property-read bool         $isHtml
+ * @property Request $current
+ * @property string  $routeName
+ * @property string  $routeRoot
+ * @property string  $pathInfo
+ * @property string  $route
+ * @property string  $method
+ * @property string  $type
+ * @property string  $controller
+ * @property bool    $isHtmx
+ * @property bool    $isJson
+ * @property bool    $isHtml
  */
 final readonly class CurrentRequest
 {
     use PropertyAccessor;
-    
+
     /**
-     * Assigns the current {@see Http\Request} from the {@see Http\RequestStack}, to {@see CurrentRequest::$current}.
+     * Assigns the current {@see Request} from the {@see Http\RequestStack}, to {@see CurrentRequest::$current}.
      *
-     * If no {@see request} is found, one will be created from {@see $GLOBALS}, and pushed onto the empty {@see stack}
+     * If no {@see Request} is found, one will be created from {@see $GLOBALS}, and pushed onto the empty {@see stack}
      *
-     * @param Http\RequestStack    $stack
-     * @param HttpKernelInterface  $kernel
+     * @param Http\RequestStack   $stack
+     * @param HttpKernelInterface $kernel
      */
     public function __construct(
-            public Http\RequestStack    $stack,
-            private HttpKernelInterface $kernel,
-    )
-    {
-        if ( !$this->stack->getCurrentRequest() ) {
-            $this->stack->push( Http\Request::createFromGlobals() );
+        public Http\RequestStack $stack,
+        private HttpKernelInterface $kernel,
+    ) {
+        if ( ! $this->stack->getCurrentRequest() ) {
+            $this->stack->push( Request::createFromGlobals() );
         }
     }
 
     /**
      * Retrieves various values.
      *
-     * - The call is cached either in this {@see $this::class}, or natively in the Symfony {@see Http\Request}.
+     * - The call is cached either in this {@see $this::class}, or natively in the Symfony {@see Request}.
      *
-     * @param string  $property
+     * @param string $property
      *
-     * @return string|bool
+     * @return bool|string
      */
-    public function __get( string $property ) : string | bool
+    public function __get( string $property ) : string|bool
     {
         return match ( $property ) {
             'current'    => $this->currentRequest(),
@@ -71,24 +70,24 @@ final readonly class CurrentRequest
     }
 
     /**
-     * Public access via magic {@see CurrentRequest::$current};
+     * Public access via magic {@see CurrentRequest::$current};.
      *
      * @return Request
      */
-    private function currentRequest() : Http\Request
+    private function currentRequest() : Request
     {
         return $this->stack->getCurrentRequest();
     }
 
     /**
-     * @param ?string  $get  {@see Http\HeaderBag::get} Returns null if the header is not set
-     * @param ?string  $has  {@see Http\HeaderBag::has} Checks if the headerBag contains the header
+     * @param ?string $get {@see Http\HeaderBag::get} Returns null if the header is not set
+     * @param ?string $has {@see Http\HeaderBag::has} Checks if the headerBag contains the header
      *
-     * @return null|Http\HeaderBag|string|bool
+     * @return null|bool|Http\HeaderBag|string
      */
-    public function headerBag( ?string $get = null, ?string $has = null ) : Http\HeaderBag | string | bool | null
+    public function headerBag( ?string $get = null, ?string $has = null ) : Http\HeaderBag|string|bool|null
     {
-        if ( !$get && !$has ) {
+        if ( ! $get && ! $has ) {
             return $this->currentRequest()->headers;
         }
 
@@ -96,7 +95,7 @@ final readonly class CurrentRequest
     }
 
     /**
-     * @param ?string  $get  {@see  SessionInterface::get}
+     * @param ?string $get {@see  SessionInterface::get}
      *
      * @return FlashBagAwareSessionInterface|mixed
      */
@@ -106,44 +105,41 @@ final readonly class CurrentRequest
             return $get ? $this->currentRequest()->getSession()->get( $get ) : $this->currentRequest()->getSession();
         }
         catch ( Http\Exception\SessionNotFoundException $exception ) {
-            throw new Http\Exception\LogicException(
-                    message  : 'Sessions are disabled. Enable them in "config/packages/framework".',
-                    previous : $exception,
-            );
+            throw new Http\Exception\LogicException( message  : 'Sessions are disabled. Enable them in "config/packages/framework".', previous : $exception);
         }
     }
 
     /**
-     * @param  ?string  $get  {@see Http\Request::get}
+     * @param ?string $get {@see Http\Request::get}
      *
-     * @return Http\ParameterBag|array|string|int|bool|float|null
+     * @return null|array|bool|float|Http\ParameterBag|int|string
      */
-    public function parameter( ?string $get = null ) : Http\ParameterBag | array | string | int | bool | float | null
+    public function parameter( ?string $get = null ) : Http\ParameterBag|array|string|int|bool|float|null
     {
         return $get ? $this->currentRequest()->get( $get ) : $this->currentRequest()->attributes;
     }
 
-    public function attributes( ?string $get = null ) : Http\ParameterBag | array | string | int | bool | float | null
+    public function attributes( ?string $get = null ) : Http\ParameterBag|array|string|int|bool|float|null
     {
         return $get ? $this->currentRequest()->attributes->get( $get ) : $this->currentRequest()->attributes;
     }
 
     /**
-     * @param ?string  $get  {@see  InputBag::get}
+     * @param ?string $get {@see  InputBag::get}
      *
-     * @return Http\InputBag|string|int|float|bool|null
+     * @return null|bool|float|Http\InputBag|int|string
      */
-    public function query( ?string $get = null ) : Http\InputBag | string | int | float | bool | null
+    public function query( ?string $get = null ) : Http\InputBag|string|int|float|bool|null
     {
         return $get ? $this->currentRequest()->query->get( $get ) : $this->currentRequest()->query;
     }
 
     /**
-     * @param ?string  $get  {@see Http\InputBag::get}
+     * @param ?string $get {@see Http\InputBag::get}
      *
-     * @return Http\InputBag|string|int|float|bool|null
+     * @return null|bool|float|Http\InputBag|int|string
      */
-    public function cookies( ?string $get = null ) : Http\InputBag | string | int | float | bool | null
+    public function cookies( ?string $get = null ) : Http\InputBag|string|int|float|bool|null
     {
         return $get ? $this->currentRequest()->cookies->get( $get ) : $this->currentRequest()->cookies;
     }
@@ -163,24 +159,24 @@ final readonly class CurrentRequest
      *
      * - Pass `null` to return the current requestType as string
      *
-     * @param ?string  $is
+     * @param ?string $is
      *
      * @return bool|string
      */
-    private function type( ?string $is = null ) : bool | string
+    private function type( ?string $is = null ) : bool|string
     {
         static $requestType;
 
         $requestType
                 ??= $this->headerBag( get : 'hx-request' )
-                    ?? $this->headerBag( get : 'content-type' )
+                       ?? $this->headerBag( get : 'content-type' )
                        ?? 'text/html; charset=utf-8';
 
         return $is ? $is === $requestType : $requestType;
     }
 
     /**
-     * Resolve and cache the current route key
+     * Resolve and cache the current route key.
      *
      * @return string
      */
@@ -191,7 +187,7 @@ final readonly class CurrentRequest
     }
 
     /**
-     * Resolve and cache the current route name
+     * Resolve and cache the current route name.
      *
      * @return string
      */
@@ -202,7 +198,7 @@ final readonly class CurrentRequest
     }
 
     /**
-     * Resolve and cache the current route root name
+     * Resolve and cache the current route root name.
      *
      * @return string
      */
@@ -223,5 +219,4 @@ final readonly class CurrentRequest
                 ? \implode( '::', $controller )
                 : $controller;
     }
-
 }

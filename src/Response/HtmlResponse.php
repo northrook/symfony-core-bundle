@@ -1,23 +1,18 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Northrook\Symfony\Core\Response;
 
-use Northrook\Clerk;
-use Northrook\Get;
-use Northrook\Latte;
-use Northrook\Settings;
+use Northrook\{Clerk, Get, Latte, Settings};
 use Northrook\Symfony\Core\DependencyInjection\ServiceContainer;
-use Northrook\Symfony\Core\Response\ResponseHandler\AssetHandler;
 use Northrook\Symfony\Core\Service\CurrentRequest;
-use Northrook\Symfony\Service\Document\DocumentService;
+use Northrook\Symfony\Service\DocumentService;
 use Northrook\Symfony\Service\Toasts\Message;
 use Northrook\UI\Component\Notification;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use function Northrook\toString;
-use const Northrook\EMPTY_STRING;
+use Symfony\Component\HttpFoundation\{Request, Response};
+use function Support\toString;
+use const Support\EMPTY_STRING;
 
 /**
  * @internal
@@ -25,29 +20,26 @@ use const Northrook\EMPTY_STRING;
  */
 final class HtmlResponse extends Response
 {
+    private bool $isRendered = false;
 
-    private bool         $isRendered = false;
     public readonly bool $isTemplate;
 
     /**
-     * @param string               $content
-     * @param null | object|array  $parameters
-     * @param ?DocumentService     $documentService
-     * @param ?AssetHandler        $assetHandler
-     * @param int                  $status
-     * @param array                $headers
+     * @param string            $content
+     * @param null|array|object $parameters
+     * @param ?DocumentService  $documentService
+     * @param int               $status
+     * @param array             $headers
      */
     public function __construct(
-            string                            $content,
-            private null | array | object     $parameters = [],
-            private readonly ?DocumentService $documentService = null,
-            private readonly ?AssetHandler    $assetHandler = null,
-            int                               $status = Response::HTTP_OK,
-            array                             $headers = [],
-    )
-    {
+        string                            $content,
+        private null|array|object         $parameters = [],
+        private readonly ?DocumentService $documentService = null,
+        int                               $status = Response::HTTP_OK,
+        array                             $headers = [],
+    ) {
         Clerk::event( $this::class, 'response' );
-        $this->isTemplate = $this->parameters !== null;
+        $this->isTemplate = null !== $this->parameters;
         parent::__construct( $content, $status, $headers );
     }
 
@@ -65,7 +57,7 @@ final class HtmlResponse extends Response
 
     public function render() : void
     {
-        if ( $this->isRendered || $this->isTemplate === false ) {
+        if ( $this->isRendered || false === $this->isTemplate ) {
             return;
         }
 
@@ -77,12 +69,13 @@ final class HtmlResponse extends Response
 
         if ( $this->documentService ) {
             $this->content = $this->documentService->renderDocumentHtml(
-                    $this->content, $notifications,
+                $this->content,
+                $notifications,
             );
             Clerk::stopGroup( 'document' );
         }
         else {
-            $this->content = $notifications . $this->content;
+            $this->content = $notifications.$this->content;
         }
 
         $this->isRendered = true;
@@ -92,24 +85,24 @@ final class HtmlResponse extends Response
     {
         $latte = $this->latteEnvironment();
 
-        if ( !$this->documentService ) {
+        if ( ! $this->documentService ) {
             return $latte->render(
-                    template   : $this->content,
-                    parameters : $this->parameters,
+                template   : $this->content,
+                parameters : $this->parameters,
             );
         }
 
         $layout = \strstr( $this->content, '/', true );
 
-        $this->documentService->document->add( 'body.id', $layout )
-                                        ->add( 'body.data-route', $this->request()->route );
+        $this->documentService->properties->add( 'body.id', $layout )
+            ->add( 'body.data-route', $this->request()->route );
 
-        $this->parameters[ 'template' ] = $this->content;
-        $this->parameters[ 'document' ] = $this->documentService;
+        $this->parameters['template'] = $this->content;
+        $this->parameters['document'] = $this->documentService;
 
         return $latte->render(
-                template   : "$layout.latte",
-                parameters : $this->parameters,
+            template   : "{$layout}.latte",
+            parameters : $this->parameters,
         );
     }
 
@@ -121,24 +114,24 @@ final class HtmlResponse extends Response
         foreach ( $flashes as $type => $flash ) {
             foreach ( $flash as $toast ) {
                 $notification = match ( $toast instanceof Message ) {
-                    true  => new Notification(
-                            $toast->type,
-                            $toast->message,
-                            $toast->description,
-                            $toast->timeout,
+                    true => new Notification(
+                        $toast->type,
+                        $toast->message,
+                        $toast->description,
+                        $toast->timeout,
                     ),
                     false => new Notification(
-                            $type,
-                            toString( $toast ),
+                        $type,
+                        toString( $toast ),
                     ),
                 };
 
-                if ( !$notification->description ) {
+                if ( ! $notification->description ) {
                     $notification->attributes->add( 'class', 'compact' );
                 }
 
-                if ( !$notification->timeout && $notification->type !== 'error' ) {
-                    $notification->setTimeout( Settings::get( 'notification.timeout' ) ?? 5000 );
+                if ( ! $notification->timeout && 'error' !== $notification->type ) {
+                    $notification->setTimeout( Settings::get( 'notification.timeout' ) ?? 5_000 );
                 }
 
                 $notifications .= $notification;
@@ -164,7 +157,7 @@ final class HtmlResponse extends Response
                 $assets .= $asset->getInlineHtml( true );
             }
 
-            $this->content = $assets . $this->content;
+            $this->content = $assets.$this->content;
         }
     }
 
@@ -189,5 +182,4 @@ final class HtmlResponse extends Response
     {
         return ServiceContainer::get( CurrentRequest::class );
     }
-
 }

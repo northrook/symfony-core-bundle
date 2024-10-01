@@ -1,91 +1,82 @@
 <?php
 
-//------------------------------------------------------------------
+// ------------------------------------------------------------------
 // config / Controllers
-//------------------------------------------------------------------
+// ------------------------------------------------------------------
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Northrook\Symfony\Core\Controller\AdminController;
-use Northrook\Symfony\Core\Controller\ApiController;
-use Northrook\Symfony\Core\Controller\PublicController;
-use Northrook\Symfony\Core\Controller\SecurityController;
+use Northrook\Symfony\Core\Controller\{AdminController, ApiController, PublicController, SecurityController};
 use Northrook\Symfony\Core\Response\ResponseHandler;
 use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\CurrentRequest;
-use Northrook\Symfony\Service\Document\DocumentService;
+use Northrook\Symfony\Service\DocumentService;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 
-return static function( ContainerConfigurator $container ) : void
-{
+return static function( ContainerConfigurator $container ) : void {
     $container->services()
-              ->set( ResponseHandler::class )
-              ->tag( 'controller.service_arguments' )
-              ->args(
-                      [
-                              service( ResponseHandler\AssetHandler::class ),
-                              service_closure( DocumentService::class ),
-                      ],
-              );
+        ->set( ResponseHandler::class )
+        ->tag( 'controller.service_arguments' )
+        ->args( [service_closure( DocumentService::class )] );
 
     /**
-     * Profiler Alias for `autowiring`
+     * Profiler Alias for `autowiring`.
      */
     $container->services()->alias( Profiler::class, 'profiler' );
 
     $controllers = $container
-            ->services()
-            ->defaults()
-            ->autoconfigure();
+        ->services()
+        ->defaults()
+        ->autoconfigure();
 
     /**
-     * Core `Public` Controller
+     * Core `Public` Controller.
      */
     $controllers
-            ->set( 'core.controller.public', PublicController::class )
-            ->tag( 'controller.service_arguments' )
-            ->args(
-                    [
-                            service( CurrentRequest::class ),
-                            service( Authentication::class ),
-                    ],
-            );
+        ->set( 'core.controller.public', PublicController::class )
+        ->tag( 'controller.service_arguments' )
+        ->args(
+            [
+                service( CurrentRequest::class ),
+                service( Authentication::class ),
+            ],
+        );
 
     /**
-     * Core `Admin` Controller
+     * Core `Admin` Controller.
      */
     $controllers
-            ->set( 'core.controller.admin', AdminController::class )
-            ->tag( 'controller.service_arguments' )
-            ->args(
-                    [
-                            service( CurrentRequest::class ),
-                            service( Authentication::class ),
-                    ],
-            );
+        ->set( 'core.controller.admin', AdminController::class )
+        ->tag( 'controller.service_arguments' )
+        ->args(
+            [
+                service( CurrentRequest::class ),
+                service( Authentication::class ),
+            ],
+        );
 
     /**
-     * Core `Security` Controller
+     * Core `Security` Controller.
      */
     $controllers
-            ->set( 'core.controller.security', SecurityController::class )
-            ->tag( 'controller.service_arguments' )
-            ->args(
-                    [
-                            service( CurrentRequest::class ),
-                    ],
-            );
+        ->set( 'core.controller.security', SecurityController::class )
+        ->tag( 'controller.service_arguments' )
+        ->args(
+            [
+                service( CurrentRequest::class ),
+            ],
+        );
     /**
-     * Core `API` Controller
+     * Core `API` Controller.
      */
     $controllers
-            ->set( 'core.controller.api', ApiController::class )
-            ->tag( 'controller.service_arguments' )
-            ->args(
-                    [
-                            service( CurrentRequest::class ),
-                    ],
-            );
+        ->set( 'core.controller.api', ApiController::class )
+        ->tag( 'controller.service_arguments' )
+        ->args(
+            [
+                service( CurrentRequest::class ),
+            ],
+        );
 };

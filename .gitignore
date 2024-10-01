@@ -12,11 +12,10 @@
 # Build data
 .env
 *.lock
-/assets/
-/public/
-/var/
-/build/
-/*.php
+/assets
+/public
+/var
+/build
 
 # Node
 /node_modules/

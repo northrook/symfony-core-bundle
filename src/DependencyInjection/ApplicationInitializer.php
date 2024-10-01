@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Northrook\Symfony\Core\DependencyInjection;
 
@@ -10,10 +10,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 
-
 /**
- *
- *
  * Pass the {@see LoggerInterface} instance into {@see Log} for static logging.
  *
  * * {@see LoggerInterface} - Symfony's internal logger
@@ -26,11 +23,15 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
  */
 final readonly class ApplicationInitializer
 {
-
+    /**
+     * @param MemoizationCache $memoizationCache
+     * @param ServiceLocator   $serviceLocator
+     * @param LoggerInterface  $logger
+     */
     public function __construct(
-            MemoizationCache         $memoizationCache,
-            private ServiceLocator   $serviceLocator,
-            private ?LoggerInterface $logger = null,
+        MemoizationCache        $memoizationCache,
+        private ServiceLocator  $serviceLocator,
+        private LoggerInterface $logger,
     ) {}
 
     public function __invoke( RequestEvent $event ) : void

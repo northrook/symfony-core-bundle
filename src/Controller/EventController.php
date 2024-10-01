@@ -6,12 +6,11 @@ use Northrook\Logger\Log;
 use Northrook\Symfony\Core\DependencyInjection\CoreController;
 use Northrook\Symfony\Core\Security\Authentication;
 use Northrook\Symfony\Core\Service\CurrentRequest;
-use Northrook\Symfony\Service\Document\DocumentService;
+use Northrook\Symfony\Service\DocumentService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use const Cache\EPHEMERAL;
-
 
 class EventController extends CoreController
 {
@@ -26,9 +25,21 @@ class EventController extends CoreController
     {
         $exception = $event->getThrowable();
 
-        if ( $exception instanceof HttpExceptionInterface ) {
-            $this->HttpException( $event, $exception );
-        }
+        match ( true ) {
+            $exception instanceof HttpExceptionInterface => $this->HttpException( $event, $exception ),
+            default                                      => $this->handleException( $event, $exception ),
+        };
+    }
+
+    public function handleException( ExceptionEvent $event, \Throwable $exception ) : void
+    {
+        dump( $exception, $event );
+        $event->setResponse(
+                new Response(
+                        'Exception occurd. Soft response.',
+                        500,
+                ),
+        );
     }
 
     public function HttpException(
@@ -51,8 +62,7 @@ class EventController extends CoreController
                                               'dir.assets/scripts/*.js',
                                       ],
                         persistence : EPHEMERAL,
-                )
-        ;
+                );
 
         $event->setResponse(
                 new Response( 'Not found, sadly.' ),

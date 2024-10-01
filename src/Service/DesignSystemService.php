@@ -1,54 +1,50 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Northrook\Symfony\Core\Service;
 
 use Northrook\DesignSystem;
 use Psr\Log\LoggerInterface;
-use function Northrook\normalizeKey;
+use Support\Normalize;
 
 final class DesignSystemService
 {
     private array $designSystems = [];
 
     /**
-     * @param ?LoggerInterface  $logger
+     * @param ?LoggerInterface $logger
      */
     public function __construct(
         private readonly ?LoggerInterface $logger,
     ) {}
 
-    public function system( string $get ) : DesignSystem {
-        $get = normalizeKey( $get );
+    public function system( string $get ) : DesignSystem
+    {
+        $get = Normalize::path( $get );
         if ( 'admin' === $get ) {
-            throw new \InvalidArgumentException(
-                "The Design System 'admin' key is reserved.",
-            );
+            throw new \InvalidArgumentException( "The Design System 'admin' key is reserved." );
         }
-        return $this->designSystems[ $get ] ??= new DesignSystem();
+        return $this->designSystems[$get] ??= new DesignSystem();
     }
 
-    public function admin() : DesignSystem {
-        if ( isset( $this->designSystems[ 'admin' ] ) ) {
-            return $this->designSystems[ 'admin' ];
+    public function admin() : DesignSystem
+    {
+        if ( isset( $this->designSystems['admin'] ) ) {
+            return $this->designSystems['admin'];
         }
 
-        $admin = new DesignSystem();
+        $admin                               = new DesignSystem();
 
         $admin->colorPalette
             ->addPalette(
                 name   : 'baseline',
-                from   : [ 222, 9 ],
-                method : [
-                             2, 5, 8,
-                             12, 60, 75,
-                             92, 95, 98,
-                         ],
+                from   : [222, 9],
+                method : [2, 5, 8, 12, 60, 75, 92, 95, 98],
             )
-            ->addPalette( 'primary', [ 222, 100, 50 ] )
+            ->addPalette( 'primary', [222, 100, 50] )
             ->systemPalettes();
 
-        return $this->designSystems[ 'admin' ] = $admin;
+        return $this->designSystems['admin'] = $admin;
     }
 }
