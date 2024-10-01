@@ -4,42 +4,36 @@
    config/latte
 /-------------------------------------------------------------------*/
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Northrook\Latte\Extension\CacheExtension;
-use Northrook\Latte\Extension\FormatterExtension;
-use Northrook\Latte\Extension\OptimizerExtension;
+use Northrook\Latte\Extension\{CacheExtension, FormatterExtension, OptimizerExtension};
 use Northrook\UI\Compiler\Latte\UiCompileExtension;
-use function Northrook\normalizePath;
+use Support\Normalize;
 
-
-return static function( ContainerConfigurator $container ) : void
-{
+return static function( ContainerConfigurator $container ) : void {
     $container
         ->parameters()
         ->set(
             'dir.ui.assets',
-            normalizePath( '%dir.root%/vendor/northrook/ui/assets' ),
+            Normalize::path( '%dir.root%/vendor/northrook/ui/assets' ),
         )
         ->set(
             'path.public.stylesheet',
-            normalizePath( '%dir.assets%/stylesheet.css' ),
+            Normalize::path( '%dir.assets%/stylesheet.css' ),
         )
         ->set(
             'path.admin.stylesheet',
-            normalizePath( '%dir.assets%/admin.css' ),
-        )
-    ;
+            Normalize::path( '%dir.assets%/admin.css' ),
+        );
 
     $latte = $container->services();
 
     $latte
         ->defaults()
         ->autowire()
-        ->autoconfigure()
-    ;
+        ->autoconfigure();
 
     $latte
         ->set( UiCompileExtension::class )
@@ -47,8 +41,7 @@ return static function( ContainerConfigurator $container ) : void
             [
                 service( 'core.latte.cache' )->nullOnInvalid(),
             ],
-        )
-    ;
+        );
     $latte->set( FormatterExtension::class );
     $latte->set( OptimizerExtension::class );
 
@@ -59,6 +52,5 @@ return static function( ContainerConfigurator $container ) : void
                 service( 'core.latte.cache' )->nullOnInvalid(),
                 service( 'logger' )->nullOnInvalid(),
             ],
-        )
-    ;
+        );
 };

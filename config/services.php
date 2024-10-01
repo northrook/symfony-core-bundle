@@ -1,18 +1,16 @@
 <?php
 
-//------------------------------------------------------------------
+// ------------------------------------------------------------------
 // config / Services
-//------------------------------------------------------------------
+// ------------------------------------------------------------------
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Northrook\Favicon\FaviconBundle;
-use Northrook\Symfony\Core\Services\FormService;
-use Northrook\Symfony\Core\Services\MailerService;
-
-return static function ( ContainerConfigurator $container ) : void {
+use Northrook\Symfony\Core\Services\{FormService, MailerService};
+return static function( ContainerConfigurator $container ) : void {
 
     return;
 
@@ -21,41 +19,40 @@ return static function ( ContainerConfigurator $container ) : void {
     $services->defaults()->autowire();
 
     /** # ⭐
-     * Favicon Generator
+     * Favicon Generator.
      */
     $services->set( FaviconBundle::class );
 
-
-    //--------------------------------------------------------------------
+    // --------------------------------------------------------------------
     // Services
-    //--------------------------------------------------------------------
+    // --------------------------------------------------------------------
 
     /** # 📧
-     * Mailer Service
+     * Mailer Service.
      */
     $services->set( 'core.service.mailer', MailerService::class )
-             ->tag( 'controller.service_arguments' )
-             ->args(
-                 [
-                     service( 'core.service.settings' ),
-                     service( 'twig' ),
-                     service( 'latte.environment' ),
-                 ],
-             )
-             ->alias( MailerService::class, 'core.service.mailer' );
+        ->tag( 'controller.service_arguments' )
+        ->args(
+            [
+                service( 'core.service.settings' ),
+                service( 'twig' ),
+                service( 'latte.environment' ),
+            ],
+        )
+        ->alias( MailerService::class, 'core.service.mailer' );
 
     /** # 📩
-     * Form Service
+     * Form Service.
      */
     $services->set( 'core.service.form', FormService::class )
-             ->tag( 'controller.service_arguments' )
-             ->args(
-                 [
-                     service( 'parameter_bag' ),
-                     service( 'security.csrf.token_manager' ),
-                 ],
-             )
-             ->autowire()
-             ->public()
-             ->alias( FormService::class, 'core.service.form' );
+        ->tag( 'controller.service_arguments' )
+        ->args(
+            [
+                service( 'parameter_bag' ),
+                service( 'security.csrf.token_manager' ),
+            ],
+        )
+        ->autowire()
+        ->public()
+        ->alias( FormService::class, 'core.service.form' );
 };
